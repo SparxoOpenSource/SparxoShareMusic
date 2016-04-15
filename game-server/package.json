@@ -1,0 +1,12 @@
+{
+  "name": "SparxoShareMusicServer",
+  "version": "0.0.1",
+  "private": false,
+  "dependencies": {
+    "pomelo": "1.2.0",
+    "pomelo-logger": "0.1.7",
+    "crc": "3.3.0",
+    "async": "1.4.2",
+    "request": "2.63.0"
+  }
+}

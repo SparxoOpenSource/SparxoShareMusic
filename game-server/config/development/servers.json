@@ -1,0 +1,51 @@
+{
+  "connector": [
+    {
+      "id": "connector-server-1",
+      "host": "192.168.31.125",
+      "port": 4550,
+      "clientPort": 3550,
+      "frontend": true,
+      "args": " --debug=4060"
+    },
+    {
+      "id": "connector-server-2",
+      "host": "192.168.31.125",
+      "port": 4551,
+      "clientPort": 3551,
+      "frontend": true,
+      "args": " --debug=4061"
+    },
+    {
+      "id": "connector-server-3",
+      "host": "192.168.31.125",
+      "port": 4552,
+      "clientPort": 3552,
+      "frontend": true,
+      "args": " --debug=4062"
+    }
+  ],
+  "chat": [
+    {
+      "id": "chat-server-1",
+      "host": "127.0.0.1",
+      "port": 4150
+    }
+  ],
+  "studio": [
+    {
+      "id": "music-server-1",
+      "host": "127.0.0.1",
+      "port": 4250,
+      "studioId": 1
+    }
+  ],
+  "gate": [
+    {
+      "id": "gate-server-1",
+      "host": "127.0.0.1",
+      "clientPort": 3014,
+      "frontend": true
+    }
+  ]
+}

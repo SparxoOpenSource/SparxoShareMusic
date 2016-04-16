@@ -5,7 +5,7 @@
 			"name": "Launch",
 			"type": "node",
 			"request": "launch",
-			"program": "${workspaceRoot}/app.js",
+			"program": "${workspaceRoot}/game-server/app.js",
 			"stopOnEntry": false,
 			"args": [],
 			"cwd": "${workspaceRoot}",
@@ -25,12 +25,12 @@
 			"name": "Attach",
 			"type": "node",
 			"request": "attach",
-			"port": 4250,
+			"port": 4260,
 			"address": "127.0.0.1",
 			"restart": false,
 			"sourceMaps": false,
 			"outDir": null,
-			"localRoot": "${workspaceRoot}",
+			"localRoot": "${workspaceRoot}/game-server",
 			"remoteRoot": null
 		}
 	]

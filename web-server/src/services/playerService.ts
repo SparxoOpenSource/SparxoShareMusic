@@ -252,9 +252,11 @@ class PlayerServiceClass extends Events {
                 return;
             }
             pomelo.on('onMusicAdd', function (data) {
-                var music = new Music(data);
-                self.musics.push(music);
-                self.trigger("list.changed", self.musics);
+                if (!self.getMusic(data.id)) {
+                    var music = new Music(data);
+                    self.musics.push(music);
+                    self.trigger("list.changed", self.musics);
+                }
             });
             pomelo.on('onMusicRemove', function (data) {
                 var music = self.getMusic(data.id);
@@ -291,9 +293,14 @@ class PlayerServiceClass extends Events {
         });
     }
     studioAddMusic(url, callback) {
+        var self=this;
         var route = "studio.studioHandler.addMusic";
         pomelo.request(route, { url: url }, function (data) {
-            callback();
+             if (!self.getMusic(data.id)) {                  
+                 callback();
+             }else{
+                 alert("已经存在");
+             }
         });
     }
     studioRemoveMusic(id) {
@@ -326,8 +333,8 @@ class PlayerServiceClass extends Events {
         return new Promise((resolve, reject) => {
             pomelo.request(route, {
                 userName: userName
-            }, function (data) {                
-                if (data.code != 500&&!data.isExisted) {
+            }, function (data) {
+                if (data.code != 500 && !data.isExisted) {
                     resolve();
                 } else {
                     pomelo.disconnect();

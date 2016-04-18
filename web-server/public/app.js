@@ -55,9 +55,9 @@
 
 	const React = __webpack_require__(2);
 	const ReactDOM = __webpack_require__(33);
-	const player_1 = __webpack_require__(172);
-	const list_1 = __webpack_require__(174);
-	const playerService_1 = __webpack_require__(173);
+	const player_1 = __webpack_require__(167);
+	const list_1 = __webpack_require__(169);
+	const playerService_1 = __webpack_require__(168);
 	class MusicApp extends React.Component {
 	    constructor(...args) {
 	        super(...args);
@@ -20082,12 +20082,7 @@
 	module.exports = ReactMount.renderSubtreeIntoContainer;
 
 /***/ },
-/* 167 */,
-/* 168 */,
-/* 169 */,
-/* 170 */,
-/* 171 */,
-/* 172 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// A '.tsx' file enables JSX support in the TypeScript compiler,
@@ -20096,7 +20091,7 @@
 	"use strict";
 
 	const React = __webpack_require__(2);
-	const playerService_1 = __webpack_require__(173);
+	const playerService_1 = __webpack_require__(168);
 	class Player extends React.Component {
 	    constructor(...args) {
 	        super(...args);
@@ -20124,7 +20119,7 @@
 	exports.Player = Player;
 
 /***/ },
-/* 173 */
+/* 168 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -20350,9 +20345,11 @@
 	                return;
 	            }
 	            pomelo.on('onMusicAdd', function (data) {
-	                var music = new Music(data);
-	                self.musics.push(music);
-	                self.trigger("list.changed", self.musics);
+	                if (!self.getMusic(data.id)) {
+	                    var music = new Music(data);
+	                    self.musics.push(music);
+	                    self.trigger("list.changed", self.musics);
+	                }
 	            });
 	            pomelo.on('onMusicRemove', function (data) {
 	                var music = self.getMusic(data.id);
@@ -20389,9 +20386,14 @@
 	        });
 	    }
 	    studioAddMusic(url, callback) {
+	        var self = this;
 	        var route = "studio.studioHandler.addMusic";
 	        pomelo.request(route, { url: url }, function (data) {
-	            callback();
+	            if (!self.getMusic(data.id)) {
+	                callback();
+	            } else {
+	                alert("已经存在");
+	            }
 	        });
 	    }
 	    studioRemoveMusic(id) {
@@ -20438,7 +20440,7 @@
 	exports.PlayerService = new PlayerServiceClass();
 
 /***/ },
-/* 174 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// A '.tsx' file enables JSX support in the TypeScript compiler,
@@ -20447,7 +20449,7 @@
 	"use strict";
 
 	const React = __webpack_require__(2);
-	const playerService_1 = __webpack_require__(173);
+	const playerService_1 = __webpack_require__(168);
 	class MusicItem extends React.Component {
 	    constructor(props, context) {
 	        super(props, context);

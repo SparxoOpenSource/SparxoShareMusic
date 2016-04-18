@@ -29,7 +29,7 @@ app.configure('production|development', function () {
     app.route('studio', routeUtil.studio);
 
     //load config
-        app.loadConfig('appConfig', app.getBase() + '/config/' + app.get('env') + '/appConfig.json');
+    app.loadConfig('appConfig', app.getBase() + '/config/' + app.get('env') + '/appConfig.json');
 
     // filter configures
     app.filter(pomelo.timeout());

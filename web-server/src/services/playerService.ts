@@ -204,7 +204,7 @@ class PlayerServiceClass extends Events {
             var route = 'gate.gateHandler.queryEntry';
             pomelo.init({
                 host: '52.193.35.178',
-                port: 3014,
+                port: 3114,
                 log: true
             }, () => {
                 pomelo.request(route, { userName: uid }, function (data) {

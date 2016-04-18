@@ -20338,12 +20338,11 @@
 	    };
 	    PlayerServiceClass.prototype.init = function (uid) {
 	        var self = this;
-<<<<<<< HEAD
 	        var d = q.defer();
 	        //return new Promise((resolve, reject) => {
 	        var route = 'gate.gateHandler.queryEntry';
 	        pomelo.init({
-	            host: '192.168.31.125',
+	            host: '120.55.96.3',
 	            port: 3014,
 	            log: true
 	        }, function () {
@@ -20356,25 +20355,6 @@
 	                self.host = data.host;
 	                self.port = data.port;
 	                d.resolve();
-=======
-	        return new Promise((resolve, reject) => {
-	            var route = 'gate.gateHandler.queryEntry';
-	            pomelo.init({
-	                host: '52.193.35.178',
-	                port: 3014,
-	                log: true
-	            }, () => {
-	                pomelo.request(route, { userName: uid }, function (data) {
-	                    pomelo.disconnect();
-	                    if (data.code === 500) {
-	                        reject("There is no server to log in, please wait.");
-	                        return;
-	                    }
-	                    self.host = data.host;
-	                    self.port = data.port;
-	                    resolve();
-	                });
->>>>>>> 41a4fcaf2d6cc404a245c6ec3081056d96a0e459
 	            });
 	        });
 	        //});    

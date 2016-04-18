@@ -2,6 +2,7 @@ var pomelo = require('pomelo');
 var channelUtil = require('../../util/channelUtil');
 var MessageService = require('../../services/messageService');
 var WYMusicService = require('../../services/wyMusicService.js');
+var ProxyService = require('../../services/proxyService.js');
 
 var studio = function (opts) {
     this.studioId = opts.id;
@@ -35,7 +36,7 @@ studio.prototype.pushByUserName = function (userName, route, msg, cb) {
 studio.prototype.getPlayerMusicList = function () {
     var playerList = this.playerList;
     var list = [];
-    for(var m in playerList) {
+    for (var m in playerList) {
         list.push(playerList[m]);
     }
     return list;
@@ -43,7 +44,7 @@ studio.prototype.getPlayerMusicList = function () {
 
 studio.prototype.getMusic = function (id, cb) {
     var music = this.playerList[id];
-    if(!music){
+    if (!music) {
         cb('music not exist! ');
         return;
     }
@@ -52,7 +53,7 @@ studio.prototype.getMusic = function (id, cb) {
 
 studio.prototype.addMusic = function (url, userName, cb) {
     var self = this;
-    WYMusicService.getMusicByUrl(url, function (err, music) {
+    var getMusicFunc = function (err, music) {
         if (!!err) {
             cb('get music by url error! ');
             return;
@@ -60,12 +61,20 @@ studio.prototype.addMusic = function (url, userName, cb) {
         music.orderer = userName;
         self.playerList[music.id] = music;
         self.getChannel().pushMessage('onMusicAdd', music, cb);
-    });
+    };
+    if (pomelo.app.get('appConfig').useProxy) {
+        ProxyService.getIp(function (err, ip) {
+            WYMusicService.getMusicByUrl(url, ip, getMusicFunc);
+        });
+    }
+    else {
+        WYMusicService.getMusicByUrl(url, null, getMusicFunc);
+    }
 };
 
 studio.prototype.playMusic = function (id, cb) {
     var music = this.playerList[id];
-    if(!music){
+    if (!music) {
         cb('music not exist! ');
         return;
     }

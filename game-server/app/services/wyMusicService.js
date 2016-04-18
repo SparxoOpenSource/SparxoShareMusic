@@ -2,7 +2,7 @@ var request = require('request');
 
 var exp = module.exports;
 
-exp.getMusicByUrl = function (url, cb) {
+exp.getMusicByUrl = function (url, proxyIp, cb) {
     if (!this.match(url)) {
         cb('error url! ');
         return;
@@ -26,10 +26,12 @@ exp.getMusicByUrl = function (url, cb) {
             Cookie: "appver=1.5.0.75771"
         }
     };
-
+    if (proxyIp) {
+        options.proxy = proxyIp;
+    }
     request(options, function (err, response, body) {
         if (!err && response.statusCode == 200) {
-            var data  = JSON.parse(body);
+            var data = JSON.parse(body);
             var song = data.songs[0];
             if (!song) {
                 console.log(body);
@@ -37,7 +39,7 @@ exp.getMusicByUrl = function (url, cb) {
                 return;
             }
             var artists = [];
-            for(var n in song.artists){
+            for (var n in song.artists) {
                 artists.push(song.artists[n].name);
             }
             cb(null, {

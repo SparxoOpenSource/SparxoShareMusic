@@ -33,7 +33,7 @@ class MusicApp extends React.Component<{}, {}>{
     }
     render() {
         return <div>
-            <div className="container" style={{ marginBottom: '80px' }}>
+            <div className="container" style={{ marginBottom: '80px',marginTop:'20px'}}>
                 <div className="panel panel-default">
                     <div className="panel-heading">
                         Sparxo Player
@@ -61,24 +61,25 @@ class MusicApp extends React.Component<{}, {}>{
 
 class  Login extends React.Component<{},{}> {
     
-    login(){
+    login(e){        
+        e.nativeEvent.preventDefault();
         var txtInput=this.refs["userName"] as HTMLInputElement;
         if(txtInput.value==""){
             alert("请输入用户名")
             return;
         }
         localStorage["username"]=txtInput.value;
-        ReactDOM.render(<MusicApp />, document.getElementById("app"));
+        initMusic(txtInput.value);
     }
     render(){        
         return <div>
-            <div className="container" style={{ marginBottom: '80px' }}>
+            <div className="container" style={{ marginBottom: '80px',marginTop:'20px'}}>
                 <div className="panel panel-default">
                     <div className="panel-heading">
                         Sparxo Player
                     </div>
                     <div className="panel-body">
-                        <form action="#" onSubmit={this.login.bind(this)}>
+                        <form onSubmit={this.login.bind(this)}>
                             <div className="form-group">
                                 <label for="exampleInputEmail1">用户名</label>
                                 <input type="text" ref="userName" className="form-control" placeholder="用户名"/>
@@ -97,17 +98,21 @@ if(username==''){
     ReactDOM.render(<Login/>,document.getElementById("app"));
 }
 else{
-    initMusic();
+    initMusic(username);
 }
-
-function  initMusic() {
-    PlayerService.init(username).then(()=>{        
+function  initMusic(username) {
+    
+    PlayerService.init(username).then(()=>{
+       return PlayerService.studio();
+    }).then(()=>{        
        return PlayerService.studioUserIsExisted(username);          
-    })
-    .then(data=>{
+    }).then(()=>{
+        PlayerService.studioEnter(username);
         ReactDOM.render(<MusicApp/>,document.getElementById("app"));
-    })
-    .catch(message=>{        
-        alert(message);
+        
+    }).catch(message=>{     
+        localStorage.removeItem("username");   
+        ReactDOM.render(<Login/>,document.getElementById("app"));
+        alert(message);   
     });
 }

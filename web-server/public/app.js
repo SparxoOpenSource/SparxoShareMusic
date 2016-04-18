@@ -84,38 +84,44 @@
 	        });
 	    }
 	    render() {
-	        return React.createElement("div", null, React.createElement("div", { className: "container", style: { marginBottom: '80px' } }, React.createElement("div", { className: "panel panel-default" }, React.createElement("div", { className: "panel-heading" }, "Sparxo Player", React.createElement("label", { className: "pull-right" }, React.createElement("input", { type: "checkbox", checked: this.state.isMainPlayer, onChange: this.checkedChanged.bind(this), style: { verticalAlign: 'top' } }), "主播放器")), React.createElement("div", { className: "panel-body" }, React.createElement("div", { className: "input-group" }, React.createElement("input", { type: "text", ref: "txt_url", className: "form-control", placeholder: "163音乐地址" }), React.createElement("span", { className: "input-group-btn" }, React.createElement("button", { className: "btn btn-default", onClick: this.addMusic.bind(this), type: "button" }, "添加")))), React.createElement(list_1.PlayList, null))), React.createElement(player_1.Player, { isMainPlayer: this.state.isMainPlayer }));
+	        return React.createElement("div", null, React.createElement("div", { className: "container", style: { marginBottom: '80px', marginTop: '20px' } }, React.createElement("div", { className: "panel panel-default" }, React.createElement("div", { className: "panel-heading" }, "Sparxo Player", React.createElement("label", { className: "pull-right" }, React.createElement("input", { type: "checkbox", checked: this.state.isMainPlayer, onChange: this.checkedChanged.bind(this), style: { verticalAlign: 'top' } }), "主播放器")), React.createElement("div", { className: "panel-body" }, React.createElement("div", { className: "input-group" }, React.createElement("input", { type: "text", ref: "txt_url", className: "form-control", placeholder: "163音乐地址" }), React.createElement("span", { className: "input-group-btn" }, React.createElement("button", { className: "btn btn-default", onClick: this.addMusic.bind(this), type: "button" }, "添加")))), React.createElement(list_1.PlayList, null))), React.createElement(player_1.Player, { isMainPlayer: this.state.isMainPlayer }));
 	    }
 	}
 	MusicApp.propTypes = {
 	    title: React.PropTypes.string
 	};
 	class Login extends React.Component {
-	    login() {
+	    login(e) {
+	        e.nativeEvent.preventDefault();
 	        var txtInput = this.refs["userName"];
 	        if (txtInput.value == "") {
 	            alert("请输入用户名");
 	            return;
 	        }
 	        localStorage["username"] = txtInput.value;
-	        ReactDOM.render(React.createElement(MusicApp, null), document.getElementById("app"));
+	        initMusic(txtInput.value);
 	    }
 	    render() {
-	        return React.createElement("div", null, React.createElement("div", { className: "container", style: { marginBottom: '80px' } }, React.createElement("div", { className: "panel panel-default" }, React.createElement("div", { className: "panel-heading" }, "Sparxo Player"), React.createElement("div", { className: "panel-body" }, React.createElement("form", { action: "#", onSubmit: this.login.bind(this) }, React.createElement("div", { className: "form-group" }, React.createElement("label", { for: "exampleInputEmail1" }, "用户名"), React.createElement("input", { type: "text", ref: "userName", className: "form-control", placeholder: "用户名" })), React.createElement("button", { type: "submit", className: "btn btn-default" }, "登录"))))));
+	        return React.createElement("div", null, React.createElement("div", { className: "container", style: { marginBottom: '80px', marginTop: '20px' } }, React.createElement("div", { className: "panel panel-default" }, React.createElement("div", { className: "panel-heading" }, "Sparxo Player"), React.createElement("div", { className: "panel-body" }, React.createElement("form", { onSubmit: this.login.bind(this) }, React.createElement("div", { className: "form-group" }, React.createElement("label", { for: "exampleInputEmail1" }, "用户名"), React.createElement("input", { type: "text", ref: "userName", className: "form-control", placeholder: "用户名" })), React.createElement("button", { type: "submit", className: "btn btn-default" }, "登录"))))));
 	    }
 	}
 	var username = localStorage['username'] || "";
 	if (username == '') {
 	    ReactDOM.render(React.createElement(Login, null), document.getElementById("app"));
 	} else {
-	    initMusic();
+	    initMusic(username);
 	}
-	function initMusic() {
+	function initMusic(username) {
 	    playerService_1.PlayerService.init(username).then(() => {
+	        return playerService_1.PlayerService.studio();
+	    }).then(() => {
 	        return playerService_1.PlayerService.studioUserIsExisted(username);
-	    }).then(data => {
+	    }).then(() => {
+	        playerService_1.PlayerService.studioEnter(username);
 	        ReactDOM.render(React.createElement(MusicApp, null), document.getElementById("app"));
 	    }).catch(message => {
+	        localStorage.removeItem("username");
+	        ReactDOM.render(React.createElement(Login, null), document.getElementById("app"));
 	        alert(message);
 	    });
 	}
@@ -20257,7 +20263,7 @@
 	    constructor(...args) {
 	        super(...args);
 	        this.musics = [];
-	        this.isMainPlayer = JSON.parse(localStorage['isMainPlayer'] || "true");
+	        this.isMainPlayer = JSON.parse(localStorage['isMainPlayer'] || "false");
 	    }
 	    setIsMainPlayer(isMainPlayer) {
 	        this.isMainPlayer = isMainPlayer;
@@ -20302,7 +20308,7 @@
 	                port: 3014,
 	                log: true
 	            }, () => {
-	                pomelo.request(route, { uid: uid }, function (data) {
+	                pomelo.request(route, { userName: uid }, function (data) {
 	                    pomelo.disconnect();
 	                    if (data.code === 500) {
 	                        reject("There is no server to log in, please wait.");
@@ -20324,11 +20330,25 @@
 	    }
 	    studio() {
 	        var self = this;
-	        pomelo.init({
-	            host: self.host,
-	            port: self.port,
-	            log: false
-	        }, data => {
+	        return new Promise((resolve, reject) => {
+	            pomelo.init({
+	                host: self.host,
+	                port: self.port,
+	                log: false
+	            }, data => {
+	                resolve();
+	            });
+	        });
+	    }
+	    studioEnter(userName) {
+	        var self = this;
+	        var route = "connector.entryHandler.enter";
+	        pomelo.request(route, {
+	            userName: userName
+	        }, function (data) {
+	            if (data.code === 500) {
+	                return;
+	            }
 	            pomelo.on('onMusicAdd', function (data) {
 	                var music = new Music(data);
 	                self.musics.push(music);
@@ -20358,18 +20378,6 @@
 	            pomelo.on('onUserLeave', function (data) {
 	                console.log(data);
 	            });
-	            self.studioEnter(localStorage['username']);
-	        });
-	    }
-	    studioEnter(userName) {
-	        var self = this;
-	        var route = "connector.entryHandler.enter";
-	        pomelo.request(route, {
-	            userName: userName
-	        }, function (data) {
-	            if (data.code === 500) {
-	                return;
-	            }
 	            self.studioEnterSence();
 	        });
 	    }
@@ -20417,8 +20425,11 @@
 	            pomelo.request(route, {
 	                userName: userName
 	            }, function (data) {
-	                if (data) {
+	                if (data.code != 500 && !data.isExisted) {
 	                    resolve();
+	                } else {
+	                    pomelo.disconnect();
+	                    reject("用户名已经存在");
 	                }
 	            });
 	        });

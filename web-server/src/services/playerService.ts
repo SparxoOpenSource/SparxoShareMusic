@@ -159,7 +159,7 @@ class PlayerServiceClass extends Events {
     player: HTMLAudioElement;
     host;
     port;
-    isMainPlayer = JSON.parse(localStorage['isMainPlayer'] || "true");
+    isMainPlayer = JSON.parse(localStorage['isMainPlayer'] || "false");
     setIsMainPlayer(isMainPlayer: boolean) {
         this.isMainPlayer = isMainPlayer;
         localStorage['isMainPlayer'] = isMainPlayer;
@@ -203,11 +203,11 @@ class PlayerServiceClass extends Events {
         return new Promise((resolve, reject) => {
             var route = 'gate.gateHandler.queryEntry';
             pomelo.init({
-                host: '192.168.31.125',  
+                host: '192.168.31.125',
                 port: 3014,
                 log: true
             }, () => {
-                pomelo.request(route, {uid: uid }, function (data) {
+                pomelo.request(route, { userName: uid }, function (data) {
                     pomelo.disconnect();
                     if (data.code === 500) {
                         reject("There is no server to log in, please wait.");
@@ -231,11 +231,26 @@ class PlayerServiceClass extends Events {
     }
     studio() {
         var self = this;
-        pomelo.init({
-            host: self.host,
-            port: self.port,
-            log: false
-        }, (data) => {
+        return new Promise((resolve, reject) => {
+            pomelo.init({
+                host: self.host,
+                port: self.port,
+                log: false
+            }, (data) => {
+                resolve();
+            });
+        });
+
+    }
+    studioEnter(userName) {
+        var self = this;
+        var route = "connector.entryHandler.enter";
+        pomelo.request(route, {
+            userName: userName
+        }, function (data) {
+            if (data.code === 500) {
+                return;
+            }
             pomelo.on('onMusicAdd', function (data) {
                 var music = new Music(data);
                 self.musics.push(music);
@@ -265,19 +280,6 @@ class PlayerServiceClass extends Events {
             pomelo.on('onUserLeave', function (data) {
                 console.log(data);
             });
-
-            self.studioEnter(localStorage['username']);
-        });
-    }
-    studioEnter(userName) {
-        var self = this;
-        var route = "connector.entryHandler.enter";
-        pomelo.request(route, {
-            userName: userName
-        }, function (data) {
-            if (data.code === 500) {
-                return;
-            }
             self.studioEnterSence();
         });
     }
@@ -324,9 +326,12 @@ class PlayerServiceClass extends Events {
         return new Promise((resolve, reject) => {
             pomelo.request(route, {
                 userName: userName
-            }, function (data) {
-                if (data) {
+            }, function (data) {                
+                if (data.code != 500&&!data.isExisted) {
                     resolve();
+                } else {
+                    pomelo.disconnect();
+                    reject("用户名已经存在")
                 }
             });
         });

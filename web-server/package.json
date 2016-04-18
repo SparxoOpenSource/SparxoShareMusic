@@ -16,7 +16,8 @@
     "react-addons-css-transition-group": "^15.0.1",
     "react-addons-linked-state-mixin": "^15.0.1",
     "react-addons-perf": "^15.0.1",
-    "react-dom": "^15.0.1"
+    "react-dom": "^15.0.1",
+    "q":"^1.4.1"
   },
   "devDependencies": {
     "tsd": "^0.6.5",

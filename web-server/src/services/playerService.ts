@@ -1,4 +1,4 @@
-﻿
+﻿import q=require("q");
 var pomelo = window['pomelo'];
 
 export class Subscription {
@@ -200,7 +200,9 @@ class PlayerServiceClass extends Events {
 
     init(uid) {
         var self = this;
-        return new Promise((resolve, reject) => {
+        var d=q.defer();
+       
+        //return new Promise((resolve, reject) => {
             var route = 'gate.gateHandler.queryEntry';
             pomelo.init({
                 host: '192.168.31.125',
@@ -210,16 +212,18 @@ class PlayerServiceClass extends Events {
                 pomelo.request(route, { userName: uid }, function (data) {
                     pomelo.disconnect();
                     if (data.code === 500) {
-                        reject("There is no server to log in, please wait.");
+                        d.reject("There is no server to log in, please wait.");
                         return;
                     }
                     self.host = data.host;
                     self.port = data.port;
-                    resolve();
+                    d.resolve();
                 });
             });
 
-        });
+        //});     
+        return d.promise
+
 
     }
     getMusic(id) {
@@ -230,16 +234,19 @@ class PlayerServiceClass extends Events {
         }
     }
     studio() {
-        var self = this;
-        return new Promise((resolve, reject) => {
+        var self = this;       
+         var d=q.defer();
+
+        //return new Promise((resolve, reject) => {
             pomelo.init({
                 host: self.host,
                 port: self.port,
                 log: false
             }, (data) => {
-                resolve();
+                d.resolve();
             });
-        });
+        //});
+        return  d.promise;
 
     }
     studioEnter(userName) {
@@ -330,18 +337,21 @@ class PlayerServiceClass extends Events {
     }
     studioUserIsExisted(userName) {
         var route = "connector.entryHandler.isUserExisted";
-        return new Promise((resolve, reject) => {
+        var d=q.defer();
+
+        //return new Promise((resolve, reject) => {
             pomelo.request(route, {
                 userName: userName
             }, function (data) {
                 if (data.code != 500 && !data.isExisted) {
-                    resolve();
+                    d.resolve();
                 } else {
                     pomelo.disconnect();
-                    reject("用户名已经存在")
+                   d.reject("用户名已经存在")
                 }
             });
-        });
+            return  d.promise;
+        //});
     }
 }
 

@@ -41,7 +41,7 @@ studio.prototype.getPlayerMusicList = function () {
     return list;
 };
 
-studio.prototype.getMusic = function (id) {
+studio.prototype.getMusic = function (id, cb) {
     var music = this.playerList[id];
     if(!music){
         cb('music not exist! ');

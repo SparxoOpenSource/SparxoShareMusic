@@ -38,13 +38,13 @@ export class MusicItem extends React.Component<{ music: Music }, {}>{
                 <div className="media-body" style={{ position: 'relative' }}>
                     <h4 className="media-heading">
                         {music.name} 
+                        <div className="pull-right">{music.orderer}</div>
                     </h4>
                     <p>{music.artists}</p>
                     <div className="btn-group" role="group" aria-label="...">
                         <button type="button" className="btn btn-default btn-sm"  onClick={this.play.bind(this) }>播放</button>
                         <button type="button" className="btn btn-default btn-sm" onClick={this.removeMusic.bind(this)}>删除</button>
                     </div>
-                    -{music.orderer}
                 </div>
             </div>
         </li>

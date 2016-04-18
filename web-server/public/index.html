@@ -6,7 +6,6 @@
     <title>
         chatofpomelo
     </title>
-<<<<<<< HEAD
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
     <style>
         .navbar-player {
@@ -15,129 +14,20 @@
             -webkit-transition: all 2s;
             transition: all 2s;
         }
-        .navbar-player.nomain {  
+        
+        .navbar-player.nomain {
             -moz-transition: all 2s;
             -o-transition: all 2s;
             -webkit-transition: all 2s;
             transition: all 2s;
-            bottom:-100px !important;
+            bottom: -100px !important;
         }
     </style>
-=======
-    <link rel="stylesheet" href="style.css" type="text/css" />
-    <script src="js/lib/jquery-1.8.0.min.js" type="text/javascript">
-
-    </script>
-
-    <script src="js/lib/build/build.js" type="text/javascript">
-
-    </script>
-        <script type="text/javascript">
-         
-         require('boot');
-        </script> 
-    <script type="text/javascript">
-       var pomelo = window.pomelo;
-       function queryEntry(userName, callback) { 
-           var route = 'gate.gateHandler.queryEntry'; 
-           pomelo.init({ 
-               host: '127.0.0.1', //host:window.location.hostname, 
-               port: 3014, 
-               log: true }, 
-               function() { 
-                   pomelo.request(route, { userName: userName }, function (data)
-                   { 
-                       pomelo.disconnect(); 
-                       if(data.code === 500) { 
-                           showError(LOGIN_ERROR); 
-                           return; 
-                        } 
-                        callback(data.host, data.port); 
-                    }); 
-                });
-            };
-            function studio(userName){
-                queryEntry(userName, function(host, port){
-                     pomelo.init({
-                        host: host,
-                        port: port,
-                        log: true,
-                    }, function () {
-                        pomelo.on('onMusicAdd', function (data) {
-                            console.log(data);
-                        });
-                        pomelo.on('onMusicRemove', function (data) {
-                            console.log(data);
-                        });
-                        pomelo.on('onMusicPlay', function (data) {
-                            console.log(data);
-                        });
-                        pomelo.on('onUserLeave', function (data) {
-                            console.log(data);
-                        });
-                    });
-                });
-            }
-            
-            function studioEnter(userName){
-                 var route = "connector.entryHandler.enter";
-                  pomelo.request(route, {
-                    userName: userName
-                }, function (data) {
-                    console.log(data);
-                });
-            }
-            
-             function studioUserIsExisted(userName){
-                 var route = "connector.entryHandler.isUserExisted";
-                  pomelo.request(route, {
-                    userName: userName
-                }, function (data) {
-                    console.log(data);
-                });
-            }
-            
-            function studioEnterSence() {
-                var route = "studio.studioHandler.enterStudio";
-                pomelo.request(route, {}, function (data) {
-                    console.log(data);
-                });
-            }
-            
-           function studioAddMusic(url) {
-                var route = "studio.studioHandler.addMusic";
-                pomelo.request(route, {url: url}, function (data) {
-                    console.log(data);
-                });
-            }
-            
-            function studioRemoveMusic(id) {
-                var route = "studio.studioHandler.removeMusic";
-                pomelo.request(route, {id: id}, function (data) {
-                    console.log(data);
-                });
-            }
-            
-            function studioPlayMusic(id) {
-                var route = "studio.studioHandler.playMusic";
-                pomelo.request(route, {id: id}, function (data) {
-                    console.log(data);
-                });
-            }
-            
-            function studioGetPlayerMusicList() {
-                var route = "studio.studioHandler.getPlayerMusicList";
-                pomelo.request(route, {}, function (data) {
-                    console.log(data);
-                });
-            }
-    </script>
->>>>>>> f49d84026529c53f7b994153958c041676fa1795
 </head>
 
 <body>
     <div id="app">
-    </div>    
+    </div>
     <script src="js/lib/build/build.js" type="text/javascript"></script>
     <script>
         require('boot');

@@ -1,0 +1,13 @@
+﻿{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "jsx": "react",    
+    "sourceMap": true,
+    "emitDecoratorMetadata": false,
+    "removeComments": false,
+    "noImplicitAny": false
+  },
+  "exclude": [ "node_modules" ]
+}

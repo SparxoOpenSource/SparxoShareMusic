@@ -6,179 +6,32 @@
     <title>
         chatofpomelo
     </title>
-    <link rel="stylesheet" href="style.css" type="text/css" />
-    <script src="js/lib/jquery-1.8.0.min.js" type="text/javascript">
-
-    </script>
-
-    <script src="js/lib/build/build.js" type="text/javascript">
-
-    </script>
-        <script type="text/javascript">
-         
-         require('boot');
-        </script> 
-    <script type="text/javascript">
-       var pomelo = window.pomelo;
-       function queryEntry(uid, callback) { 
-           var route = 'gate.gateHandler.queryEntry'; 
-           pomelo.init({ 
-               host: '127.0.0.1', //host:window.location.hostname, 
-               port: 3014, 
-               log: true }, 
-               function() { 
-                   pomelo.request(route, { userName: uid }, function (data)
-                   { 
-                       pomelo.disconnect(); 
-                       if(data.code === 500) { 
-                           showError(LOGIN_ERROR); 
-                           return; 
-                        } 
-                        callback(data.host, data.port); 
-                    }); 
-                });
-            };
-            function studio(userName){
-                queryEntry(userName, function(host, port){
-                     pomelo.init({
-                        host: host,
-                        port: port,
-                        log: true,
-                    }, function () {
-                        pomelo.on('onMusicAdd', function (data) {
-                            console.log(data);
-                        });
-                        pomelo.on('onMusicRemove', function (data) {
-                            console.log(data);
-                        });
-                        pomelo.on('onMusicPlay', function (data) {
-                            console.log(data);
-                        });
-                        pomelo.on('onUserLeave', function (data) {
-                            console.log(data);
-                        });
-                    });
-                });
-            }
-            
-            function studioEnter(userName){
-                 var route = "connector.entryHandler.enter";
-                  pomelo.request(route, {
-                    userName: userName
-                }, function (data) {
-                    console.log(data);
-                });
-            }
-            
-            function studioEnterSence() {
-                var route = "studio.studioHandler.enterStudio";
-                pomelo.request(route, {}, function (data) {
-                    console.log(data);
-                });
-            }
-            
-           function studioAddMusic(url) {
-                var route = "studio.studioHandler.addMusic";
-                pomelo.request(route, {url: url}, function (data) {
-                    console.log(data);
-                });
-            }
-            
-            function studioRemoveMusic(id) {
-                var route = "studio.studioHandler.removeMusic";
-                pomelo.request(route, {id: id}, function (data) {
-                    console.log(data);
-                });
-            }
-            
-            function studioPlayMusic(id) {
-                var route = "studio.studioHandler.playMusic";
-                pomelo.request(route, {id: id}, function (data) {
-                    console.log(data);
-                });
-            }
-            
-            function studioGetPlayerMusicList() {
-                var route = "studio.studioHandler.getPlayerMusicList";
-                pomelo.request(route, {}, function (data) {
-                    console.log(data);
-                });
-            }
-    </script>
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <style>
+        .navbar-player {
+            -moz-transition: all 2s;
+            -o-transition: all 2s;
+            -webkit-transition: all 2s;
+            transition: all 2s;
+        }
+        .navbar-player.nomain {  
+            -moz-transition: all 2s;
+            -o-transition: all 2s;
+            -webkit-transition: all 2s;
+            transition: all 2s;
+            bottom:-100px !important;
+        }
+    </style>
 </head>
 
 <body>
-    <button type="button" onclick="test2('123456789123123456789123',0,0)">player 1</button>
-    <button type="button" onclick="test2('123456789456123456789456',0,0)">player 2</button>
-    <button type="button" onclick="testBattle()">GO</button>
-
     <div id="app">
-        <div id="loginView">
-            <div id="loginTitle">
-                Chat of Pomelo
-            </div>
-            <table>
-                <tr>
-                    <td>
-                        <input id="loginUser" type="text" placeholder="enter your name" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input name="channels" type="text" id="channelList" placeholder="enter your channel" />
-                    </td>
-                    <tr>
-                        <td>
-                            <input id="login" type='button' value="join" />
-                        </td>
-                    </tr>
-            </table>
-            <div id="loginError">
-            </div>
-        </div>
-        <div id="chatHistory">
-        </div>
-        <div id="toolbar">
-            <ul id="status">
-                <li>
-                    users:
-                    <select name="users" id="usersList">
-                        <option value="*">
-                            all
-                        </option>
-                    </select>
-                </li>
-                <li>
-                    name:
-                    <span id="name">
-                    </span>
-                </li>
-                <li>
-                    room:
-                    <span id="room">
-                    </span>
-                </li>
-            </ul>
-            <input tabindex="1" type="text" id="entry" />
-        </div>
-    </div>
-    <div id="pop">
-        <div id="popHead">
-            <a id="popClose" title="close">Close</a>
-            <h2>
-                Tip
-            </h2>
-        </div>
-        <div id="popContent">
-            <dl>
-                <dd id="popIntro">
-                </dd>
-            </dl>
-            <p id="popMore">
-                No Tip Again
-            </p>
-        </div>
-    </div>
+    </div>    
+    <script src="js/lib/build/build.js" type="text/javascript"></script>
+    <script>
+        require('boot');
+    </script>
+    <script src="app.js"></script>
 </body>
 
 </html>

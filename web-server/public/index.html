@@ -20,14 +20,14 @@
         </script> 
     <script type="text/javascript">
        var pomelo = window.pomelo;
-       function queryEntry(uid, callback) { 
+       function queryEntry(userName, callback) { 
            var route = 'gate.gateHandler.queryEntry'; 
            pomelo.init({ 
                host: '127.0.0.1', //host:window.location.hostname, 
                port: 3014, 
                log: true }, 
                function() { 
-                   pomelo.request(route, { userName: uid }, function (data)
+                   pomelo.request(route, { userName: userName }, function (data)
                    { 
                        pomelo.disconnect(); 
                        if(data.code === 500) { 
@@ -63,6 +63,15 @@
             
             function studioEnter(userName){
                  var route = "connector.entryHandler.enter";
+                  pomelo.request(route, {
+                    userName: userName
+                }, function (data) {
+                    console.log(data);
+                });
+            }
+            
+             function studioUserIsExisted(userName){
+                 var route = "connector.entryHandler.isUserExisted";
                   pomelo.request(route, {
                     userName: userName
                 }, function (data) {

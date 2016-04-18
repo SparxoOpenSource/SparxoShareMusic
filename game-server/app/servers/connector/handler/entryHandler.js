@@ -17,7 +17,7 @@ pro.enter = function (msg, session, next) {
     var self = this;
     var userName = msg.userName;
     var sessionService = self.app.get('sessionService');
-
+    
     //duplicate log in
     if (!!sessionService.getByUid(userName)) {
         next(null, {
@@ -26,8 +26,9 @@ pro.enter = function (msg, session, next) {
         });
         return;
     }
-    
+
     var studioId = 1;
+    session.bind(userName);
     session.set('serverId', self.app.get('studioIdMap')[studioId]);
     session.set('studioId', studioId);
     session.set('userName', userName);
@@ -37,16 +38,30 @@ pro.enter = function (msg, session, next) {
             return;
         }
     });
-    session.bind(userName);
     session.on('closed', onUserLeave.bind(null, self.app));
     next(null, { code: 200 });
 };
 
-var onUserLeave = function (app, session, reason) {
-    if (!session || !session.userName) {
+pro.isUserExisted = function (msg, session, next) {
+    var self = this;
+    var userName = msg.userName;
+    var sessionService = self.app.get('sessionService');
+
+    //duplicate log in
+    if (!!sessionService.getByUid(userName)) {
+        next(null, {
+            code: 200,
+            isExisted: true
+        });
         return;
     }
+    next(null, { code: 200, isExisted: false });
+}
 
+var onUserLeave = function (app, session, reason) {
+    if (!session || !session.uid) {
+        return;
+    }
     app.rpc.studio.studioRemote.userLeave(session, { userName: session.get('userName'), studioId: session.get('studioId') }, function (err) {
         if (!!err) {
             logger.error('user leave error! %j', err);

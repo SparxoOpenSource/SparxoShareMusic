@@ -70,7 +70,8 @@
 	    function MusicApp() {
 	        _super.apply(this, arguments);
 	        this.state = {
-	            isMainPlayer: playerService_1.PlayerService.isMainPlayer
+	            isMainPlayer: playerService_1.PlayerService.isMainPlayer,
+	            keyword: ""
 	        };
 	    }
 	    MusicApp.prototype.checkedChanged = function (checked) {
@@ -82,6 +83,7 @@
 	        });
 	    };
 	    MusicApp.prototype.addMusic = function () {
+	        var _this = this;
 	        var urlInput = this.refs["txt_url"];
 	        var url = urlInput.value;
 	        if (url.indexOf("http://music.163.com") == -1) {
@@ -89,14 +91,20 @@
 	            return;
 	        }
 	        playerService_1.PlayerService.studioAddMusic(url, function () {
-	            urlInput.value = "";
+	            _this.setState({
+	                keyword: ""
+	            });
+	        });
+	    };
+	    MusicApp.prototype.search = function () {
+	        var urlInput = this.refs["txt_url"];
+	        var url = urlInput.value;
+	        this.setState({
+	            keyword: urlInput.value
 	        });
 	    };
 	    MusicApp.prototype.render = function () {
-	        return React.createElement("div", null, React.createElement("div", { className: "container", style: { marginBottom: '80px', marginTop: '20px' } }, React.createElement("div", { className: "panel panel-default" }, React.createElement("div", { className: "panel-heading" }, "Sparxo Player", React.createElement("label", { className: "pull-right" }, React.createElement("input", { type: "checkbox", checked: this.state.isMainPlayer, onChange: this.checkedChanged.bind(this), style: { verticalAlign: 'top' } }), "主播放器")), React.createElement("div", { className: "panel-body" }, React.createElement("div", { className: "input-group" }, React.createElement("input", { type: "text", ref: "txt_url", className: "form-control", placeholder: "163音乐地址" }), React.createElement("span", { className: "input-group-btn" }, React.createElement("button", { className: "btn btn-default", onClick: this.addMusic.bind(this), type: "button" }, "添加")))), React.createElement(list_1.PlayList, null))), React.createElement(player_1.Player, { isMainPlayer: this.state.isMainPlayer }));
-	    };
-	    MusicApp.propTypes = {
-	        title: React.PropTypes.string
+	        return React.createElement("div", null, React.createElement("div", { className: "container", style: { marginBottom: '80px', marginTop: '20px' } }, React.createElement("div", { className: "panel panel-default" }, React.createElement("div", { className: "panel-heading" }, "Sparxo Player - [", localStorage['username'], "]", React.createElement("label", { className: "pull-right" }, React.createElement("input", { type: "checkbox", checked: this.state.isMainPlayer, onChange: this.checkedChanged.bind(this), style: { verticalAlign: 'top' } }), "主播放器")), React.createElement("div", { className: "panel-body" }, React.createElement("div", { className: "input-group" }, React.createElement("input", { type: "text", ref: "txt_url", value: this.state.keyword, onChange: this.search.bind(this), className: "form-control", placeholder: "163音乐地址" }), React.createElement("span", { className: "input-group-btn" }, React.createElement("button", { className: "btn btn-default", onClick: this.addMusic.bind(this), disabled: this.state.keyword.indexOf("http://music.163.com") == -1, type: "button" }, "添加")))), React.createElement(list_1.PlayList, { filter: this.state.keyword }))), React.createElement(player_1.Player, { isMainPlayer: this.state.isMainPlayer }));
 	    };
 	    return MusicApp;
 	}(React.Component);
@@ -113,10 +121,10 @@
 	            return;
 	        }
 	        localStorage["username"] = txtInput.value;
-	        initMusic(txtInput.value);
+	        initApp(txtInput.value);
 	    };
 	    Login.prototype.render = function () {
-	        return React.createElement("div", null, React.createElement("div", { className: "container", style: { marginBottom: '80px', marginTop: '20px' } }, React.createElement("div", { className: "panel panel-default" }, React.createElement("div", { className: "panel-heading" }, "Sparxo Player"), React.createElement("div", { className: "panel-body" }, React.createElement("form", { onSubmit: this.login.bind(this) }, React.createElement("div", { className: "form-group" }, React.createElement("label", { for: "exampleInputEmail1" }, "用户名"), React.createElement("input", { type: "text", ref: "userName", className: "form-control", placeholder: "用户名" })), React.createElement("button", { type: "submit", className: "btn btn-default" }, "登录"))))));
+	        return React.createElement("div", null, React.createElement("div", { className: "container", style: { marginBottom: '80px', marginTop: '20px' } }, React.createElement("div", { className: "panel panel-default" }, React.createElement("div", { className: "panel-heading" }, "Sparxo Player"), React.createElement("div", { className: "panel-body" }, React.createElement("form", { onSubmit: this.login.bind(this) }, React.createElement("div", { className: "form-group" }, React.createElement("label", null, "用户名"), React.createElement("input", { type: "text", ref: "userName", className: "form-control", placeholder: "用户名" })), React.createElement("button", { type: "submit", className: "btn btn-default" }, "登录"))))));
 	    };
 	    return Login;
 	}(React.Component);
@@ -124,9 +132,9 @@
 	if (username == '') {
 	    ReactDOM.render(React.createElement(Login, null), document.getElementById("app"));
 	} else {
-	    initMusic(username);
+	    initApp(username);
 	}
-	function initMusic(username) {
+	function initApp(username) {
 	    playerService_1.PlayerService.init(username).then(function () {
 	        return playerService_1.PlayerService.studio();
 	    }).then(function () {
@@ -20342,7 +20350,7 @@
 	        //return new Promise((resolve, reject) => {
 	        var route = 'gate.gateHandler.queryEntry';
 	        pomelo.init({
-	            host: '192.168.31.125',
+	            host: '52.193.35.178',
 	            port: 3014,
 	            log: true
 	        }, function () {
@@ -20394,7 +20402,7 @@
 	            pomelo.on('onMusicAdd', function (data) {
 	                if (!self.getMusic(data.id)) {
 	                    var music = new Music(data);
-	                    self.musics.push(music);
+	                    self.musics.unshift(music);
 	                    self.trigger("list.changed", self.musics);
 	                }
 	            });
@@ -22650,7 +22658,7 @@
 	    function MusicItem(props, context) {
 	        _super.call(this, props, context);
 	        this.state = {
-	            isPlay: false
+	            isPlay: this.props.music.state == "play"
 	        };
 	        var self = this;
 	        this.props.music.on("stateChange", function (isPlay) {
@@ -22687,8 +22695,14 @@
 	        };
 	    }
 	    PlayList.prototype.render = function () {
+	        var _this = this;
 	        return React.createElement("ul", { className: "list-group" }, this.state.musics.map(function (music) {
-	            return React.createElement(MusicItem, { key: music.id, music: music });
+	            if (_this.props.filter.indexOf("http://music.163.com") != -1) {
+	                return React.createElement(MusicItem, { key: music.id, music: music });
+	            }
+	            if (music.name.toLocaleLowerCase().indexOf(_this.props.filter.toLocaleLowerCase()) != -1 || music.artists.toLocaleLowerCase().indexOf(_this.props.filter.toLocaleLowerCase()) != -1) {
+	                return React.createElement(MusicItem, { key: music.id, music: music });
+	            }
 	        }));
 	    };
 	    return PlayList;

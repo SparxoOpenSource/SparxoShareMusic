@@ -261,7 +261,7 @@ class PlayerServiceClass extends Events {
             pomelo.on('onMusicAdd', function (data) {
                 if (!self.getMusic(data.id)) {
                     var music = new Music(data);
-                    self.musics.push(music);
+                    self.musics.unshift(music);
                     self.trigger("list.changed", self.musics);
                 }
             });
@@ -329,7 +329,7 @@ class PlayerServiceClass extends Events {
             if (data.code !== 500) {
                 for (var item of data.playerMusicList) {
                     self.musics.push(new Music(item));
-                }
+                }                
                 self.trigger("list.changed", self.musics);
             }
             console.log(data);

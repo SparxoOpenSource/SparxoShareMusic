@@ -18,7 +18,7 @@ export class MusicItem extends React.Component<{ music: Music }, {}>{
         })
     }
     state = {
-        isPlay: false
+        isPlay: this.props.music.state=="play"
     }
     play() {
         PlayerService.studioPlayMusic(this.props.music.id);
@@ -50,7 +50,7 @@ export class MusicItem extends React.Component<{ music: Music }, {}>{
         </li>
     }
 }
-export class PlayList extends React.Component<{}, { musics: Music[] }> {
+export class PlayList extends React.Component<{filter:string}, { musics: Music[] }> {
 
     constructor() {
         super();
@@ -68,7 +68,13 @@ export class PlayList extends React.Component<{}, { musics: Music[] }> {
     render() {
         return <ul className="list-group">
             {this.state.musics.map(music => {
-                return <MusicItem key={music.id} music={music} />
+                if(this.props.filter.indexOf("http://music.163.com")!=-1){
+                     return <MusicItem key={music.id} music={music} />
+                }
+                if (music.name.toLocaleLowerCase().indexOf(this.props.filter.toLocaleLowerCase())!=-1||
+                    music.artists.toLocaleLowerCase().indexOf(this.props.filter.toLocaleLowerCase())!=-1) {
+                     return <MusicItem key={music.id} music={music} />
+                }
             }) }
         </ul>
     }

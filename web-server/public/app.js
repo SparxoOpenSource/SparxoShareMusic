@@ -22700,7 +22700,7 @@
 	            if (_this.props.filter.indexOf("http://music.163.com") != -1) {
 	                return React.createElement(MusicItem, { key: music.id, music: music });
 	            }
-	            if (music.name.indexOf(_this.props.filter) != -1) {
+	            if (music.name.toLocaleLowerCase().indexOf(_this.props.filter.toLocaleLowerCase()) != -1 || music.artists.toLocaleLowerCase().indexOf(_this.props.filter.toLocaleLowerCase())) {
 	                return React.createElement(MusicItem, { key: music.id, music: music });
 	            }
 	        }));

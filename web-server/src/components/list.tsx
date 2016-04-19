@@ -71,7 +71,7 @@ export class PlayList extends React.Component<{filter:string}, { musics: Music[]
                 if(this.props.filter.indexOf("http://music.163.com")!=-1){
                      return <MusicItem key={music.id} music={music} />
                 }
-                if (music.name.indexOf(this.props.filter)!=-1) {
+                if (music.name.toLocaleLowerCase().indexOf(this.props.filter.toLocaleLowerCase())!=-1||music.artists.toLocaleLowerCase().indexOf(this.props.filter.toLocaleLowerCase())) {
                      return <MusicItem key={music.id} music={music} />
                 }
             }) }

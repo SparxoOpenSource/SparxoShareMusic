@@ -44,7 +44,7 @@ class MusicApp extends React.Component<{}, {}>{
             <div className="container" style={{ marginBottom: '80px', marginTop: '20px' }}>
                 <div className="panel panel-default">
                     <div className="panel-heading">
-                        Sparxo Player
+                        Sparxo Player - {localStorage['username']}
                         <label className="pull-right" >
                             <input type="checkbox"checked={this.state.isMainPlayer} onChange={this.checkedChanged.bind(this) }  style={{ verticalAlign: 'top' }} />
                             主播放器

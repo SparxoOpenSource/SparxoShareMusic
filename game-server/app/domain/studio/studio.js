@@ -39,7 +39,7 @@ studio.prototype.getPlayerMusicList = function () {
     var playerList = this.playerList;
     var songs = this.songs;
     var list = [];
-    for(var n in songs){
+    for (var n in songs) {
         list.unshift(playerList[songs[n].id]);
     }
     return list;
@@ -87,12 +87,13 @@ studio.prototype.playMusic = function (id, cb) {
 };
 
 studio.prototype.removeMusic = function (id, cb) {
+    var songs = this.songs;
     delete this.playerList[id];
-    for (var i = 0; i < this.songs.length, i++){
-       if(this.songs[i].id == id){
-           this.songs.splice(i);
-           break;
-       }
+    for (var n in songs) {
+        if (songs[n].id == id) {
+            songs.splice(n);
+            break;
+        }
     }
     this.getChannel().pushMessage('onMusicRemove', { id: id }, cb);
 };

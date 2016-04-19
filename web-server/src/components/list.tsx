@@ -50,7 +50,7 @@ export class MusicItem extends React.Component<{ music: Music }, {}>{
         </li>
     }
 }
-export class PlayList extends React.Component<{}, { musics: Music[] }> {
+export class PlayList extends React.Component<{filter:string}, { musics: Music[] }> {
 
     constructor() {
         super();
@@ -68,7 +68,12 @@ export class PlayList extends React.Component<{}, { musics: Music[] }> {
     render() {
         return <ul className="list-group">
             {this.state.musics.map(music => {
-                return <MusicItem key={music.id} music={music} />
+                if(this.props.filter.indexOf("http://music.163.com")!=-1){
+                     return <MusicItem key={music.id} music={music} />
+                }
+                if (music.name.indexOf(this.props.filter)!=-1) {
+                     return <MusicItem key={music.id} music={music} />
+                }
             }) }
         </ul>
     }

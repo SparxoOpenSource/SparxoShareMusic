@@ -19,14 +19,14 @@ handler.enterStudio = function (msg, session, next) {
 	utils.myPrint("1 ~ EnterScene: studioId = ", studioId);
     utils.myPrint("1 ~ EnterScene: userName = ", userName);
 	studio.addUser(user);
-    next(null, { code: 200, playerMusicList: studio.getPlayerMusicList() });
+    next(null, { code: 200, playerMusicList: studio.getPlayerMusicList(), playingSong: studio.getPlayingSong() });
 };
 
 handler.getPlayerMusicList = function (msg, session, next) {
     var studio = session.studio;
 	var studioId = session.get('studioId');
     var userName = session.get('userName');
-    next(null, { code: 200, playerMusicList: studio.getPlayerMusicList() });
+    next(null, { code: 200, playerMusicList: studio.getPlayerMusicList(), playingSong: studio.getPlayingSong() });
 };
 
 handler.addMusic = function (msg, session, next) {

@@ -9,6 +9,7 @@ var studio = function (opts) {
 
     this.users = {};
     this.playerList = {};
+    this.playingSong = null;
     this.channel = null;
 }
 
@@ -78,6 +79,7 @@ studio.prototype.playMusic = function (id, cb) {
         cb('music not exist! ');
         return;
     }
+    this.playingSong = music;
     this.getChannel().pushMessage('onMusicPlay', music, cb);
 };
 
@@ -100,3 +102,7 @@ studio.prototype.removeUser = function (userName) {
     this.getChannel().leave(user.name, user.serverId);
     delete this.users[userName];
 };
+
+studio.prototype.getPlayingSong = function () {
+    return this.playingSong;
+}

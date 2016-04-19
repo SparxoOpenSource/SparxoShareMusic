@@ -22658,7 +22658,7 @@
 	    function MusicItem(props, context) {
 	        _super.call(this, props, context);
 	        this.state = {
-	            isPlay: false
+	            isPlay: this.props.music.state == "play"
 	        };
 	        var self = this;
 	        this.props.music.on("stateChange", function (isPlay) {

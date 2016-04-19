@@ -18,7 +18,7 @@ export class MusicItem extends React.Component<{ music: Music }, {}>{
         })
     }
     state = {
-        isPlay: false
+        isPlay: this.props.music.state=="play"
     }
     play() {
         PlayerService.studioPlayMusic(this.props.music.id);

@@ -9,6 +9,7 @@ var studio = function (opts) {
 
     this.users = {};
     this.playerList = {};
+    this.songs = [];
     this.playingSong = null;
     this.channel = null;
 }
@@ -36,9 +37,10 @@ studio.prototype.pushByUserName = function (userName, route, msg, cb) {
 
 studio.prototype.getPlayerMusicList = function () {
     var playerList = this.playerList;
+    var songs = this.songs;
     var list = [];
-    for (var m in playerList) {
-        list.push(playerList[m]);
+    for(var n in songs){
+        list.unshift(playerList[songs[n].id]);
     }
     return list;
 };
@@ -61,6 +63,7 @@ studio.prototype.addMusic = function (url, userName, cb) {
         }
         music.orderer = userName;
         self.playerList[music.id] = music;
+        self.songs.push(music);
         self.getChannel().pushMessage('onMusicAdd', music, cb);
     };
     if (pomelo.app.get('appConfig').useProxy) {
@@ -85,6 +88,12 @@ studio.prototype.playMusic = function (id, cb) {
 
 studio.prototype.removeMusic = function (id, cb) {
     delete this.playerList[id];
+    for (var i = 0; i < this.songs.length, i++){
+       if(this.songs[i].id == id){
+           this.songs.splice(i);
+           break;
+       }
+    }
     this.getChannel().pushMessage('onMusicRemove', { id: id }, cb);
 };
 

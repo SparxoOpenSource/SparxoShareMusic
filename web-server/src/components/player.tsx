@@ -12,7 +12,6 @@ export class Player extends React.Component<{isMainPlayer:boolean}, {}>{
     }
     componentDidMount() {
         var self = this;
-        console.log("test");
         var player = this.refs['player'];
         PlayerService.setPlayer(player);
         PlayerService.on("play.changed", (music: Music) => {

@@ -1,4 +1,4 @@
-﻿import q=require("q");
+﻿import q = require("q");
 var pomelo = window['pomelo'];
 
 export class Subscription {
@@ -200,26 +200,26 @@ class PlayerServiceClass extends Events {
 
     init(uid) {
         var self = this;
-        var d=q.defer();
-       
+        var d = q.defer();
+
         //return new Promise((resolve, reject) => {
-            var route = 'gate.gateHandler.queryEntry';
-            pomelo.init({
-                host: '52.193.35.178',
-                port: 3014,
-                log: true
-            }, () => {
-                pomelo.request(route, { userName: uid }, function (data) {
-                    pomelo.disconnect();
-                    if (data.code === 500) {
-                        d.reject("There is no server to log in, please wait.");
-                        return;
-                    }
-                    self.host = data.host;
-                    self.port = data.port;
-                    d.resolve();
-                });
+        var route = 'gate.gateHandler.queryEntry';
+        pomelo.init({
+            host: '52.193.35.178',
+            port: 3014,
+            log: true
+        }, () => {
+            pomelo.request(route, { userName: uid }, function (data) {
+                pomelo.disconnect();
+                if (data.code === 500) {
+                    d.reject("There is no server to log in, please wait.");
+                    return;
+                }
+                self.host = data.host;
+                self.port = data.port;
+                d.resolve();
             });
+        });
 
         //});     
         return d.promise
@@ -234,19 +234,19 @@ class PlayerServiceClass extends Events {
         }
     }
     studio() {
-        var self = this;       
-         var d=q.defer();
+        var self = this;
+        var d = q.defer();
 
         //return new Promise((resolve, reject) => {
-            pomelo.init({
-                host: self.host,
-                port: self.port,
-                log: false
-            }, (data) => {
-                d.resolve();
-            });
+        pomelo.init({
+            host: self.host,
+            port: self.port,
+            log: false
+        }, (data) => {
+            d.resolve();
+        });
         //});
-        return  d.promise;
+        return d.promise;
 
     }
     studioEnter(userName) {
@@ -273,24 +273,29 @@ class PlayerServiceClass extends Events {
                 }
             });
             pomelo.on('onMusicPlay', function (data) {
-                var music = self.getMusic(data.id);
-                if (self.current) {
-                    self.current.stop();
-                }
-                music.play();
-                self.current = music;
-                self.trigger("play.changed", music);
-                if (self.isMainPlayer) {
-                    self.player.pause();
-                    self.player.src = music.mp3;
-                    self.player.play();
-                }
+                self.playMusic(data.id);
             });
             pomelo.on('onUserLeave', function (data) {
                 console.log(data);
             });
             self.studioEnterSence();
         });
+    }
+
+    playMusic(id) {
+        var self = this;
+        var music = self.getMusic(id);
+        if (self.current) {
+            self.current.stop();
+        }
+        music.play();
+        self.current = music;
+        self.trigger("play.changed", music);
+        if (self.isMainPlayer) {
+            self.player.pause();
+            self.player.src = music.mp3;
+            self.player.play();
+        }
     }
     studioEnterSence() {
         var self = this;
@@ -300,14 +305,14 @@ class PlayerServiceClass extends Events {
         });
     }
     studioAddMusic(url, callback) {
-        var self=this;
+        var self = this;
         var route = "studio.studioHandler.addMusic";
         pomelo.request(route, { url: url }, function (data) {
-             if (!self.getMusic(data.id)) {                  
-                 callback();
-             }else{
-                 alert("已经存在");
-             }
+            if (!self.getMusic(data.id)) {
+                callback();
+            } else {
+                alert("已经存在");
+            }
         });
     }
     studioRemoveMusic(id) {
@@ -329,28 +334,31 @@ class PlayerServiceClass extends Events {
             if (data.code !== 500) {
                 for (var item of data.playerMusicList) {
                     self.musics.push(new Music(item));
-                }                
+                }
                 self.trigger("list.changed", self.musics);
+            }
+            if (data.playingSong) {
+                self.playMusic(data.playingSong.id);
             }
             console.log(data);
         });
     }
     studioUserIsExisted(userName) {
         var route = "connector.entryHandler.isUserExisted";
-        var d=q.defer();
+        var d = q.defer();
 
         //return new Promise((resolve, reject) => {
-            pomelo.request(route, {
-                userName: userName
-            }, function (data) {
-                if (data.code != 500 && !data.isExisted) {
-                    d.resolve();
-                } else {
-                    pomelo.disconnect();
-                   d.reject("用户名已经存在")
-                }
-            });
-            return  d.promise;
+        pomelo.request(route, {
+            userName: userName
+        }, function (data) {
+            if (data.code != 500 && !data.isExisted) {
+                d.resolve();
+            } else {
+                pomelo.disconnect();
+                d.reject("用户名已经存在")
+            }
+        });
+        return d.promise;
         //});
     }
 }

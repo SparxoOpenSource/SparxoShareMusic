@@ -20133,7 +20133,6 @@
 	    }
 	    Player.prototype.componentDidMount = function () {
 	        var self = this;
-	        console.log("test");
 	        var player = this.refs['player'];
 	        playerService_1.PlayerService.setPlayer(player);
 	        playerService_1.PlayerService.on("play.changed", function (music) {
@@ -20414,24 +20413,28 @@
 	                }
 	            });
 	            pomelo.on('onMusicPlay', function (data) {
-	                var music = self.getMusic(data.id);
-	                if (self.current) {
-	                    self.current.stop();
-	                }
-	                music.play();
-	                self.current = music;
-	                self.trigger("play.changed", music);
-	                if (self.isMainPlayer) {
-	                    self.player.pause();
-	                    self.player.src = music.mp3;
-	                    self.player.play();
-	                }
+	                self.playMusic(data.id);
 	            });
 	            pomelo.on('onUserLeave', function (data) {
 	                console.log(data);
 	            });
 	            self.studioEnterSence();
 	        });
+	    };
+	    PlayerServiceClass.prototype.playMusic = function (id) {
+	        var self = this;
+	        var music = self.getMusic(id);
+	        if (self.current) {
+	            self.current.stop();
+	        }
+	        music.play();
+	        self.current = music;
+	        self.trigger("play.changed", music);
+	        if (self.isMainPlayer) {
+	            self.player.pause();
+	            self.player.src = music.mp3;
+	            self.player.play();
+	        }
 	    };
 	    PlayerServiceClass.prototype.studioEnterSence = function () {
 	        var self = this;
@@ -20473,6 +20476,9 @@
 	                    self.musics.push(new Music(item));
 	                }
 	                self.trigger("list.changed", self.musics);
+	            }
+	            if (data.playingSong) {
+	                self.playMusic(data.playingSong.id);
 	            }
 	            console.log(data);
 	        });

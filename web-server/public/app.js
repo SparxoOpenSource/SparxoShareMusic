@@ -103,8 +103,35 @@
 	            keyword: urlInput.value
 	        });
 	    };
+	    MusicApp.prototype.export = function () {
+	        var musics = playerService_1.PlayerService.musics.map(function (m) {
+	            return m.id;
+	        });
+	        window.open("data:application/octet-stream," + musics.join(','), "_blank");
+	    };
+	    MusicApp.prototype.import = function () {
+	        var self = this;
+	        var s = document.createElement("input");
+	        s.type = "file";
+	        s.onchange = function (e) {
+	            self.onImport(s.files.item(0));
+	        };
+	        s.click();
+	    };
+	    MusicApp.prototype.onImport = function (file) {
+	        var reader = new FileReader();
+	        reader.onload = function (e) {
+	            var str = e.target['result'];
+	            var ids = str.split(',');
+	            for (var _i = 0, ids_1 = ids; _i < ids_1.length; _i++) {
+	                var id = ids_1[_i];
+	                playerService_1.PlayerService.studioAddMusic("http://music.163.com/#/song?id=" + id, function () {});
+	            }
+	        };
+	        reader.readAsText(file);
+	    };
 	    MusicApp.prototype.render = function () {
-	        return React.createElement("div", null, React.createElement("div", { className: "container", style: { marginBottom: '80px', marginTop: '20px' } }, React.createElement("div", { className: "panel panel-default" }, React.createElement("div", { className: "panel-heading" }, "Sparxo Player - [", localStorage['username'], "]", React.createElement("label", { className: "pull-right" }, React.createElement("input", { type: "checkbox", checked: this.state.isMainPlayer, onChange: this.checkedChanged.bind(this), style: { verticalAlign: 'top' } }), "主播放器")), React.createElement("div", { className: "panel-body" }, React.createElement("div", { className: "input-group" }, React.createElement("input", { type: "text", ref: "txt_url", value: this.state.keyword, onChange: this.search.bind(this), className: "form-control", placeholder: "163音乐地址" }), React.createElement("span", { className: "input-group-btn" }, React.createElement("button", { className: "btn btn-default", onClick: this.addMusic.bind(this), disabled: this.state.keyword.indexOf("http://music.163.com") == -1, type: "button" }, "添加")))), React.createElement(list_1.PlayList, { filter: this.state.keyword }))), React.createElement(player_1.Player, { isMainPlayer: this.state.isMainPlayer }));
+	        return React.createElement("div", null, React.createElement("div", { className: "container", style: { marginBottom: '80px', marginTop: '20px' } }, React.createElement("div", { className: "panel panel-default" }, React.createElement("div", { className: "panel-heading" }, "Sparxo Player - [", localStorage['username'], "]", React.createElement("label", { className: "pull-right" }, React.createElement("input", { type: "checkbox", checked: this.state.isMainPlayer, onChange: this.checkedChanged.bind(this), style: { verticalAlign: 'top' } }), "主播放器"), React.createElement("a", { href: "javascript:;", className: "pull-right", style: { paddingRight: "15px" }, onClick: this.import.bind(this) }, "导入"), React.createElement("a", { href: "javascript:;", className: "pull-right", style: { paddingRight: "15px" }, onClick: this.export.bind(this) }, "导出")), React.createElement("div", { className: "panel-body" }, React.createElement("div", { className: "input-group" }, React.createElement("input", { type: "text", ref: "txt_url", value: this.state.keyword, onChange: this.search.bind(this), className: "form-control", placeholder: "163音乐地址" }), React.createElement("span", { className: "input-group-btn" }, React.createElement("button", { className: "btn btn-default", onClick: this.addMusic.bind(this), disabled: this.state.keyword.indexOf("http://music.163.com") == -1, type: "button" }, "添加")))), React.createElement(list_1.PlayList, { filter: this.state.keyword }))), React.createElement(player_1.Player, { isMainPlayer: this.state.isMainPlayer }));
 	    };
 	    return MusicApp;
 	}(React.Component);

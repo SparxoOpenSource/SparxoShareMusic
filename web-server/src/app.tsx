@@ -39,6 +39,34 @@ class MusicApp extends React.Component<{}, {}>{
             keyword: urlInput.value
         });
     }
+    export(){
+        var musics=PlayerService.musics.map(m=>{
+            return  m.id;
+        });
+        window.open("data:application/octet-stream,"+musics.join(','),"_blank");
+    }
+    import(){
+        var self=this;
+        var s=document.createElement("input");
+        s.type="file";
+        s.onchange=function (e) {
+            self.onImport(s.files.item(0));
+        }
+        s.click();
+    }
+    onImport(file){             
+        var reader=new FileReader();
+        reader.onload=function (e) {
+            var str= e.target['result'];
+            var ids=str.split(',');
+            for(var id of ids){
+                PlayerService.studioAddMusic("http://music.163.com/#/song?id="+id,function () {
+                    
+                });
+            }                
+        } 
+        reader.readAsText(file);
+    }
     render() {
         return <div>
             <div className="container" style={{ marginBottom: '80px', marginTop: '20px' }}>
@@ -49,6 +77,12 @@ class MusicApp extends React.Component<{}, {}>{
                             <input type="checkbox"checked={this.state.isMainPlayer} onChange={this.checkedChanged.bind(this) }  style={{ verticalAlign: 'top' }} />
                             主播放器
                         </label>
+                        <a href="javascript:;" className="pull-right" style={{ paddingRight:"15px"}} onClick={this.import.bind(this)}>
+                            导入
+                        </a>
+                        <a href="javascript:;" className="pull-right" style={{ paddingRight:"15px"}} onClick={this.export.bind(this)}>
+                            导出
+                        </a>
                     </div>
                     <div className="panel-body">
                         <div className="input-group">

@@ -62,8 +62,10 @@ studio.prototype.addMusic = function (url, userName, cb) {
             return;
         }
         music.orderer = userName;
+        if (!self.playerList[music.id]) {
+            self.songs.push(music);
+        }
         self.playerList[music.id] = music;
-        self.songs.push(music);
         self.getChannel().pushMessage('onMusicAdd', music, cb);
     };
     if (pomelo.app.get('appConfig').useProxy) {
@@ -95,7 +97,7 @@ studio.prototype.removeMusic = function (id, cb) {
             break;
         }
     }
-    if(this.playingSong.id == id){
+    if (this.playingSong.id == id) {
         this.playingSong = null;
     }
     this.getChannel().pushMessage('onMusicRemove', { id: id }, cb);

@@ -22667,7 +22667,7 @@
 	            isPlay: this.props.music.state == "play"
 	        };
 	        var self = this;
-	        this.props.music.on("stateChange", function (isPlay) {
+	        self.subscription = this.props.music.on("stateChange", function (isPlay) {
 	            self.setState({
 	                isPlay: isPlay
 	            });
@@ -22678,6 +22678,9 @@
 	    };
 	    MusicItem.prototype.removeMusic = function () {
 	        playerService_1.PlayerService.studioRemoveMusic(this.props.music.id);
+	    };
+	    MusicItem.prototype.componentWillUnmount = function () {
+	        this.subscription.off();
 	    };
 	    MusicItem.prototype.render = function () {
 	        var music = this.props.music;

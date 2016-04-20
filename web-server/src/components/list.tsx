@@ -11,7 +11,7 @@ export class MusicItem extends React.Component<{ music: Music }, {}>{
         super(props, context);
 
         var self = this;
-        self.subscription= this.props.music.on("stateChange", (isPlay) => {
+        self.subscription= this.props.music.on("stateChange", (isPlay) => {            
             self.setState({
                 isPlay: isPlay
             })

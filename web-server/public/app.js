@@ -20409,6 +20409,8 @@
 	        pomelo.init({
 	            host: self.host,
 	            port: self.port,
+	            reconnect: true,
+	            maxReconnectAttempts: 20,
 	            log: false
 	        }, function (data) {
 	            d.resolve();

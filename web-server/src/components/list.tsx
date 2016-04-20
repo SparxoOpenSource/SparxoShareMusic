@@ -6,12 +6,12 @@ import React = require("react");
 import {PlayerService, Music} from "../services/playerService";
 
 export class MusicItem extends React.Component<{ music: Music }, {}>{
-
+    subscription;
     constructor(props?, context?) {
         super(props, context);
 
         var self = this;
-        this.props.music.on("stateChange", (isPlay) => {
+        self.subscription= this.props.music.on("stateChange", (isPlay) => {
             self.setState({
                 isPlay: isPlay
             })
@@ -25,6 +25,9 @@ export class MusicItem extends React.Component<{ music: Music }, {}>{
     }
     removeMusic(){
         PlayerService.studioRemoveMusic(this.props.music.id);
+    }
+    componentWillUnmount(){
+        this.subscription.off();
     }
     render() {
         var music = this.props.music;

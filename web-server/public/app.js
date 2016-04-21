@@ -20349,6 +20349,9 @@
 	        self.player.addEventListener("ended", function () {
 	            self.playNext();
 	        });
+	        self.player.addEventListener("error", function (e) {
+	            self.playNext();
+	        });
 	    };
 	    PlayerServiceClass.prototype.pause = function () {
 	        this.player.pause();
@@ -20453,6 +20456,10 @@
 	    PlayerServiceClass.prototype.playMusic = function (id) {
 	        var self = this;
 	        var music = self.getMusic(id);
+	        if (music.mp3 == null) {
+	            self.playNext();
+	            return;
+	        }
 	        if (self.current) {
 	            self.current.stop();
 	        }

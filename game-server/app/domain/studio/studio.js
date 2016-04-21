@@ -93,7 +93,7 @@ studio.prototype.removeMusic = function (id, cb) {
     delete this.playerList[id];
     for (var n in songs) {
         if (songs[n].id == id) {
-            songs.splice(n);
+            songs.splice(n, 1);
             break;
         }
     }

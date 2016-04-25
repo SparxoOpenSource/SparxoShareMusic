@@ -174,6 +174,9 @@ class PlayerServiceClass extends Events {
         self.player.addEventListener("ended", () => {
             self.playNext();
         });
+        self.player.addEventListener("error",(e)=>{
+            self.playNext();
+        });
     }
     pause() {
         this.player.pause();
@@ -287,6 +290,10 @@ class PlayerServiceClass extends Events {
     playMusic(id) {
         var self = this;
         var music = self.getMusic(id);
+        if(music.mp3==null){
+            self.playNext();
+            return;
+        }
         if (self.current) {
             self.current.stop();
         }

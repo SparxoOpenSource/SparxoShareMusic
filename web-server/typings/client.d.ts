@@ -6,3 +6,8 @@ declare var Router:any;
 declare module "react-routing/lib/Router"{
     export = Router;
 }
+
+declare var Notification:any=null;
+interface Window{
+    Notification:any
+}

@@ -268,7 +268,7 @@ class PlayerServiceClass extends Events {
                 var music=self.getMusic(data.id)
                 if(!music){
                     music=new Music(data);               
-                    self.musics.unshift(music);
+                    self.musics.push(music);
                     self.trigger("list.changed", self.musics);                
                     notification.show(data.orderer+"添加了音乐"+data.name,undefined,data.image);
                 }
@@ -291,7 +291,6 @@ class PlayerServiceClass extends Events {
                 }
             });
             pomelo.on('onMusicPlay', function (data) {                    
-                notification.show(data.name,"正在播放",data.image);
                 self.playMusic(data.id);
             });
             pomelo.on('onUserLeave', function (data) {              
@@ -312,11 +311,13 @@ class PlayerServiceClass extends Events {
         }
         music.play();
         self.current = music;
-        self.trigger("play.changed", music);               
+        self.trigger("play.changed", music);        
         if(music.mp3==null){
             self.playNext();
-            return;
-        }
+            //notification.show(music.name+",已跳过","无法播放",music.image); 
+            return ;
+        }        
+        notification.show(music.name,"正在播放",music.image);      
         if (self.isMainPlayer) {
             self.player.pause();
             self.player.src = music.mp3;
@@ -352,6 +353,7 @@ class PlayerServiceClass extends Events {
         if(this.current&&this.current.id==id){
             return;
         }
+        console.log("点击播放"+id);
         pomelo.request(route, { id: id }, function (data) {
             console.log("play", data.name);
         });

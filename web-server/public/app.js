@@ -22803,7 +22803,9 @@
 	        icon = "images/music_beamed.png";
 	    }
 	    console.log(body);
-	    return new Notification(title, { body: body, icon: icon });
+	    if (window.Notification) {
+	        return new Notification(title, { body: body, icon: icon });
+	    }
 	}
 	exports.show = show;
 

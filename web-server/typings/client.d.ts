@@ -7,7 +7,7 @@ declare module "react-routing/lib/Router"{
     export = Router;
 }
 
-declare var Notification:any=null;
+declare var Notification:any;
 interface Window{
     Notification:any
 }

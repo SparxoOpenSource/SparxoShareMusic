@@ -349,6 +349,9 @@ class PlayerServiceClass extends Events {
     }
     studioPlayMusic(id) {
         var route = "studio.studioHandler.playMusic";
+        if(this.current.id==id){
+            return;
+        }
         pomelo.request(route, { id: id }, function (data) {
             console.log("play", data.name);
         });

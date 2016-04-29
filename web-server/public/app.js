@@ -107,7 +107,12 @@
 	        var musics = playerService_1.PlayerService.musics.map(function (m) {
 	            return m.id;
 	        });
-	        window.open("data:application/octet-stream," + musics.join(','), "_blank");
+	        var a = document.createElement('a');
+	        a.setAttribute("download", "playlist.txt");
+	        a.href = "data:application/octet-stream," + musics.join(',');
+	        a.target = "_blank";
+	        a.click();
+	        a.remove();
 	    };
 	    MusicApp.prototype.import = function () {
 	        var self = this;

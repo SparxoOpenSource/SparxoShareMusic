@@ -63,9 +63,9 @@
 	var React = __webpack_require__(2);
 	var ReactDOM = __webpack_require__(33);
 	var player_1 = __webpack_require__(167);
-	var list_1 = __webpack_require__(171);
+	var list_1 = __webpack_require__(172);
 	var playerService_1 = __webpack_require__(168);
-	var notification = __webpack_require__(172);
+	var notification = __webpack_require__(171);
 	var MusicApp = function (_super) {
 	    __extends(MusicApp, _super);
 	    function MusicApp() {
@@ -20202,7 +20202,7 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var q = __webpack_require__(169);
-	var notification = __webpack_require__(172);
+	var notification = __webpack_require__(171);
 	var pomelo = window['pomelo'];
 	var Subscription = function () {
 	    function Subscription(owner, events) {
@@ -20480,7 +20480,7 @@
 	    };
 	    PlayerServiceClass.prototype.playMusic = function (id) {
 	        var self = this;
-	        if (self.current.id == id) {
+	        if (self.current && self.current.id == id) {
 	            return;
 	        }
 	        var music = self.getMusic(id);
@@ -20526,7 +20526,7 @@
 	    };
 	    PlayerServiceClass.prototype.studioPlayMusic = function (id) {
 	        var route = "studio.studioHandler.playMusic";
-	        if (this.current.id == id) {
+	        if (this.current && this.current.id == id) {
 	            return;
 	        }
 	        pomelo.request(route, { id: id }, function (data) {
@@ -22710,6 +22710,34 @@
 
 /***/ },
 /* 171 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	function checkPermission() {
+	    if (window.Notification) {
+	        if (Notification.permission == "default") {
+	            Notification.requestPermission();
+	        }
+	    }
+	}
+	exports.checkPermission = checkPermission;
+	function show(body, title, icon) {
+	    if (title === void 0) {
+	        title = "通知";
+	    }
+	    if (icon === void 0) {
+	        icon = "images/music_beamed.png";
+	    }
+	    console.log(body);
+	    if (window.Notification) {
+	        return new Notification(title, { body: body, icon: icon });
+	    }
+	}
+	exports.show = show;
+
+/***/ },
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// A '.tsx' file enables JSX support in the TypeScript compiler,
@@ -22786,34 +22814,6 @@
 	    return PlayList;
 	}(React.Component);
 	exports.PlayList = PlayList;
-
-/***/ },
-/* 172 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	function checkPermission() {
-	    if (window.Notification) {
-	        if (Notification.permission == "default") {
-	            Notification.requestPermission();
-	        }
-	    }
-	}
-	exports.checkPermission = checkPermission;
-	function show(body, title, icon) {
-	    if (title === void 0) {
-	        title = "通知";
-	    }
-	    if (icon === void 0) {
-	        icon = "images/music_beamed.png";
-	    }
-	    console.log(body);
-	    if (window.Notification) {
-	        return new Notification(title, { body: body, icon: icon });
-	    }
-	}
-	exports.show = show;
 
 /***/ }
 /******/ ]);

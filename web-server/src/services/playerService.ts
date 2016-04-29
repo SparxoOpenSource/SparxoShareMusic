@@ -303,7 +303,7 @@ class PlayerServiceClass extends Events {
 
     playMusic(id) {
         var self = this;
-        if(self.current.id==id){
+        if(self.current&&self.current.id==id){
             return;
         }
         var music = self.getMusic(id);       
@@ -349,7 +349,7 @@ class PlayerServiceClass extends Events {
     }
     studioPlayMusic(id) {
         var route = "studio.studioHandler.playMusic";
-        if(this.current.id==id){
+        if(this.current&&this.current.id==id){
             return;
         }
         pomelo.request(route, { id: id }, function (data) {

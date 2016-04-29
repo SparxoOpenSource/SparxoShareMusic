@@ -43,7 +43,15 @@ class MusicApp extends React.Component<{}, {}>{
         var musics=PlayerService.musics.map(m=>{
             return  m.id;
         });
-        window.open("data:application/octet-stream,"+musics.join(','),"_blank");
+        
+        var a=document.createElement('a');
+        a.setAttribute("download","playlist.txt");
+        a.href="data:application/octet-stream,"+musics.join(',');
+        a.target="_blank";
+        a.click();
+        setTimeout(function() {            
+            a.remove();
+        }, 1000);
     }
     import(){
         var self=this;
@@ -53,6 +61,9 @@ class MusicApp extends React.Component<{}, {}>{
             self.onImport(s.files.item(0));
         }
         s.click();
+        setTimeout(function() {            
+            s.remove();
+        }, 1000);
     }
     onImport(file){             
         var reader=new FileReader();

@@ -42,12 +42,11 @@ class MusicApp extends React.Component<{}, {}>{
     }
     export(){
         var musics=PlayerService.musics.map(m=>{
-            return  m.id;
-        });
-        
+            return  m._raw_;
+        });        
         var a=document.createElement('a');
         a.setAttribute("download","playlist.txt");
-        a.href="data:application/octet-stream,"+musics.join(',');
+        a.href="data:application/octet-stream,"+JSON.stringify(musics);
         a.target="_blank";
         a.click();
         setTimeout(function() {            
@@ -70,9 +69,9 @@ class MusicApp extends React.Component<{}, {}>{
         var reader=new FileReader();
         reader.onload=function (e) {
             var str= e.target['result'];
-            var ids=str.split(',');
-            for(var id of ids){
-                PlayerService.studioAddMusic("http://music.163.com/#/song?id="+id,function () {
+            var musics=JSON.parse(str);
+            for(var music of musics){
+                PlayerService.studioAddMusic("http://music.163.com/#/song?id="+music.id,function () {
                     
                 });
             }                

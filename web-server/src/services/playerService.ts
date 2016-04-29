@@ -131,14 +131,14 @@ export class Music extends Events {
     image = "";
     mp3 = "";
     orderer = "";
-    constructor(data) {
+    constructor(public _raw_) {
         super();
-        this.id = data.id;
-        this.name = data.name + " - " + data.album;
-        this.artists = data.artists.join(',');
-        this.image = data.image;
-        this.mp3 = data.resourceUrl;
-        this.orderer = data.orderer;
+        this.id = _raw_.id;
+        this.name = _raw_.name + " - " + _raw_.album;
+        this.artists = _raw_.artists.join(',');
+        this.image = _raw_.image;
+        this.mp3 = _raw_.resourceUrl;
+        this.orderer = _raw_.orderer;
     }
     play() {
         this.state = "play";
@@ -353,9 +353,8 @@ class PlayerServiceClass extends Events {
         if(this.current&&this.current.id==id){
             return;
         }
-        console.log("点击播放"+id);
+        //console.log("点击播放"+id);
         pomelo.request(route, { id: id }, function (data) {
-            console.log("play", data.name);
         });
     }
     studioGetPlayerMusicList() {

@@ -106,11 +106,11 @@
 	    };
 	    MusicApp.prototype.export = function () {
 	        var musics = playerService_1.PlayerService.musics.map(function (m) {
-	            return m.id;
+	            return m._raw_;
 	        });
 	        var a = document.createElement('a');
 	        a.setAttribute("download", "playlist.txt");
-	        a.href = "data:application/octet-stream," + musics.join(',');
+	        a.href = "data:application/octet-stream," + JSON.stringify(musics);
 	        a.target = "_blank";
 	        a.click();
 	        setTimeout(function () {
@@ -133,10 +133,10 @@
 	        var reader = new FileReader();
 	        reader.onload = function (e) {
 	            var str = e.target['result'];
-	            var ids = str.split(',');
-	            for (var _i = 0, ids_1 = ids; _i < ids_1.length; _i++) {
-	                var id = ids_1[_i];
-	                playerService_1.PlayerService.studioAddMusic("http://music.163.com/#/song?id=" + id, function () {});
+	            var musics = JSON.parse(str);
+	            for (var _i = 0, musics_1 = musics; _i < musics_1.length; _i++) {
+	                var music = musics_1[_i];
+	                playerService_1.PlayerService.studioAddMusic("http://music.163.com/#/song?id=" + music.id, function () {});
 	            }
 	        };
 	        reader.readAsText(file);
@@ -20314,20 +20314,21 @@
 	exports.Events = Events;
 	var Music = function (_super) {
 	    __extends(Music, _super);
-	    function Music(data) {
+	    function Music(_raw_) {
 	        _super.call(this);
+	        this._raw_ = _raw_;
 	        this.name = 'name';
 	        this.state = 'stop';
 	        this.artists = "";
 	        this.image = "";
 	        this.mp3 = "";
 	        this.orderer = "";
-	        this.id = data.id;
-	        this.name = data.name + " - " + data.album;
-	        this.artists = data.artists.join(',');
-	        this.image = data.image;
-	        this.mp3 = data.resourceUrl;
-	        this.orderer = data.orderer;
+	        this.id = _raw_.id;
+	        this.name = _raw_.name + " - " + _raw_.album;
+	        this.artists = _raw_.artists.join(',');
+	        this.image = _raw_.image;
+	        this.mp3 = _raw_.resourceUrl;
+	        this.orderer = _raw_.orderer;
 	    }
 	    Music.prototype.play = function () {
 	        this.state = "play";
@@ -20530,10 +20531,8 @@
 	        if (this.current && this.current.id == id) {
 	            return;
 	        }
-	        console.log("点击播放" + id);
-	        pomelo.request(route, { id: id }, function (data) {
-	            console.log("play", data.name);
-	        });
+	        //console.log("点击播放"+id);
+	        pomelo.request(route, { id: id }, function (data) {});
 	    };
 	    PlayerServiceClass.prototype.studioGetPlayerMusicList = function () {
 	        var self = this;
@@ -22731,7 +22730,6 @@
 	    if (icon === void 0) {
 	        icon = "images/music_beamed.png";
 	    }
-	    console.log(body);
 	    if (window.Notification) {
 	        return new Notification(title, { body: body, icon: icon });
 	    }

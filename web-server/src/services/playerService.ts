@@ -303,6 +303,9 @@ class PlayerServiceClass extends Events {
 
     playMusic(id) {
         var self = this;
+        if(self.current.id==id){
+            return;
+        }
         var music = self.getMusic(id);       
         if (self.current) {
             self.current.stop();

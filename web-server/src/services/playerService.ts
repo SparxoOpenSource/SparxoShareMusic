@@ -287,7 +287,7 @@ class PlayerServiceClass extends Events {
                 if (music) {
                     self.musics.splice(self.musics.indexOf(music), 1);
                     self.trigger("list.changed", self.musics);
-                    notification.show("某人删除了音乐"+data.name);
+                    notification.show("某人删除了音乐"+music.name);
                 }
             });
             pomelo.on('onMusicPlay', function (data) {                    

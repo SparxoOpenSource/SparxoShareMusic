@@ -4,6 +4,7 @@ import * as ReactDOM from "react-dom";
 import {Player} from "./components/player";
 import {PlayList} from "./components/list";
 import {PlayerService} from "./services/playerService";
+import * as notification from "./services/notification";
 
 class MusicApp extends React.Component<{}, {}>{
 
@@ -160,9 +161,10 @@ function initApp(username) {
     }).then(() => {
         return PlayerService.studioUserIsExisted(username);
     }).then(() => {
+        notification.checkPermission();
+        
         PlayerService.studioEnter(username);
         ReactDOM.render(<MusicApp/>, document.getElementById("app"));
-
     }).catch(message => {
         localStorage.removeItem("username");
         ReactDOM.render(<Login/>, document.getElementById("app"));

@@ -65,6 +65,7 @@
 	var player_1 = __webpack_require__(167);
 	var list_1 = __webpack_require__(171);
 	var playerService_1 = __webpack_require__(168);
+	var notification = __webpack_require__(172);
 	var MusicApp = function (_super) {
 	    __extends(MusicApp, _super);
 	    function MusicApp() {
@@ -112,7 +113,9 @@
 	        a.href = "data:application/octet-stream," + musics.join(',');
 	        a.target = "_blank";
 	        a.click();
-	        a.remove();
+	        setTimeout(function () {
+	            a.remove();
+	        }, 1000);
 	    };
 	    MusicApp.prototype.import = function () {
 	        var self = this;
@@ -122,6 +125,9 @@
 	            self.onImport(s.files.item(0));
 	        };
 	        s.click();
+	        setTimeout(function () {
+	            s.remove();
+	        }, 1000);
 	    };
 	    MusicApp.prototype.onImport = function (file) {
 	        var reader = new FileReader();
@@ -172,6 +178,7 @@
 	    }).then(function () {
 	        return playerService_1.PlayerService.studioUserIsExisted(username);
 	    }).then(function () {
+	        notification.checkPermission();
 	        playerService_1.PlayerService.studioEnter(username);
 	        ReactDOM.render(React.createElement(MusicApp, null), document.getElementById("app"));
 	    }).catch(function (message) {
@@ -20195,6 +20202,7 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var q = __webpack_require__(169);
+	var notification = __webpack_require__(172);
 	var pomelo = window['pomelo'];
 	var Subscription = function () {
 	    function Subscription(owner, events) {
@@ -20323,12 +20331,12 @@
 	    }
 	    Music.prototype.play = function () {
 	        this.state = "play";
-	        this.trigger("stateChange", true);
+	        this.trigger("music:changed", this);
 	        exports.PlayerService.trigger("play", this);
 	    };
 	    Music.prototype.stop = function () {
 	        this.state = "stop";
-	        this.trigger("stateChange", false);
+	        this.trigger("music:changed", this);
 	        exports.PlayerService.trigger("stop", this);
 	    };
 	    return Music;
@@ -20436,10 +20444,20 @@
 	                return;
 	            }
 	            pomelo.on('onMusicAdd', function (data) {
-	                if (!self.getMusic(data.id)) {
-	                    var music = new Music(data);
+	                var music = self.getMusic(data.id);
+	                if (!music) {
+	                    music = new Music(data);
 	                    self.musics.unshift(music);
 	                    self.trigger("list.changed", self.musics);
+	                    notification.show(data.orderer + "添加了音乐" + data.name, undefined, data.image);
+	                } else {
+	                    music.name = data.name + " - " + data.album;
+	                    music.artists = data.artists.join(',');
+	                    music.image = data.image;
+	                    music.mp3 = data.resourceUrl;
+	                    music.orderer = data.orderer;
+	                    music.trigger("music:changed", music);
+	                    notification.show(data.orderer + "替换了音乐" + data.name, undefined, data.image);
 	                }
 	            });
 	            pomelo.on('onMusicRemove', function (data) {
@@ -20447,13 +20465,15 @@
 	                if (music) {
 	                    self.musics.splice(self.musics.indexOf(music), 1);
 	                    self.trigger("list.changed", self.musics);
+	                    notification.show("某人删除了音乐" + data.name);
 	                }
 	            });
 	            pomelo.on('onMusicPlay', function (data) {
+	                notification.show(data.name, "正在播放", data.image);
 	                self.playMusic(data.id);
 	            });
 	            pomelo.on('onUserLeave', function (data) {
-	                console.log(data);
+	                notification.show(data.userName + "退出");
 	            });
 	            self.studioEnterSence();
 	        });
@@ -20461,16 +20481,16 @@
 	    PlayerServiceClass.prototype.playMusic = function (id) {
 	        var self = this;
 	        var music = self.getMusic(id);
-	        if (music.mp3 == null) {
-	            self.playNext();
-	            return;
-	        }
 	        if (self.current) {
 	            self.current.stop();
 	        }
 	        music.play();
 	        self.current = music;
 	        self.trigger("play.changed", music);
+	        if (music.mp3 == null) {
+	            self.playNext();
+	            return;
+	        }
 	        if (self.isMainPlayer) {
 	            self.player.pause();
 	            self.player.src = music.mp3;
@@ -22705,17 +22725,19 @@
 	    function MusicItem(props, context) {
 	        _super.call(this, props, context);
 	        this.state = {
-	            isPlay: this.props.music.state == "play"
+	            music: this.props.music
 	        };
 	        var self = this;
-	        self.subscription = this.props.music.on("stateChange", function (isPlay) {
+	        self.subscription = this.props.music.on("music:changed", function (music) {
 	            self.setState({
-	                isPlay: isPlay
+	                music: music
 	            });
 	        });
 	    }
 	    MusicItem.prototype.play = function () {
-	        playerService_1.PlayerService.studioPlayMusic(this.props.music.id);
+	        if (this.props.music.mp3 != null) {
+	            playerService_1.PlayerService.studioPlayMusic(this.props.music.id);
+	        }
 	    };
 	    MusicItem.prototype.removeMusic = function () {
 	        playerService_1.PlayerService.studioRemoveMusic(this.props.music.id);
@@ -22724,8 +22746,8 @@
 	        this.subscription.off();
 	    };
 	    MusicItem.prototype.render = function () {
-	        var music = this.props.music;
-	        return React.createElement("li", { className: this.state.isPlay ? "list-group-item active" : "list-group-item" }, React.createElement("div", { className: "media" }, React.createElement("div", { className: "media-left" }, React.createElement("a", { href: "#", onClick: this.play.bind(this) }, React.createElement("img", { style: { width: '84px', height: '84px' }, class: "media-object", src: music.image, alt: music.name }))), React.createElement("div", { className: "media-body", style: { position: 'relative' } }, React.createElement("h4", { className: "media-heading" }, music.name, React.createElement("div", { className: "pull-right" }, music.orderer)), React.createElement("p", null, music.artists), React.createElement("div", { className: "btn-group", role: "group", "aria-label": "..." }, React.createElement("button", { type: "button", className: "btn btn-default btn-sm", onClick: this.play.bind(this) }, "播放"), React.createElement("button", { type: "button", className: "btn btn-default btn-sm", onClick: this.removeMusic.bind(this) }, "删除")))));
+	        var music = this.state.music;
+	        return React.createElement("li", { className: music.state == 'play' ? "list-group-item active" : "list-group-item" }, React.createElement("div", { className: "media" }, React.createElement("div", { className: "media-left" }, React.createElement("a", { href: "#", onClick: this.play.bind(this) }, React.createElement("img", { style: { width: '84px', height: '84px' }, class: "media-object", src: music.image, alt: music.name }))), React.createElement("div", { className: "media-body", style: { position: 'relative' } }, React.createElement("h4", { className: "media-heading" }, music.name, React.createElement("div", { className: "pull-right" }, music.orderer)), React.createElement("p", null, music.artists), React.createElement("div", { className: "btn-group", role: "group", "aria-label": "..." }, React.createElement("button", { type: "button", className: "btn btn-default btn-sm", disabled: music.mp3 == null, onClick: this.play.bind(this) }, "播放"), React.createElement("button", { type: "button", className: "btn btn-default btn-sm", onClick: this.removeMusic.bind(this) }, "删除")))));
 	    };
 	    return MusicItem;
 	}(React.Component);
@@ -22758,6 +22780,32 @@
 	    return PlayList;
 	}(React.Component);
 	exports.PlayList = PlayList;
+
+/***/ },
+/* 172 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	function checkPermission() {
+	    if (window.Notification) {
+	        if (Notification.permission == "default") {
+	            Notification.requestPermission();
+	        }
+	    }
+	}
+	exports.checkPermission = checkPermission;
+	function show(body, title, icon) {
+	    if (title === void 0) {
+	        title = "通知";
+	    }
+	    if (icon === void 0) {
+	        icon = "images/music_beamed.png";
+	    }
+	    console.log(body);
+	    return new Notification(title, { body: body, icon: icon });
+	}
+	exports.show = show;
 
 /***/ }
 /******/ ]);

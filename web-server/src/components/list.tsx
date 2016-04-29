@@ -11,17 +11,19 @@ export class MusicItem extends React.Component<{ music: Music }, {}>{
         super(props, context);
 
         var self = this;
-        self.subscription= this.props.music.on("stateChange", (isPlay) => {            
+        self.subscription= this.props.music.on("music:changed", (music) => {            
             self.setState({
-                isPlay: isPlay
+                music: music
             })
         })
     }
     state = {
-        isPlay: this.props.music.state=="play"
+        music:this.props.music
     }
     play() {
-        PlayerService.studioPlayMusic(this.props.music.id);
+        if(this.props.music.mp3!=null){
+            PlayerService.studioPlayMusic(this.props.music.id);
+        }
     }
     removeMusic(){
         PlayerService.studioRemoveMusic(this.props.music.id);
@@ -30,8 +32,8 @@ export class MusicItem extends React.Component<{ music: Music }, {}>{
         this.subscription.off();
     }
     render() {
-        var music = this.props.music;
-        return <li className={this.state.isPlay ? "list-group-item active" : "list-group-item"}>
+        var music = this.state.music;
+        return <li className={music.state=='play' ? "list-group-item active" : "list-group-item"}>
             <div className="media">
                 <div className="media-left">
                     <a href="#" onClick={this.play.bind(this) }>
@@ -45,7 +47,7 @@ export class MusicItem extends React.Component<{ music: Music }, {}>{
                     </h4>
                     <p>{music.artists}</p>
                     <div className="btn-group" role="group" aria-label="...">
-                        <button type="button" className="btn btn-default btn-sm"  onClick={this.play.bind(this) }>播放</button>
+                        <button type="button" className="btn btn-default btn-sm" disabled={music.mp3==null} onClick={this.play.bind(this) }>播放</button>
                         <button type="button" className="btn btn-default btn-sm" onClick={this.removeMusic.bind(this)}>删除</button>
                     </div>
                 </div>

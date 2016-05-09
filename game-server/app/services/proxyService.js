@@ -8,7 +8,7 @@ exp.getIp = function (cb) {
             if (!body) {
                 return cb('get proxy ip error! ');
             }
-            cb(null, 'http://' + body);
+            cb(null, 'http://' + body.split('\r\n')[0]);
         } else {
             return cb('can not get proxy ip! ');
         }

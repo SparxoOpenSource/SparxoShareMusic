@@ -61,18 +61,20 @@ studio.prototype.addMusic = function (url, userName, cb) {
             cb('get music by url error! ');
             return;
         }
-        if(!music.resourceUrl){
-            self.getChannel().pushMessage('onMusicAdd', null, cb);
-            return;
-        }
-        if(self.playerList[music.id]){
-            cb('music already existed! ');
-            return;
-        }
         music.orderer = userName;
-        self.songs.push(music);
-        self.playerList[music.id] = music;
-        self.getChannel().pushMessage('onMusicAdd', music, cb);
+        if (!self.playerList[music.id]) {
+            self.songs.push(music);
+            self.playerList[music.id] = music;
+            self.getChannel().pushMessage('onMusicAdd', music, cb);
+        }
+        else {
+            if (!music.resourceUrl) {
+                self.playerList[music.id] = music;
+                self.getChannel().pushMessage('onMusicAdd', music, cb);
+            } else {
+                self.getChannel().pushMessage('onMusicAdd', null, cb);
+            }
+        }
     };
     if (pomelo.app.get('appConfig').useProxy) {
         ProxyService.getIp(function (err, ip) {

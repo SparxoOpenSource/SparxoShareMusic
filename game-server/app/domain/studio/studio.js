@@ -68,9 +68,15 @@ studio.prototype.addMusic = function (url, userName, cb) {
             self.getChannel().pushMessage('onMusicAdd', music, cb);
         }
         else {
-            if (!music.resourceUrl) {
-                self.playerList[music.id] = music;
-                self.getChannel().pushMessage('onMusicAdd', music, cb);
+            if (music.resourceUrl) {
+                if (self.playerList[music.id].resourceUrl) {
+                    cb('music already existed! ');
+                    return;
+                }
+                else {
+                    self.playerList[music.id] = music;
+                    self.getChannel().pushMessage('onMusicAdd', music, cb);
+                }
             } else {
                 self.getChannel().pushMessage('onMusicAdd', null, cb);
             }

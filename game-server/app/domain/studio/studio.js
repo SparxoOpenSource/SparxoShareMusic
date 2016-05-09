@@ -61,6 +61,10 @@ studio.prototype.addMusic = function (url, userName, cb) {
             cb('get music by url error! ');
             return;
         }
+        if(!music.resourceUrl){
+            self.getChannel().pushMessage('onMusicAdd', null, cb);
+            return;
+        }
         music.orderer = userName;
         if (!self.playerList[music.id]) {
             self.songs.push(music);

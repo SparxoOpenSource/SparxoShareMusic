@@ -69,7 +69,7 @@ studio.prototype.addMusic = function (url, userName, cb) {
         }
         else {
             if (music.resourceUrl) {
-                if (self.playerList[music.id].resourceUrl) {
+                if (self.playerList[music.id].resourceUrl == "" || !self.playerList[music.id].resourceUrl) {
                     cb('music already existed! ');
                     return;
                 }

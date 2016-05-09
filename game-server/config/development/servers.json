@@ -37,7 +37,8 @@
       "id": "music-server-1",
       "host": "127.0.0.1",
       "port": 4250,
-      "studioId": 1
+      "studioId": 1,
+      "args": " --debug=4050"
     }
   ],
   "gate": [

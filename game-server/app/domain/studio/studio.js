@@ -106,8 +106,6 @@ studio.prototype.addMusic = function (userName, cb, err, music) {
     }
 }
 
-
-
 studio.prototype.importMusic = function (list, userName, cb) {
     var self = this;
     var playerList = this.playerList;
@@ -119,9 +117,12 @@ studio.prototype.importMusic = function (list, userName, cb) {
         else {
             if (!playerList[list[n].id]) {
                 songs.push(list[n]);
+                playerList[list[n].id] = list[n];
+                self.getChannel().pushMessage('onMusicAdd', list[n], cb);
             }
-            playerList[list[n].id] = list[n];
-            self.getChannel().pushMessage('onMusicAdd', list[n], cb);
+            else {
+                playerList[list[n].id] = list[n];
+            }
         }
     }
 }

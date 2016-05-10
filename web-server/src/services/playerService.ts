@@ -344,7 +344,7 @@ class PlayerServiceClass extends Events {
             }
             var parts = pair.split(/=(.+)?/),
                 key = parts[0],
-                value = parts[1] && decodeURIComponent(parts[1].replace(/\+/g, ' '));
+                value = parts[1] && parts[1].replace(/\+/g, ' ');
             var existing = queryObject[key];
             if (existing) {
                 if (Array.isArray(existing)){

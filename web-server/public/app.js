@@ -109,7 +109,7 @@
 	                        name: json.song_name,
 	                        artists: [json.singer_name],
 	                        album: json.album_name,
-	                        image: "http://imgcache.qq.com/music/photo/album_300/" + album_str.substr(album_str.length - 2) + "/300_albumpic_" + json.album_id + "_0.jpg",
+	                        image: "http://imgcache.qq.com/music/photo/album_300/" + parseInt(album_str.substr(album_str.length - 2)) + "/300_albumpic_" + json.album_id + "_0.jpg",
 	                        resourceUrl: json.play_url,
 	                        orderer: username || ""
 	                    }]).then(function () {
@@ -20678,7 +20678,7 @@
 	            }
 	            var parts = pair.split(/=(.+)?/),
 	                key = parts[0],
-	                value = parts[1] && decodeURIComponent(parts[1].replace(/\+/g, ' '));
+	                value = parts[1] && parts[1].replace(/\+/g, ' ');
 	            var existing = queryObject[key];
 	            if (existing) {
 	                if (Array.isArray(existing)) {

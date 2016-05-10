@@ -54,81 +54,59 @@ studio.prototype.getMusic = function (id, cb) {
     return music;
 };
 
-studio.prototype.addMusic = function (url, userName, cb) {
+studio.prototype.addMusicById = function (id, userName, cb) {
     var self = this;
-    var addMusicFunc = function (err, music) {
-        if (!!err) {
-            cb('get music by url error! ');
-            return;
-        }
-        music.orderer = userName;
-        if (!self.playerList[music.id]) {
-            self.songs.push(music);
-            self.playerList[music.id] = music;
-            self.getChannel().pushMessage('onMusicAdd', music, cb);
-        }
-        else {
-            if (music.resourceUrl) {
-                if (self.playerList[music.id].resourceUrl == "" || !self.playerList[music.id].resourceUrl) {
-                    self.playerList[music.id] = music;
-                    self.getChannel().pushMessage('onMusicAdd', music, cb);
-                }
-                else {
-                    cb('music already existed! ');
-                    return;
-                }
-            } else {
-                self.getChannel().pushMessage('onMusicAdd', null, cb);
-            }
-        }
-    };
     if (pomelo.app.get('appConfig').useProxy) {
         ProxyService.getIp(function (err, ip) {
-            WYMusicService.getMusicByUrl(url, ip, addMusicFunc);
+            WYMusicService.getMusicById(id, ip, self.addMusic.bind(self, userName, cb));
         });
     }
     else {
-        WYMusicService.getMusicByUrl(url, null, addMusicFunc);
+        WYMusicService.getMusicById(id, null, self.addMusic.bind(self, userName, cb));
+    }
+}
+
+studio.prototype.addMusicByUrl = function (url, userName, cb) {
+    var self = this;
+    if (pomelo.app.get('appConfig').useProxy) {
+        ProxyService.getIp(function (err, ip) {
+            WYMusicService.getMusicByUrl(url, ip, self.addMusic.bind(self, userName, cb));
+        });
+    }
+    else {
+        WYMusicService.getMusicByUrl(url, null, self.addMusic.bind(self, userName, cb));
     }
 };
 
-studio.prototype.addMusicById = function (id, userName, cb) {
+studio.prototype.addMusic = function (userName, cb, err, music) {
     var self = this;
-    var addMusicFunc = function (err, music) {
-        if (!!err) {
-            cb('get music by url error! ');
-            return;
-        }
-        music.orderer = userName;
-        if (!self.playerList[music.id]) {
-            self.songs.push(music);
-            self.playerList[music.id] = music;
-            self.getChannel().pushMessage('onMusicAdd', music, cb);
-        }
-        else {
-            if (music.resourceUrl) {
-                if (!self.playerList[music.id].resourceUrl || self.playerList[music.id].resourceUrl == "") {
-                    self.playerList[music.id] = music;
-                    self.getChannel().pushMessage('onMusicAdd', music, cb);
-                }
-                else {
-                    cb('music already existed! ');
-                    return;
-                }
-            } else {
-                self.getChannel().pushMessage('onMusicAdd', null, cb);
-            }
-        }
-    };
-    if (pomelo.app.get('appConfig').useProxy) {
-        ProxyService.getIp(function (err, ip) {
-            WYMusicService.getMusicById(id, ip, addMusicFunc);
-        });
+    if (!!err) {
+        cb('get music by url error! ');
+        return;
+    }
+    music.orderer = userName;
+    if (!self.playerList[music.id]) {
+        self.songs.push(music);
+        self.playerList[music.id] = music;
+        self.getChannel().pushMessage('onMusicAdd', music, cb);
     }
     else {
-        WYMusicService.getMusicById(id, null, addMusicFunc);
+        if (music.resourceUrl) {
+            if (!self.playerList[music.id].resourceUrl || self.playerList[music.id].resourceUrl == "") {
+                self.playerList[music.id] = music;
+                self.getChannel().pushMessage('onMusicAdd', music, cb);
+            }
+            else {
+                cb('music already existed! ');
+                return;
+            }
+        } else {
+            self.getChannel().pushMessage('onMusicAdd', null, cb);
+        }
     }
 }
+
+
 
 studio.prototype.importMusic = function (list, userName, cb) {
     var self = this;

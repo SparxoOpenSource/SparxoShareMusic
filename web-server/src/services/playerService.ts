@@ -391,6 +391,14 @@ class PlayerServiceClass extends Events {
         return d.promise;
         //});
     }
+    importMusic(musics){
+        var d=q.defer();
+        var route = "studio.studioHandler.importMusic";
+        pomelo.request(route, musics, function (data) {
+           d.resolve();
+        });
+        return  d.promise;
+    }
 }
 
 export var PlayerService = new PlayerServiceClass(); 

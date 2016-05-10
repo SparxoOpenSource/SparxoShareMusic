@@ -76,4 +76,21 @@ handler.playMusic = function (msg, session, next) {
 	});
 };
 
+handler.importMusic = function (msg, session, next) {
+	var studio = session.studio;
+    var userName = session.get('userName');
+	var list = msg;
+	if (!list) {
+		next(null, { code: 500, msg: 'need music list! ' });
+		return;
+	}	
+	studio.importMusic(list, userName, function (err) {
+		if (!!err) {
+			next(null, { code: 500 });
+			return;
+		}
+		next(null, { code: 200 });
+	});
+}
+
 

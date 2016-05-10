@@ -18,6 +18,10 @@ exp.getMusicByUrl = function (url, proxyIp, cb) {
         }
         id = id[1]
     }
+    return this.getMusicById(id, proxyIp, cb);
+}
+
+exp.getMusicById = function (id, proxyIp, cb) {
     var musicUrl = 'http://music.163.com/api/song/detail?id=' + id + '&ids=[' + id + ']';
     var options = {
         url: musicUrl,

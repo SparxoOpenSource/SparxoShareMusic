@@ -20526,7 +20526,7 @@
 	        //return new Promise((resolve, reject) => {
 	        var route = 'gate.gateHandler.queryEntry';
 	        pomelo.init({
-	            host: '52.193.35.178',
+	            host: '127.0.0.1',
 	            port: 3014,
 	            log: true
 	        }, function () {

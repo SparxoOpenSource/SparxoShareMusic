@@ -37,7 +37,7 @@ handler.addMusic = function (msg, session, next) {
 		next(null, { code: 500, msg: 'need music url! ' });
 		return;
 	}
-	studio.addMusic(musicUrl, userName, function (err) {
+	studio.addMusicByUrl(musicUrl, userName, function (err) {
 		if (!!err) {
 			next(null, { code: 500 });
 			return;

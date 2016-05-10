@@ -20526,7 +20526,7 @@
 	        //return new Promise((resolve, reject) => {
 	        var route = 'gate.gateHandler.queryEntry';
 	        pomelo.init({
-	            host: '127.0.0.1',
+	            host: '52.193.35.178',
 	            port: 3014,
 	            log: true
 	        }, function () {
@@ -20704,7 +20704,7 @@
 	    PlayerServiceClass.prototype.importMusic = function (musics) {
 	        var d = q.defer();
 	        var route = "studio.studioHandler.importMusic";
-	        pomelo.request(route, musics, function (data) {
+	        pomelo.request(route, { list: musics }, function (data) {
 	            d.resolve();
 	        });
 	        return d.promise;

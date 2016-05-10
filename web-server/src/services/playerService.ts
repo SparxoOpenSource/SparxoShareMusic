@@ -394,7 +394,7 @@ class PlayerServiceClass extends Events {
     importMusic(musics){
         var d=q.defer();
         var route = "studio.studioHandler.importMusic";
-        pomelo.request(route, musics, function (data) {
+        pomelo.request(route, {list: musics}, function (data) {
            d.resolve();
         });
         return  d.promise;

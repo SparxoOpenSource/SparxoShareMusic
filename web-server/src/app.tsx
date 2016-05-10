@@ -70,11 +70,7 @@ class MusicApp extends React.Component<{}, {}>{
         reader.onload=function (e) {
             var str= e.target['result'];
             var musics=JSON.parse(str);
-            for(var music of musics){
-                PlayerService.studioAddMusic("http://music.163.com/#/song?id="+music.id,function () {
-                    
-                });
-            }                
+            PlayerService.importMusic(musics);
         } 
         reader.readAsText(file);
     }

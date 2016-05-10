@@ -10,6 +10,7 @@
   "dependencies": {
     "express": "3.4.0",
     "bootstrap": "^3.3.6",
+    "jquery":"^2.2.3",
     "react": "^15.0.1",
     "react-routing":"^0.0.7",
     "react-addons-create-fragment": "^15.0.1",

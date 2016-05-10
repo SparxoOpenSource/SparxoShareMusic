@@ -324,6 +324,41 @@ class PlayerServiceClass extends Events {
             self.player.play();
         }
     }
+    
+    
+    parseQueryString(url) :any{
+        var queryIndex = url.indexOf("?"),
+            queryObject = {},
+            pairs;
+        if (!url) {
+            return null;
+        }
+        var queryString = url;
+        if (queryIndex != -1) {
+            queryString = url.substr(queryIndex + 1);
+        }
+        pairs = queryString.split('&');
+        for (var pair of pairs) {
+            if (pair === '') {
+                continue;
+            }
+            var parts = pair.split(/=(.+)?/),
+                key = parts[0],
+                value = parts[1] && decodeURIComponent(parts[1].replace(/\+/g, ' '));
+            var existing = queryObject[key];
+            if (existing) {
+                if (Array.isArray(existing)){
+                    existing.push(value);
+                } else {
+                    queryObject[key] = [existing, value];
+                }
+            } else {
+                queryObject[key] = value;
+            }
+        }
+        return queryObject;
+    }
+    
     studioEnterSence() {
         var self = this;
         var route = "studio.studioHandler.enterStudio";

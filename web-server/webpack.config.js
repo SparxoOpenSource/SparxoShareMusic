@@ -17,8 +17,8 @@ module.exports = {
         // Add `.ts` and `.tsx` and `.css` as a resolvable extension.
         extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.css'],
         alias: {
-            //react: 'react/dist/react-with-addons'
-        }
+             jquery: "../node_modules/jquery/dist/jquery"
+        }    
     },
     module: {
         loaders: [

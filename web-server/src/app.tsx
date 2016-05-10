@@ -5,6 +5,9 @@ import {Player} from "./components/player";
 import {PlayList} from "./components/list";
 import {PlayerService} from "./services/playerService";
 import * as notification from "./services/notification";
+import * as $  from 'jquery';
+
+
 
 class MusicApp extends React.Component<{}, {}>{
 
@@ -23,15 +26,39 @@ class MusicApp extends React.Component<{}, {}>{
     addMusic() {
         var urlInput = this.refs["txt_url"] as HTMLInputElement;
         var url = urlInput.value;
-        if (url.indexOf("http://music.163.com") == -1) {
-            alert("只支持163音乐");
-            return;
-        }
-        PlayerService.studioAddMusic(url, () => {
-            this.setState({
-                keyword: ""
+        if (url.indexOf("http://music.163.com") != -1) {            
+            PlayerService.studioAddMusic(url, () => {
+                this.setState({
+                    keyword: ""
+                });
             });
-        });
+        }
+        if(url.indexOf("http://mp3.sogou.com/tiny/song")!=-1){
+            var queryParams=PlayerService.parseQueryString(url);
+            if(queryParams.tid){
+                return $.ajax({
+                    url: "http://mp3.sogou.com/tiny/song?json=1&query=getlyric&tid="+queryParams.tid,
+                    dataType: 'jsonp',
+                    jsonpCallback:"MusicJsonCallback"
+                }).done((json)=>{
+                    var album_str=json.album_id+"";
+                    PlayerService.importMusic([{
+                        id:'sogou-'+json.song_id,
+                        name:json.song_name,
+                        artists:[json.singer_name],
+                        album:json.album_name,
+                        image:"http://imgcache.qq.com/music/photo/album_300/"+album_str.substr(album_str.length-2)+"/300_albumpic_"+json.album_id+"_0.jpg",
+                        resourceUrl:json.play_url,
+                        orderer:username||""
+                    }]).then(()=>{                        
+                        this.setState({
+                            keyword:""
+                        });
+                    });
+                });
+
+            }
+        }
     }
     search() {
         var urlInput = this.refs["txt_url"] as HTMLInputElement;
@@ -95,7 +122,7 @@ class MusicApp extends React.Component<{}, {}>{
                         <div className="input-group">
                             <input type="text"  ref="txt_url" value={this.state.keyword} onChange={this.search.bind(this) } className="form-control"  placeholder="163音乐地址" />
                             <span className="input-group-btn">
-                                <button className="btn btn-default" onClick={this.addMusic.bind(this) } disabled={this.state.keyword.indexOf("http://music.163.com")==-1}  type="button">添加</button>
+                                <button className="btn btn-default" onClick={this.addMusic.bind(this) } disabled={this.state.keyword.indexOf("http://mp3.sogou.com/tiny/song")==-1&&this.state.keyword.indexOf("http://music.163.com")==-1}  type="button">添加</button>
                             </span>
                         </div>
                     </div>
@@ -149,6 +176,10 @@ if (username == '') {
 else {
     initApp(username);
 }
+  
+  
+
+
 function initApp(username) {
 
     PlayerService.init(username).then(() => {

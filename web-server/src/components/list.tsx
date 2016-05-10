@@ -33,7 +33,7 @@ export class MusicItem extends React.Component<{ music: Music }, {}>{
     }
     render() {
         var music = this.state.music;
-        return <li className={music.state=='play' ? "list-group-item active" : "list-group-item"}>
+        return <li id={'music-'+music.id} className={music.state=='play' ? "list-group-item active" : "list-group-item"}>
             <div className="media">
                 <div className="media-left">
                     <a href="#" onClick={this.play.bind(this) }>

@@ -20323,6 +20323,7 @@
 	    function Player() {
 	        _super.apply(this, arguments);
 	        this.state = {
+	            id: "none",
 	            name: "未播放音乐",
 	            img: "/images/music_beamed.png"
 	        };
@@ -20333,13 +20334,15 @@
 	        playerService_1.PlayerService.setPlayer(player);
 	        playerService_1.PlayerService.on("play.changed", function (music) {
 	            self.setState({
+	                id: music.id,
 	                name: music.name,
 	                img: music.image
 	            });
+	            //location.href="#music-"+music.id;
 	        });
 	    };
 	    Player.prototype.render = function () {
-	        return React.createElement("div", { ref: "player-bar", className: "navbar navbar-player navbar-default navbar-fixed-bottom navbar-inverse" }, React.createElement("div", { className: "container" }, React.createElement("div", { className: "media" }, React.createElement("div", { className: "media-left" }, React.createElement("a", { href: "#" }, React.createElement("img", { style: { width: '70px', height: '70px' }, class: "media-object", src: this.state.img, alt: this.state.name }))), React.createElement("div", { className: "media-body", style: { position: 'relative' } }, React.createElement("h4", { className: "media-heading", style: { marginTop: '10px', color: '#fff' } }, this.state.name), React.createElement("audio", { ref: "player", controls: this.props.isMainPlayer, style: { width: '800px', bottom: '00px' } })))));
+	        return React.createElement("div", { ref: "player-bar", className: "navbar navbar-player navbar-default navbar-fixed-bottom navbar-inverse" }, React.createElement("div", { className: "container", style: { position: "relative" } }, React.createElement("div", { className: "media" }, React.createElement("div", { className: "media-left" }, React.createElement("a", { href: '#music-' + this.state.id }, React.createElement("img", { style: { width: '70px', height: '70px' }, class: "media-object", src: this.state.img, alt: this.state.name }))), React.createElement("div", { className: "media-body", style: { position: 'relative' } }, React.createElement("h4", { className: "media-heading", style: { marginTop: '10px', color: '#fff' } }, this.state.name), React.createElement("audio", { ref: "player", controls: this.props.isMainPlayer, style: { width: '800px', bottom: '00px' } }))), React.createElement("a", { href: "#", style: { display: 'block', position: "absolute", width: '50px', height: '50px', right: '-50px', top: '-50px', backgroundColor: '#000', color: '#fff', textAlign: 'center', lineHeight: '50px' } }, "TOP")));
 	    };
 	    return Player;
 	}(React.Component);
@@ -22979,7 +22982,7 @@
 	    };
 	    MusicItem.prototype.render = function () {
 	        var music = this.state.music;
-	        return React.createElement("li", { className: music.state == 'play' ? "list-group-item active" : "list-group-item" }, React.createElement("div", { className: "media" }, React.createElement("div", { className: "media-left" }, React.createElement("a", { href: "#", onClick: this.play.bind(this) }, React.createElement("img", { style: { width: '84px', height: '84px' }, class: "media-object", src: music.image, alt: music.name }))), React.createElement("div", { className: "media-body", style: { position: 'relative' } }, React.createElement("h4", { className: "media-heading" }, music.name, React.createElement("div", { className: "pull-right" }, music.orderer)), React.createElement("p", null, music.artists), React.createElement("div", { className: "btn-group", role: "group", "aria-label": "..." }, React.createElement("button", { type: "button", className: "btn btn-default btn-sm", disabled: music.mp3 == null, onClick: this.play.bind(this) }, "播放"), React.createElement("button", { type: "button", className: "btn btn-default btn-sm", onClick: this.removeMusic.bind(this) }, "删除")))));
+	        return React.createElement("li", { id: 'music-' + music.id, className: music.state == 'play' ? "list-group-item active" : "list-group-item" }, React.createElement("div", { className: "media" }, React.createElement("div", { className: "media-left" }, React.createElement("a", { href: "#", onClick: this.play.bind(this) }, React.createElement("img", { style: { width: '84px', height: '84px' }, class: "media-object", src: music.image, alt: music.name }))), React.createElement("div", { className: "media-body", style: { position: 'relative' } }, React.createElement("h4", { className: "media-heading" }, music.name, React.createElement("div", { className: "pull-right" }, music.orderer)), React.createElement("p", null, music.artists), React.createElement("div", { className: "btn-group", role: "group", "aria-label": "..." }, React.createElement("button", { type: "button", className: "btn btn-default btn-sm", disabled: music.mp3 == null, onClick: this.play.bind(this) }, "播放"), React.createElement("button", { type: "button", className: "btn btn-default btn-sm", onClick: this.removeMusic.bind(this) }, "删除")))));
 	    };
 	    return MusicItem;
 	}(React.Component);

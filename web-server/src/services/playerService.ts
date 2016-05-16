@@ -305,23 +305,26 @@ class PlayerServiceClass extends Events {
         if(self.current&&self.current.id==id){
             return;
         }
-        var music = self.getMusic(id);       
+        var music = self.getMusic(id);               
         if (self.current) {
             self.current.stop();
         }
         music.play();
         self.current = music;
-        self.trigger("play.changed", music);        
-        if(music.mp3==null){
-            self.playNext();
-            //notification.show(music.name+",已跳过","无法播放",music.image); 
-            return ;
-        }        
-        notification.show(music.name,"正在播放",music.image);      
-        if (self.isMainPlayer) {
+        self.trigger("play.changed", music); 
+        if (self.isMainPlayer) {  
+            if(music.mp3==null){
+                setTimeout(function() {
+                    self.playNext();
+                }, 2000);
+                return ;
+            }      
             self.player.pause();
             self.player.src = music.mp3;
             self.player.play();
+        }      
+        if(music.mp3){
+            notification.show(music.name,"正在播放",music.image);      
         }
     }
     

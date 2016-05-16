@@ -22927,6 +22927,7 @@
 	    }
 	}
 	exports.checkPermission = checkPermission;
+	var current;
 	function show(body, title, icon) {
 	    if (title === void 0) {
 	        title = "通知";
@@ -22935,7 +22936,10 @@
 	        icon = "images/music_beamed.png";
 	    }
 	    if (window.Notification) {
-	        return new Notification(title, { body: body, icon: icon });
+	        if (current) {
+	            current.close();
+	        }
+	        current = new Notification(title, { body: body, icon: icon });
 	    }
 	}
 	exports.show = show;

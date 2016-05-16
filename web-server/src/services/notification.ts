@@ -7,8 +7,12 @@ export function checkPermission() {
         }
     }
 }
+var current;
 export function show(body,title="通知",icon="images/music_beamed.png") {
     if(window.Notification){
-        return new Notification(title,{body:body,icon:icon});
+        if(current){
+            current.close();
+        }
+        current= new Notification(title,{body:body,icon:icon});
     }
 }

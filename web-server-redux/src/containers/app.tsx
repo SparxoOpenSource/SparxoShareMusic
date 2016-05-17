@@ -2,19 +2,25 @@ import * as React from 'react';
 import {connect} from "react-redux";
 import {Link} from 'react-router';
 
+import Player from "../components/player";
+
+
+function mapStateToProps(state) {    
+   return state;
+}
+
 interface IAppProps extends React.Props<any>{
-    session:any,
+    player:any,
     login:()=>void;
     logout:()=>void;
 }
 
-
 /**
  *  App
  */
-class  App extends React.Component<IAppProps,void> {    
+class  App extends React.Component<IAppProps,void> {
     render(){
-        let {children} =this.props;
+        let {children,player} =this.props;
         return (<div>
             <h1>title</h1>
             <div>
@@ -24,7 +30,8 @@ class  App extends React.Component<IAppProps,void> {
             <div>
                 {children}
             </div>
+            <Player text={player.text}></Player>
         </div>);
     }    
 }
-export default connect()(App);
+export default connect(mapStateToProps)(App);

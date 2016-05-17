@@ -10,8 +10,8 @@ var handlers={
     [player.play]:function(state) {
         return  Object.assign({},state,{text:'now:'+new Date().toString()});
     },
-    [player.getList]:function(state) {
-        return Object.assign({},state,{items:[{a:1},{a:2},{a:new Date().toString()}]});
+    [player.getList]:function(state,action) {
+        return Object.assign({},state,action);
     }
 }
 
@@ -23,7 +23,7 @@ export default function playerReducer(state = initialState, action = { type: "" 
         
     var func=handlers[action.type];    
     if(func){
-        return func(state);
+        return func(state,action);
     }
     return  state;   
 }

@@ -1,4 +1,5 @@
 
 export const player={
-    play:'play'
+    play:'play',
+    getList:"getList"
 }

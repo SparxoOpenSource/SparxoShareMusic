@@ -1,13 +1,17 @@
 import {player} from "../constants/actionTypes"
 
 const initialState = {
-    text: "test"
+    text: "test",
+    items:[]
 }
 
 
 var handlers={
     [player.play]:function(state) {
         return  Object.assign({},state,{text:'now:'+new Date().toString()});
+    },
+    [player.getList]:function(state) {
+        return Object.assign({},state,{items:[{a:1},{a:2},{a:new Date().toString()}]});
     }
 }
 

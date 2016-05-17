@@ -255,11 +255,12 @@ class PlayerServiceClass extends Events {
         return d.promise;
 
     }
-    studioEnter(userName) {
+    studioEnter(userName, studioId) {
         var self = this;
         var route = "connector.entryHandler.enter";
         pomelo.request(route, {
-            userName: userName
+            userName: userName,
+            studioId: studioId
         }, function (data) {
             if (data.code === 500) {
                 return;

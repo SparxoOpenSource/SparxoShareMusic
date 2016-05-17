@@ -16,8 +16,9 @@ var pro = Handler.prototype;
 pro.enter = function (msg, session, next) {
     var self = this;
     var userName = msg.userName;
+    var studioId = msg.studioId;
     var sessionService = self.app.get('sessionService');
-    
+
     //duplicate log in
     if (!!sessionService.getByUid(userName)) {
         next(null, {
@@ -26,8 +27,9 @@ pro.enter = function (msg, session, next) {
         });
         return;
     }
-
-    var studioId = 1;
+    if (!studioId) {
+        studioId = 1;
+    }
     session.bind(userName);
     session.set('serverId', self.app.get('studioIdMap')[studioId]);
     session.set('studioId', studioId);

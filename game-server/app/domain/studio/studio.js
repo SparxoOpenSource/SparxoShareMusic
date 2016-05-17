@@ -146,8 +146,10 @@ studio.prototype.removeMusic = function (id, cb) {
             break;
         }
     }
-    if (this.playingSong.id == id) {
-        this.playingSong = null;
+    if (this.playingSong) {
+        if (this.playingSong.id == id) {
+            this.playingSong = null;
+        }
     }
     this.getChannel().pushMessage('onMusicRemove', { id: id }, cb);
 };

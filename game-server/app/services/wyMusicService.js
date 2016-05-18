@@ -42,6 +42,10 @@ exp.getMusicById = function (id, proxyIp, cb) {
                 cb('request music error! ');
                 return;
             }
+            if(proxyIp){
+                console.log(proxyIp);
+                console.log(song);
+            }
             var artists = [];
             for (var n in song.artists) {
                 artists.push(song.artists[n].name);

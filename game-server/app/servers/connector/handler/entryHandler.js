@@ -60,6 +60,10 @@ pro.isUserExisted = function (msg, session, next) {
     next(null, { code: 200, isExisted: false });
 }
 
+pro.keepAlive = function (msg, session, next) {
+    next(null, { code: 200, isExisted: false });
+}
+
 var onUserLeave = function (app, session, reason) {
     if (!session || !session.uid) {
         return;

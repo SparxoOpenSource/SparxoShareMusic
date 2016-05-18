@@ -269,7 +269,7 @@ class PlayerServiceClass extends Events {
                 var music=self.getMusic(data.id)
                 if(!music){
                     music=new Music(data);               
-                    self.musics.push(music);
+                    self.musics.unshift(music);
                     self.trigger("list.changed", self.musics);                
                     notification.show(data.orderer+"添加了音乐"+data.name,undefined,data.image);
                 }

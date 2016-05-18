@@ -1,44 +1,60 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {play,getList} from '../actions/player';
+import {play,remove,init} from '../actions/player';
 
-function mapStateToProps(state) {    
-   return state.player
+function mapStateToProps(state) {
+  return state.player
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    play: (): void  => dispatch(play()),
-    getList:():void=> dispatch(getList())
+    play: (id) => dispatch(play(id)),
+    remove: (id) => dispatch(remove(id)),
   };
 }
 
 interface IHomeProps extends React.Props<any> {
-  text: any;
-  items:Array<any>;
-  play:()=>void;
-  getList:()=>Array<any>
+  playSong: any;
+  playlist: Array<any>;
+  play: (id) => void;
+  remove:(id)=>void;
 };
 
-class Home extends React.Component<IHomeProps,void> {
- 
-   componentDidMount(){
-       this.props.getList();
-   }
-   render(){ 
-      const {text,play,items,getList}=this.props;      
-       return <div>
-         <p>{text}</p>
-         <ul>
-         {items.map(d=>{
-             return <li key={d.a}>{d.a}</li>;
-         })}
-         </ul>
-         <button onClick={play}>刷新当前时间</button>
-         <button onClick={getList}>刷新列表</button>
-       </div>;
-   }
-   
+class Home extends React.Component<IHomeProps, void> {
+
+  render() {
+    const {play,remove, playSong, playlist} = this.props;
+    return <div className="flex flex-wrap justify-center">
+      {playlist.map(d => {
+        return (<div key={d.id} className="card">
+          <div className="card-info">
+            <div className="card-image" style={{ backgroundImage: `url(${d.image})` }}>
+              {
+                (playSong != null && d.id == playSong.id) ? (
+                  <div className="card-btn-play playing">播放中...</div>
+                ) : (
+                    <div className="card-btn-play" onClick={play.bind(null, d.id) }>
+                      播放
+                    </div>
+                  )
+              }
+
+            </div>
+            <div className="card-footer">
+              <div className="card-name">
+                {d.name}
+              </div>
+              <div className="card-user">
+                {d.orderer}
+                <a href="javascript:;" onClick={remove.bind(null,d.id)}>删</a>
+              </div>
+            </div>
+          </div>
+        </div>);
+      }) }
+    </div>;
+  }
+
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

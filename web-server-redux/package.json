@@ -1,0 +1,42 @@
+{
+  "name": "web-react",
+  "version": "0.0.1",
+  "private": false, 
+  "scripts": {
+    "postinstall": "tsd install",
+    "build": "webpack",
+    "dev": "webpack -w",
+    "start": "webpack-dev-server --progress --colors --hot --content-base ./dist --config ./webpack.config.js"
+  },
+  "dependencies": {
+    "express": "3.4.0",
+    "bootstrap": "^3.3.6",
+    "react": "^15.0.2",    
+    "react-dom": "^15.0.2",
+    "react-router":"^2.4.0",
+    "react-router-redux":"^4.0.4",
+    "react-redux":"^4.4.5",
+    "redux":"^3.5.2",
+    "redux-form":"^5.2.3",
+    "redux-thunk":"^2.1.0",
+    "redux-localstorage":"^0.4.0",
+    "pomelo":"^2.0.0",
+    "q":"^1.4.1"
+  },
+  "devDependencies": {
+    "tsd": "^0.6.5",
+    "babel": "^6.5.2",
+    "babel-core":"^6.7.6",    
+    "babel-runtime": "^6.5.0",
+    "babel-loader": "^6.2.4",
+    "json5": "^0.5.0",
+    "ts-loader": "^0.8.2",
+    "style-loader": "^0.13.1",
+    "css-loader": "^0.23.1",    
+    "postcss-loader": "^0.9.1",
+    "ts-node": "^0.7.1",
+    "typescript": "^1.8.9",
+    "webpack": "^1.12.15",
+    "webpack-dev-server": "^1.14.1"
+  }  
+}

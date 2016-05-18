@@ -40,7 +40,7 @@ studio.prototype.getPlayerMusicList = function () {
     var songs = this.songs;
     var list = [];
     for (var n in songs) {
-        list.push(playerList[songs[n].id]);
+        list.unshift(playerList[songs[n].id]);
     }
     return list;
 };

@@ -116,7 +116,7 @@ studio.prototype.importMusic = function (list, userName, cb) {
         }
         else {
             if (!playerList[list[n].id]) {
-                songs.push(list[n]);
+                songs.unshift(list[n]);
                 playerList[list[n].id] = list[n];
                 self.getChannel().pushMessage('onMusicAdd', list[n], cb);
             }

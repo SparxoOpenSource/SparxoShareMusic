@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import { Modal, ModalContent } from '../modal';
-import {showAddModal, addMusic, changeSource} from "../../actions/add";
+import {showAddModal, addMusic} from "../../actions/add";
 import {reduxForm} from 'redux-form';
 
 import Form from '../form/';

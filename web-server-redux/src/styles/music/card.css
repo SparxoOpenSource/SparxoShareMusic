@@ -10,6 +10,8 @@
     display: block;
     width: 180px;
     margin: 10px;
+    background-size: cover;
+    background-position: center;
 }
 
 .card .card-image{
@@ -19,8 +21,6 @@
     margin-bottom: 10px;
     overflow: hidden;
     position: relative;
-    background-size: cover;
-    background-position: center;
 }
 .card .card-btn-play{
     opacity: 0;
@@ -51,7 +51,11 @@
 .card img{
     width:100%;    
 }
-
+.card-footer{
+    padding: 3px 5px;
+    color: #fff;
+    background: rgba(0,0,0,0.6);   
+}
 .card .card-name{
     display:block;
     text-overflow: ellipsis;
@@ -61,5 +65,5 @@
 .card .card-user a{
     float: right;
     font-size: 14px;
-    color: #999;
+    color: #fff;
 }

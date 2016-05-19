@@ -20,13 +20,13 @@
 @import 'basscss-type-scale';
 @import 'basscss-typography';
 @import 'basscss-layout';
-@import 'basscss-align'; 
+@import 'basscss-align';  
 @import 'basscss-margin';
 @import 'basscss-padding';
 @import 'basscss-grid';
 @import 'basscss-flexbox'; 
-@import 'basscss-position';
+@import 'basscss-position'; 
 @import 'basscss-border'; 
-@import 'basscss-hide';  
+@import 'basscss-hide';   
   
 @import './music/index';   

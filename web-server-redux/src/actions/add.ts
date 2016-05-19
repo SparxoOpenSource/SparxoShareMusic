@@ -64,7 +64,8 @@ export function addMusic() {
             dispatch(Fail("url error"));
             return;
         }
-        if (url.indexOf("http://music.163.com") == 0) {
+        if (url.indexOf("http://music.163.com") == 0) {               
+            dispatch(Pending());
             $studio.add(url).then(() => {
                 dispatch(Success());
             })
@@ -101,7 +102,8 @@ export function addMusic() {
                 str = url.split('?')[0];
             }
             var sp = str.split('/');
-            var id = sp[sp.length - 1];
+            var id = sp[sp.length - 1];            
+            dispatch(Pending());
             return $.getJSON(`//api.soundcloud.com/tracks/${id}?client_id=${keys.soundcloud_key}`)
                 .done((data) => {
                     var music = {

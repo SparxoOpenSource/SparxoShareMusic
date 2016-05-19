@@ -35,8 +35,8 @@ class List extends React.Component<IListProps, void> {
           return (
             <div key={d.id} className="col">
               <div key={d.id} className="card">
-                <div className="card-info">
-                  <div className="card-image" style={{ backgroundImage: `url(${d.image})` }}>
+                <div className="card-info"  style={{ backgroundImage: `url(${d.image})` }}>
+                  <div className="card-image">
                     {
                       (playSong && d.id == playSong.id) ? (
                         <div className="card-btn-play playing">

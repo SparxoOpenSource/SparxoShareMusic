@@ -60,7 +60,12 @@ export function addMusic() {
     return (dispatch, getState) => {
         const add = getState().form.add;
         const url = add.url.value;
-        if (url.indexOf("http://mp3.sogou.com/tiny/song") == 0) {
+        if(url.indexOf("http://music.163.com")==0){
+            $studio.add(url).then(()=>{
+                dispatch(Success());                
+            })
+        }
+        else if (url.indexOf("http://mp3.sogou.com/tiny/song") == 0) {
             var queryParams = parseQueryString(url);
             if (queryParams.tid) {
                 dispatch(Pending());

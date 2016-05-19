@@ -96,7 +96,10 @@ class AddModal extends React.Component<IAddModalProps, void> {
         }
 
         if (values.url && values.url.indexOf("http://mp3.sogou.com/tiny/song") != 0) {
-            if (values.url.indexOf('http://mp3.sogou.com/tiny/song') != 0 && values.url.indexOf("soundcloud.com") == -1) {
+            if (
+                values.url.indexOf("http://music.163.com")!=0&&
+                values.url.indexOf('http://mp3.sogou.com/tiny/song') != 0 
+            && values.url.indexOf("soundcloud.com") == -1) {
                 errors.url = "不支持的url地址";
             }
         }

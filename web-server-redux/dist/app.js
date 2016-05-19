@@ -33685,7 +33685,12 @@
 	    return (dispatch, getState) => {
 	        const add = getState().form.add;
 	        const url = add.url.value;
-	        if (url.indexOf("http://mp3.sogou.com/tiny/song") == 0) {
+	        if (url.indexOf("http://music.163.com") == 0) {
+	            $studio.add(url).then(() => {
+	                dispatch(Success());
+	            });
+	        }
+	        else if (url.indexOf("http://mp3.sogou.com/tiny/song") == 0) {
 	            var queryParams = parseQueryString(url);
 	            if (queryParams.tid) {
 	                dispatch(Pending());
@@ -47542,7 +47547,9 @@
 	            errors.url = 'url is required.';
 	        }
 	        if (values.url && values.url.indexOf("http://mp3.sogou.com/tiny/song") != 0) {
-	            if (values.url.indexOf('http://mp3.sogou.com/tiny/song') != 0 && values.url.indexOf("soundcloud.com") == -1) {
+	            if (values.url.indexOf("http://music.163.com") != 0 &&
+	                values.url.indexOf('http://mp3.sogou.com/tiny/song') != 0
+	                && values.url.indexOf("soundcloud.com") == -1) {
 	                errors.url = "不支持的url地址";
 	            }
 	        }

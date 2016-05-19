@@ -60,7 +60,12 @@ export function filter(s) {
     keyword: s
   };
 }
-
+export function importMusic(musics) {
+  //console.log('import',musics);
+  $studio.importMusic(musics).then(()=>{
+    alert("导入成功");
+  });
+}
 export function init() {
   return (dispatch, getState) => {
     $studio.on("onMusicAdd", (data) => {

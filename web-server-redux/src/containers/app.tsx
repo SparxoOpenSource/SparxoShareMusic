@@ -29,7 +29,7 @@ function mapDispatchToProps(dispatch) {
         login: (): void => dispatch($session.login()),
         toogle: () => dispatch($player.toogleMianPlayer()),
         showAddModal: () => dispatch($add.showAddModal(true)),
-        filter:(s)=>dispatch($player.filter(s))
+        filter: (s) => dispatch($player.filter(s))
     };
 }
 interface IAppProps extends React.Props<any> {
@@ -38,7 +38,7 @@ interface IAppProps extends React.Props<any> {
     add: any,
     toogle: () => void;
     login: () => void;
-    filter:(s)=>void;
+    filter: (s) => void;
     showAddModal: () => void;
 }
 
@@ -49,12 +49,43 @@ class App extends React.Component<IAppProps, {}> {
     state = {
         showAddModal: false
     }
-    filter(){
-        var searchBox=this.refs["searchBox"] as HTMLInputElement;        
+    filter() {
+        var searchBox = this.refs["searchBox"] as HTMLInputElement;
         this.props.filter(searchBox.value);
     }
+    onImport() {
+        var self = this;
+        var s = document.createElement("input");
+        s.type = "file";
+        s.onchange = function (e) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var str = e.target['result'];
+                var musics = JSON.parse(str);
+                $player.importMusic(musics);
+            }
+            reader.readAsText(s.files.item(0));
+        }
+        s.click();
+        setTimeout(function () {
+            s.remove();
+        }, 1000);
+    }
+
+    onExport() {
+        var {player} = this.props;
+        var musics = player.playlist.reverse();
+        var a = document.createElement('a');
+        a.setAttribute("download", "playlist.json");
+        a.href = "data:application/octet-stream," + JSON.stringify(musics);
+        a.target = "_blank";
+        a.click();
+        setTimeout(function () {
+            a.remove();
+        }, 1000);
+    }
     render() {
-        let {children, session, add,filter, player, login, toogle, showAddModal} = this.props;
+        let {children, session, add, filter, player, login, toogle, showAddModal} = this.props;
         let isLoggedIn = session.token != null;
         return (<div>
             <LoginModal
@@ -70,7 +101,13 @@ class App extends React.Component<IAppProps, {}> {
                 </NavigatorItem>
                 <div className="flex flex-auto"></div>
                 <NavigatorItem mr isVisible={isLoggedIn}>
-                    <input placeholder="search" ref="searchBox" type="text" value={player.filter} onChange={this.filter.bind(this)}/>
+                    <input placeholder="search" ref="searchBox" type="text" value={player.filter} onChange={this.filter.bind(this) }/>
+                </NavigatorItem>
+                <NavigatorItem mr isVisible={isLoggedIn}>
+                    <a href="#add" onClick={this.onExport.bind(this)}>Export</a>
+                </NavigatorItem>
+                <NavigatorItem mr isVisible={isLoggedIn}>
+                    <a href="#add" onClick={this.onImport.bind(this)}>Import</a>
                 </NavigatorItem>
                 <NavigatorItem mr isVisible={isLoggedIn}>
                     <a href="#add" onClick={showAddModal}>Add</a>

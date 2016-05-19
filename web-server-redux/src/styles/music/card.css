@@ -26,7 +26,6 @@
     opacity: 0;
     cursor: pointer;
     background: rgba(0, 0, 0, 0.5);
-    color: #fff;
     position: absolute;
     left: 0;
     top: 0;
@@ -36,7 +35,12 @@
     line-height: 80px;
     -webkit-transition: all 0.3s;
     -moz-transition: all 0.3s;
-    transition: all 0.3s;
+    transition: all 0.3s;   
+    color: #a6d2a5;
+    font-size: 28px;
+    opacity: 0;
+    -webkit-transition: opacity .2s ease-in-out;
+    transition: opacity .2s ease-in-out;
 }
 .card .card-btn-play.playing{
     opacity: 1 !important;
@@ -56,5 +60,6 @@
 }
 .card .card-user a{
     float: right;
-    color: #f00;
+    font-size: 14px;
+    color: #999;
 }

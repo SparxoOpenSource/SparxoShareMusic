@@ -40,11 +40,11 @@ class List extends React.Component<IListProps, void> {
                     {
                       (playSong && d.id == playSong.id) ? (
                         <div className="card-btn-play playing">
-                          <i class="icon ion-radio-waves"></i>
+                          <i className="icon ion-radio-waves"></i>
                         </div>
                       ) : (
                           <div className="card-btn-play" onClick={play.bind(null, d.id) }>
-                            <i class="icon ion-ios-play"></i>
+                            <i className="icon ion-ios-play"></i>
                           </div>
                         )
                     }
@@ -56,7 +56,10 @@ class List extends React.Component<IListProps, void> {
                     </div>
                     <div className="card-user">
                       {d.orderer}
-                      <a href="javascript:;" onClick={remove.bind(null, d.id) }>删</a>
+                      <a href="javascript:;" onClick={remove.bind(null, d.id) }>
+                        <i className="icon ion-trash-a"></i>
+                      </a>
+                      <div className="clearfix"></div>
                     </div>
                   </div>
                 </div>

@@ -142,3 +142,7 @@ export function importMusic(musics) {
     });
     return d.promise;
 }
+export function keepAlive() {
+    var route = "studio.studioHandler.keepAlive";
+    return request(route)
+}

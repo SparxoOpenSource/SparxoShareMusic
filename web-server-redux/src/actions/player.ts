@@ -80,6 +80,9 @@ export function init() {
     }).on("onUserLeave", (data) => {
 
     });
+    var timer=setInterval(function() {
+      $studio.keepAlive();
+    },5000);
     $studio.getPlaylist().then((data) => {
       dispatch(receiveList(data));
     }).fail((err) => {

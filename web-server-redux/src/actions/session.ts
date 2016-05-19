@@ -27,9 +27,8 @@ export function login() {
     const username = login.username.value;
     const studioId = login.studioId.value;    
     dispatch(Pending());
-    $studio.once("error",(data)=>{
-      debugger;
-      dispatch(Fail(""))
+    $studio.once("io-error",(data)=>{
+      dispatch(Fail("无法连接到服务器，请稍后再试"))
     }) 
     $studio.connect(username).then(() => { 
       return $studio.studio();
@@ -44,11 +43,11 @@ export function login() {
       return $studio.enterSence();
     }).then(() => {      
       console.log("登录成功");
-      
       dispatch(Success({
         token: `${username} (${studioId})`,
         user: {
-          username: username
+          username: username,
+          studioId:studioId
         }
       }));
     }).fail((msg?) => {

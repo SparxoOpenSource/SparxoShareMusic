@@ -38,7 +38,9 @@
     
     "q/Q.d.ts":{
       "commit":"3c728a34b0702ba41a8ac4a3d05e5b46645e985e"
+    },
+    "jquery/jquery.d.ts":{
+      "commit":"4cdfbe96b666eec5e1defbb519a62abf04e96764"
     }   
-    
   }
 }

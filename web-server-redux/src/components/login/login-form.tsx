@@ -13,7 +13,7 @@ interface ILoginFormProps {
   onSubmit: () => void;
   handleSubmit?: () => void;
   resetForm?: () => void;
-  errorMessage?:string;
+  errorMessage?: string;
   isPending: boolean;
   hasError: boolean;
   fields?: {
@@ -42,7 +42,7 @@ class LoginForm extends React.Component<ILoginFormProps, void> {
       <Form handleSubmit={ handleSubmit }>
         <Alert isVisible={ isPending }>Loading...</Alert>
         <Alert id="qa-alert" isVisible={ hasError } status="error">
-          {errorMessage||"Invalid username and password"}
+          {errorMessage || "Invalid username and password"}
         </Alert>
         <FormGroup>
           <FormLabel id="qa-uname-label">Username</FormLabel>
@@ -56,8 +56,8 @@ class LoginForm extends React.Component<ILoginFormProps, void> {
           <FormLabel id="qa-studioId-label">Studio</FormLabel>
           <select {...studioId} value={studioId.value} id="qa-studioId-select" className="block col-12 mb1 select">
             <option value="">select a studio...</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
+            <option value="1">Sparxo Drug Manufacturing Laboratories</option>
+            <option value="2">Sparxo Lovely Cottage</option>
           </select>
           <FormError id="qa-ustudio-validation"
             isVisible={ !!(studioId.touched && studioId.error) }>
@@ -99,4 +99,11 @@ export default reduxForm({
     'studioId',
   ],
   validate: LoginForm.validate,
+}, (state) => {
+  return {
+    initialValues: {
+      username: sessionStorage['username2'] || "",
+      studioId: sessionStorage['studioid2'] || "1"
+    }
+  }
 })(LoginForm);

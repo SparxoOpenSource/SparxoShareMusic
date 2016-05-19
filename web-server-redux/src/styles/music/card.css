@@ -4,6 +4,7 @@
     margin: 10px;
     border:1px solid #e3e3e3;
     font-size:12px;
+    width: 200px;
 }
 .card .card-info{
     display: block;

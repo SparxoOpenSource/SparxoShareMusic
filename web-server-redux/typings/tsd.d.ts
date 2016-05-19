@@ -9,6 +9,7 @@
 /// <reference path="react-router/history.d.ts" />
 /// <reference path="classnames/classnames.d.ts" />
 /// <reference path="redux-form/redux-form.d.ts" />
+/// <reference path="jquery/jquery.d.ts" />
 interface Window{
     EventEmitter:any
 }

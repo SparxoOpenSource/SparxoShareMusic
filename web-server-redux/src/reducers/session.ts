@@ -11,12 +11,14 @@ const initialState = {
 
 var handlers={
     [session.pending]:function(state) {
-        return  Object.assign({},state,{
+        return Object.assign({},state,{
             isLoading:true,
             hasError:false
         });
     },
     [session.success]:function(state,action) {
+      sessionStorage['username2']=action.data.user.username;
+      sessionStorage['studioid2']=action.data.user.studioId;
       return Object.assign({},state,action.data,{
           hasError:false,
           isLoading:false

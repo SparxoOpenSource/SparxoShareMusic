@@ -60,13 +60,13 @@ export function addMusic() {
     return (dispatch, getState) => {
         const add = getState().form.add;
         const url = add.url.value;
-        if(url==""){
+        if (url == "") {
             dispatch(Fail("url error"));
             return;
         }
-        if(url.indexOf("http://music.163.com")==0){
-            $studio.add(url).then(()=>{
-                dispatch(Success());                
+        if (url.indexOf("http://music.163.com") == 0) {
+            $studio.add(url).then(() => {
+                dispatch(Success());
             })
         }
         else if (url.indexOf("http://mp3.sogou.com/tiny/song") == 0) {
@@ -102,7 +102,7 @@ export function addMusic() {
             }
             var sp = str.split('/');
             var id = sp[sp.length - 1];
-            return $.get(`//api.soundcloud.com/tracks/${id}?client_id=${keys.soundcloud_key}`)
+            return $.getJSON(`//api.soundcloud.com/tracks/${id}?client_id=${keys.soundcloud_key}`)
                 .done((data) => {
                     var music = {
                         id: `soundcloud-${data.id}`,
@@ -113,11 +113,12 @@ export function addMusic() {
                         resourceUrl: `${data.stream_url}?client_id=${keys.soundcloud_key}`,
                         orderer: sessionStorage['username2'] || ""
                     }
-                    debugger;
                     $studio.importMusic([music])
                         .then(() => {
                             dispatch(Success());
                         })
+                }).fail(err => {
+                    dispatch(Fail("reques soundclound fail!"))
                 });
         }
     }

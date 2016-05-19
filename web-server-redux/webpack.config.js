@@ -31,7 +31,7 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname, "dist"),
-        publicPath: "http://localhost:8080/",
+        publicPath: "http://localhost:30002/",
         filename:"[name].js"
     },
     cssnext: {
@@ -41,7 +41,7 @@ module.exports = {
         // Add `.ts` and `.tsx` and `.css` as a resolvable extension.
         extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.css'],
         alias: {
-             //jquery: "../node_modules/jquery/dist/jquery"
+             jquery: "jquery/dist/jquery"
         }    
     },
     module: {

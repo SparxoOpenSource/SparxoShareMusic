@@ -6,11 +6,12 @@
     "postinstall": "tsd install",
     "build": "webpack",
     "dev": "webpack -w",
-    "start": "webpack-dev-server --progress --colors --hot --content-base ./dist --config ./webpack.config.js"
+    "start": "webpack-dev-server --progress --colors --hot --content-base ./dist --config ./webpack.config.js --port 30002"
   },
   "dependencies": {
     "express": "3.4.0",
     "bootstrap": "^3.3.6",
+    "jquery":"^2.2.3",
     "react": "^15.0.2",    
     "react-dom": "^15.0.2",
     "react-router":"^2.4.0",
@@ -24,8 +25,7 @@
     "pomelo-jsclient-websocket":"^0.1.1",
     "pomelo-protocol":"^0.1.6",
     "pomelo-protobuf":"^0.4.0",
-    "q":"^1.4.1",   
-    
+    "q":"^1.4.1",
     "basscss": "^8.0.1",
     "basscss-addons": "^1.0.0-beta4",
     "basscss-align": "^1.0.2",

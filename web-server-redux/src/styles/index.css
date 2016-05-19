@@ -26,6 +26,7 @@
 @import 'basscss-grid';
 @import 'basscss-flexbox';
 @import 'basscss-position';
-@import 'basscss-border';
-@import 'basscss-hide';
-@import './music/index.css';     
+@import 'basscss-border'; 
+@import 'basscss-hide'; 
+  
+@import './music/index';   

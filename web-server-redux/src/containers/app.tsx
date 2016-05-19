@@ -1,8 +1,10 @@
 import * as React from 'react';
 import {connect} from "react-redux";
 import {Link} from 'react-router';
-
+import { Modal, ModalContent } from '../components/modal';
+import * as $player from "../actions/player";
 import * as $session from "../actions/session";
+import * as $add from "../actions/add";
 
 import Player from "../components/player";
 import Button from '../components/button';
@@ -12,57 +14,80 @@ import Logo from '../components/logo';
 import Navigator from '../components/navigator';
 import NavigatorItem from '../components/navigator-item';
 
+import AddModal from '../components/addModal';
+
+
 function mapStateToProps(state) {
     return {
         player: state.player,
-        session: state.session
+        session: state.session,
+        add: state.add
     };
 }
 function mapDispatchToProps(dispatch) {
     return {
-        login: (): void => dispatch($session.login())
+        login: (): void => dispatch($session.login()),
+        toogle: () => dispatch($player.toogleMianPlayer()),
+        showAddModal: () => dispatch($add.showAddModal(true)),
+        filter:(s)=>dispatch($player.filter(s))
     };
 }
 interface IAppProps extends React.Props<any> {
     player: any,
     session: any,
+    add: any,
+    toogle: () => void;
     login: () => void;
+    filter:(s)=>void;
+    showAddModal: () => void;
 }
 
 /**
- *  App
+ * App
  */
-class App extends React.Component<IAppProps, void> {
+class App extends React.Component<IAppProps, {}> {
+    state = {
+        showAddModal: false
+    }
+    filter(){
+        var searchBox=this.refs["searchBox"] as HTMLInputElement;        
+        this.props.filter(searchBox.value);
+    }
     render() {
-        let {children, session, player, login} = this.props;
+        let {children, session, add,filter, player, login, toogle, showAddModal} = this.props;
         let isLoggedIn = session.token != null;
         return (<div>
-
-            {isLoggedIn ? null : <LoginModal
+            <LoginModal
                 onSubmit={ login }
                 isPending={ session.isLoading || false }
                 hasError={ session.hasError || false }
                 isVisible={ !isLoggedIn }
                 errorMessage={session.errorMessage} />
-            }
+            <AddModal />
             <Navigator>
                 <NavigatorItem mr>
                     <Logo/>
                 </NavigatorItem>
-                <NavigatorItem  mr isVisible={isLoggedIn}>
-                    <Link to="/">Home</Link>
+                <div className="flex flex-auto"></div>
+                <NavigatorItem mr isVisible={isLoggedIn}>
+                    <input placeholder="search" ref="searchBox" type="text" value={player.filter} onChange={this.filter.bind(this)}/>
                 </NavigatorItem>
                 <NavigatorItem mr isVisible={isLoggedIn}>
-                    <Link to="/add">Add</Link>
+                    <a href="#add" onClick={showAddModal}>Add</a>
                 </NavigatorItem>
-                <div className="flex flex-auto"></div>
+                <NavigatorItem mr isVisible={isLoggedIn}>
+                    <label>
+                        <input type="checkbox" onChange={toogle} checked={player.mainPlayer}/>
+                        主播放器
+                    </label>
+                </NavigatorItem>
                 <NavigatorItem mr isVisible={isLoggedIn}>
                     <b>{session.token}</b>
                 </NavigatorItem>
             </Navigator>
             <Content isVisible={isLoggedIn}>
                 {children}
-                <Player></Player>
+                {player.mainPlayer ? <Player></Player> : null}
             </Content>
         </div>);
     }

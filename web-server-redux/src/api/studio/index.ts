@@ -47,8 +47,8 @@ var eventBuilder = {
         pomelo.on(eventName, cb);
         return eventBuilder;
     },
-    once:function(eventName,cb:(data)=>void) {
-        pomelo.once(eventName,cb);
+    once: function (eventName, cb: (data) => void) {
+        pomelo.once(eventName, cb);
         return eventBuilder;
     }
 }
@@ -133,4 +133,12 @@ export function add(url) {
 export function remove(id) {
     var route = "studio.studioHandler.removeMusic";
     return request(route, { id: id })
+}
+export function importMusic(musics) {
+    var d = q.defer();
+    var route = "studio.studioHandler.importMusic";
+    pomelo.request(route, { list: musics }, function (data) {
+        d.resolve();
+    });
+    return d.promise;
 }

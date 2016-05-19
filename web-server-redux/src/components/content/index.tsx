@@ -7,7 +7,7 @@ interface IContentProps extends React.Props<any> {
 
 export default function Content({ children = null, isVisible }: IContentProps) {
   return (
-    <main className="mt4">
+    <main className="mt4 mb4 ml4 mr4">
       { isVisible ? children : null }
     </main>
   );

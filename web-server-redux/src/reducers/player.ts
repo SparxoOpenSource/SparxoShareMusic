@@ -1,13 +1,18 @@
 import {player} from "../constants/actionTypes"
 
+var isMainPlayer = localStorage["isMainPlayer2"] || "0";
+
 const initialState = {
-    inited: false,
+    mainPlayer: isMainPlayer == "1",
+    useSoundcloud:false,
     playSong: null,
+    filter:"",
     playlist: []
 }
 
 
 var handlers = {
+   
     [player.play]: function (state, action) {
         return Object.assign({}, state, {
             playSong: action.playSong
@@ -15,7 +20,7 @@ var handlers = {
     },
     [player.add]: function (state, action) {
         return Object.assign({}, state, {
-            playlist: [...state.playlist, action.data]
+            playlist: [action.data, ...state.playlist]
         });
     },
     [player.remove]: function (state, action) {
@@ -30,6 +35,17 @@ var handlers = {
         return Object.assign({}, state, {
             playlist: action.playlist,
             playSong: action.playSong
+        });
+    },
+    [player.filter]: function (state, action) {
+        return Object.assign({}, state, {
+            filter:action.keyword
+        });
+    },
+    [player.toogle]: function (state, action) {
+        localStorage["isMainPlayer2"]=state.mainPlayer?'0':'1';
+        return Object.assign({}, state, {
+            mainPlayer: !state.mainPlayer
         });
     }
 }

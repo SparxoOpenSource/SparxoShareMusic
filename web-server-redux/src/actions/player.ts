@@ -22,15 +22,17 @@ export function play(songId) {
 function receiveList(data) {
   return {
     type: player.list,
-    playlist: data.playerMusicList,
+    playlist: data.playerMusicList.filter(m => m.resourceUrl != null),
     playSong: data.playingSong
   }
 }
 
 function receiveAdd(data) {
-  return {
-    type: player.add,
-    data: data
+  if (data.resourceUrl) {
+    return {
+      type: player.add,
+      data: data
+    }
   }
 }
 
@@ -42,19 +44,34 @@ function receiveRemove(id) {
 }
 
 export function remove(id) {
-  $studio.remove(id);
+  if (confirm("确定？")) {
+    $studio.remove(id);
+  }
+}
+
+export function toogleMianPlayer() {
+  return {
+    type: player.toogle
+  };
+}
+export function filter(s) {
+  return {
+    type: player.filter,
+    keyword: s
+  };
 }
 
 export function init() {
   return (dispatch, getState) => {
     $studio.on("onMusicAdd", (data) => {
+      console.log("add", data);
       dispatch(receiveAdd(data));
     }).on("onMusicRemove", (data) => {
-      dispatch(receiveRemove(data.id));
       console.log('remove', data);
+      dispatch(receiveRemove(data.id));
     }).on("onMusicPlay", (data) => {
+      console.log('play', data);
       dispatch(receivePlay(data));
-      console.log(data);
     }).on("onUserLeave", (data) => {
 
     });

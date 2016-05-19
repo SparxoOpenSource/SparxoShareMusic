@@ -115,7 +115,7 @@ class App extends React.Component<IAppProps, {}> {
                 <NavigatorItem mr isVisible={isLoggedIn}>
                     <label>
                         <input type="checkbox" onChange={toogle} checked={player.mainPlayer}/>
-                        主播放器
+                        Main
                     </label>
                 </NavigatorItem>
                 <NavigatorItem mr isVisible={isLoggedIn}>

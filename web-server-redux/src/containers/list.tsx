@@ -39,10 +39,12 @@ class List extends React.Component<IListProps, void> {
                   <div className="card-image" style={{ backgroundImage: `url(${d.image})` }}>
                     {
                       (playSong && d.id == playSong.id) ? (
-                        <div className="card-btn-play playing">播放中...</div>
+                        <div className="card-btn-play playing">
+                          <i class="icon ion-radio-waves"></i>
+                        </div>
                       ) : (
                           <div className="card-btn-play" onClick={play.bind(null, d.id) }>
-                            播放
+                            <i class="icon ion-ios-play"></i>
                           </div>
                         )
                     }

@@ -60,6 +60,10 @@ export function addMusic() {
     return (dispatch, getState) => {
         const add = getState().form.add;
         const url = add.url.value;
+        if(url==""){
+            dispatch(Fail("url error"));
+            return;
+        }
         if(url.indexOf("http://music.163.com")==0){
             $studio.add(url).then(()=>{
                 dispatch(Success());                

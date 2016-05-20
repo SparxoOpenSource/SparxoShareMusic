@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {play} from '../../actions/player';
+import * as $ from 'jquery';
 
 function mapStateToProps(state) {
     return state.player;
@@ -39,6 +40,14 @@ function formatSeconds(num) {
     const minutes = padZero(Math.floor(num / 60), 2);
     const seconds = padZero(num % 60, 2);
     return `${minutes}:${seconds}`;
+}
+
+function  findIndex(array:Array<any>,callback) {
+    for (var index = 0; index < array.length; index++) {
+        if(callback(array[index])){
+            return index;
+        }
+    }
 }
 class Player extends React.Component<IPlayerProps, {}> {
 
@@ -126,7 +135,8 @@ class Player extends React.Component<IPlayerProps, {}> {
     }
     playPrev() {
         var {playSong, playlist, play} = this.props;
-        var index = playlist.findIndex(s => s.id == playSong.id);
+        
+        var index = findIndex(playlist,s => s.id == playSong.id);
         var next;
         if (index > 0) {
             next = playlist[index - 1];
@@ -139,7 +149,7 @@ class Player extends React.Component<IPlayerProps, {}> {
     }
     playNext() {
         var {playSong, playlist, play} = this.props;
-        var index = playlist.findIndex(s => s.id == playSong.id);
+        var index = findIndex(playlist,s => s.id == playSong.id);
         var next;
         if (index < playlist.length - 1) {
             next = playlist[index + 1];

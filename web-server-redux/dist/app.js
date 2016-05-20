@@ -52,16 +52,16 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const ReactDOM = __webpack_require__(34);
-	const react_redux_1 = __webpack_require__(169);
-	const react_router_1 = __webpack_require__(195);
-	const react_router_redux_1 = __webpack_require__(254);
-	const routes_1 = __webpack_require__(259);
-	const configure_store_1 = __webpack_require__(346);
+	var React = __webpack_require__(2);
+	var ReactDOM = __webpack_require__(34);
+	var react_redux_1 = __webpack_require__(169);
+	var react_router_1 = __webpack_require__(195);
+	var react_router_redux_1 = __webpack_require__(254);
+	var routes_1 = __webpack_require__(259);
+	var configure_store_1 = __webpack_require__(346);
 	__webpack_require__(352);
-	const store = configure_store_1.default({});
-	const history = react_router_redux_1.syncHistoryWithStore(react_router_1.browserHistory, store);
+	var store = configure_store_1.default({});
+	var history = react_router_redux_1.syncHistoryWithStore(react_router_1.browserHistory, store);
 	ReactDOM.render(React.createElement("div", null, React.createElement(react_redux_1.Provider, {store: store}, React.createElement(react_router_1.Router, {history: history}, routes_1.default))), document.getElementById('app'));
 
 
@@ -27619,10 +27619,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const react_router_1 = __webpack_require__(195);
-	const app_1 = __webpack_require__(260);
-	const list_1 = __webpack_require__(345);
+	var React = __webpack_require__(2);
+	var react_router_1 = __webpack_require__(195);
+	var app_1 = __webpack_require__(260);
+	var list_1 = __webpack_require__(345);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = (React.createElement(react_router_1.Route, {path: "/", component: app_1.default}, React.createElement(react_router_1.IndexRoute, {component: list_1.default})));
 
@@ -27632,18 +27632,23 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const react_redux_1 = __webpack_require__(169);
-	const $player = __webpack_require__(261);
-	const $session = __webpack_require__(275);
-	const $add = __webpack_require__(276);
-	const player_1 = __webpack_require__(278);
-	const content_1 = __webpack_require__(279);
-	const login_modal_1 = __webpack_require__(280);
-	const logo_1 = __webpack_require__(341);
-	const navigator_1 = __webpack_require__(342);
-	const navigator_item_1 = __webpack_require__(343);
-	const addModal_1 = __webpack_require__(344);
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(2);
+	var react_redux_1 = __webpack_require__(169);
+	var $player = __webpack_require__(261);
+	var $session = __webpack_require__(275);
+	var $add = __webpack_require__(276);
+	var player_1 = __webpack_require__(278);
+	var content_1 = __webpack_require__(279);
+	var login_modal_1 = __webpack_require__(280);
+	var logo_1 = __webpack_require__(341);
+	var navigator_1 = __webpack_require__(342);
+	var navigator_item_1 = __webpack_require__(343);
+	var addModal_1 = __webpack_require__(344);
 	function mapStateToProps(state) {
 	    return {
 	        player: state.player,
@@ -27653,27 +27658,28 @@
 	}
 	function mapDispatchToProps(dispatch) {
 	    return {
-	        login: () => dispatch($session.login()),
-	        toogle: () => dispatch($player.toogleMianPlayer()),
-	        showAddModal: () => dispatch($add.showAddModal(true)),
-	        filter: (s) => dispatch($player.filter(s))
+	        login: function () { return dispatch($session.login()); },
+	        toogle: function () { return dispatch($player.toogleMianPlayer()); },
+	        showAddModal: function () { return dispatch($add.showAddModal(true)); },
+	        filter: function (s) { return dispatch($player.filter(s)); }
 	    };
 	}
 	/**
 	 * App
 	 */
-	class App extends React.Component {
-	    constructor(...args) {
-	        super(...args);
+	var App = (function (_super) {
+	    __extends(App, _super);
+	    function App() {
+	        _super.apply(this, arguments);
 	        this.state = {
 	            showAddModal: false
 	        };
 	    }
-	    filter() {
+	    App.prototype.filter = function () {
 	        var searchBox = this.refs["searchBox"];
 	        this.props.filter(searchBox.value);
-	    }
-	    onImport() {
+	    };
+	    App.prototype.onImport = function () {
 	        var self = this;
 	        var s = document.createElement("input");
 	        s.type = "file";
@@ -27690,9 +27696,9 @@
 	        setTimeout(function () {
 	            s.remove();
 	        }, 1000);
-	    }
-	    onExport() {
-	        var { player } = this.props;
+	    };
+	    App.prototype.onExport = function () {
+	        var player = this.props.player;
 	        var musics = player.playlist.reverse();
 	        var a = document.createElement('a');
 	        a.setAttribute("download", "playlist.json");
@@ -27702,13 +27708,14 @@
 	        setTimeout(function () {
 	            a.remove();
 	        }, 1000);
-	    }
-	    render() {
-	        let { children, session, add, filter, player, login, toogle, showAddModal } = this.props;
-	        let isLoggedIn = session.token != null;
+	    };
+	    App.prototype.render = function () {
+	        var _a = this.props, children = _a.children, session = _a.session, add = _a.add, filter = _a.filter, player = _a.player, login = _a.login, toogle = _a.toogle, showAddModal = _a.showAddModal;
+	        var isLoggedIn = session.token != null;
 	        return (React.createElement("div", null, React.createElement(login_modal_1.default, {onSubmit: login, isPending: session.isLoading || false, hasError: session.hasError || false, isVisible: !isLoggedIn, errorMessage: session.errorMessage}), React.createElement(addModal_1.default, null), React.createElement(navigator_1.default, null, React.createElement(navigator_item_1.default, {mr: true}, React.createElement(logo_1.default, null)), React.createElement("div", {className: "flex flex-auto"}), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("input", {placeholder: "search", ref: "searchBox", type: "text", value: player.filter, onChange: this.filter.bind(this)})), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("a", {href: "#add", onClick: this.onExport.bind(this)}, "Export")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("a", {href: "#add", onClick: this.onImport.bind(this)}, "Import")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("a", {href: "#add", onClick: showAddModal}, "Add")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("label", null, React.createElement("input", {type: "checkbox", onChange: toogle, checked: player.mainPlayer}), "Main")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("b", null, session.token))), React.createElement(content_1.default, {isVisible: isLoggedIn}, children, player.mainPlayer ? React.createElement(player_1.default, null) : null)));
-	    }
-	}
+	    };
+	    return App;
+	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(mapStateToProps, mapDispatchToProps)(App);
 
@@ -27718,8 +27725,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const actionTypes_1 = __webpack_require__(262);
-	const $studio = __webpack_require__(263);
+	var actionTypes_1 = __webpack_require__(262);
+	var $studio = __webpack_require__(263);
 	function receivePlay(song) {
 	    return {
 	        type: actionTypes_1.player.play,
@@ -27727,10 +27734,10 @@
 	    };
 	}
 	function play(songId) {
-	    return (dispatch, getState) => {
+	    return function (dispatch, getState) {
 	        var list = getState().player.playlist;
-	        var song = list.find(item => item.id == songId);
-	        $studio.play(songId).then(() => {
+	        var song = list.find(function (item) { return item.id == songId; });
+	        $studio.play(songId).then(function () {
 	            dispatch(receivePlay(song));
 	        });
 	    };
@@ -27739,7 +27746,7 @@
 	function receiveList(data) {
 	    return {
 	        type: actionTypes_1.player.list,
-	        playlist: data.playerMusicList.filter(m => m.resourceUrl != null),
+	        playlist: data.playerMusicList.filter(function (m) { return m.resourceUrl != null; }),
 	        playSong: data.playingSong
 	    };
 	}
@@ -27778,30 +27785,30 @@
 	exports.filter = filter;
 	function importMusic(musics) {
 	    //console.log('import',musics);
-	    $studio.importMusic(musics).then(() => {
+	    $studio.importMusic(musics).then(function () {
 	        alert("导入成功");
 	    });
 	}
 	exports.importMusic = importMusic;
 	function init() {
-	    return (dispatch, getState) => {
-	        $studio.on("onMusicAdd", (data) => {
+	    return function (dispatch, getState) {
+	        $studio.on("onMusicAdd", function (data) {
 	            console.log("add", data);
 	            dispatch(receiveAdd(data));
-	        }).on("onMusicRemove", (data) => {
+	        }).on("onMusicRemove", function (data) {
 	            console.log('remove', data);
 	            dispatch(receiveRemove(data.id));
-	        }).on("onMusicPlay", (data) => {
+	        }).on("onMusicPlay", function (data) {
 	            console.log('play', data);
 	            dispatch(receivePlay(data));
-	        }).on("onUserLeave", (data) => {
+	        }).on("onUserLeave", function (data) {
 	        });
 	        var timer = setInterval(function () {
 	            $studio.keepAlive();
 	        }, 5000);
-	        $studio.getPlaylist().then((data) => {
+	        $studio.getPlaylist().then(function (data) {
 	            dispatch(receiveList(data));
-	        }).fail((err) => {
+	        }).fail(function (err) {
 	            alert(err);
 	        });
 	    };
@@ -27842,20 +27849,20 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const q = __webpack_require__(264);
-	const Emitter = __webpack_require__(266);
+	var q = __webpack_require__(264);
+	var Emitter = __webpack_require__(266);
 	window.EventEmitter = Emitter;
 	__webpack_require__(267);
 	__webpack_require__(272);
 	__webpack_require__(273);
-	const config_1 = __webpack_require__(274);
+	var config_1 = __webpack_require__(274);
 	var room = {
 	    host: '',
 	    port: 0
 	};
 	function request(route, param) {
 	    var def = q.defer();
-	    pomelo.request(route, param, data => {
+	    pomelo.request(route, param, function (data) {
 	        def.resolve(data);
 	    });
 	    return def.promise;
@@ -27865,9 +27872,9 @@
 	    pomelo.init({
 	        host: config_1.server.ip,
 	        port: config_1.server.port
-	    }, (s) => {
+	    }, function (s) {
 	        var route = 'gate.gateHandler.queryEntry';
-	        request(route, { userName: uid }).then((data) => {
+	        request(route, { userName: uid }).then(function (data) {
 	            pomelo.disconnect();
 	            if (data.code === 500) {
 	                def.reject("There is no server to log in, please wait.");
@@ -27900,7 +27907,7 @@
 	        port: room.port,
 	        reconnect: true,
 	        maxReconnectAttempts: 20,
-	    }, (data) => {
+	    }, function (data) {
 	        def.resolve();
 	    });
 	    return def.promise;
@@ -27928,7 +27935,7 @@
 	    var def = q.defer();
 	    var route = "connector.entryHandler.enter";
 	    request(route, { userName: uid, studioId: studioId })
-	        .then((data) => {
+	        .then(function (data) {
 	        if (data.code === 500) {
 	            def.reject("error");
 	            return;
@@ -27948,7 +27955,7 @@
 	    var self = this;
 	    var route = "studio.studioHandler.getPlayerMusicList";
 	    request(route)
-	        .then((data) => {
+	        .then(function (data) {
 	        if (data.code !== 500) {
 	            def.resolve(data);
 	        }
@@ -33574,8 +33581,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const actionTypes_1 = __webpack_require__(262);
-	const $studio = __webpack_require__(263);
+	var actionTypes_1 = __webpack_require__(262);
+	var $studio = __webpack_require__(263);
 	function Pending() {
 	    return {
 	        type: actionTypes_1.session.pending
@@ -33594,35 +33601,35 @@
 	    };
 	}
 	function login() {
-	    return (dispatch, getState) => {
-	        const login = getState().form.login;
-	        const username = login.username.value;
-	        const studioId = login.studioId.value;
+	    return function (dispatch, getState) {
+	        var login = getState().form.login;
+	        var username = login.username.value;
+	        var studioId = login.studioId.value;
 	        dispatch(Pending());
-	        $studio.once("io-error", (data) => {
+	        $studio.once("io-error", function (data) {
 	            dispatch(Fail("无法连接到服务器，请稍后再试"));
 	        });
-	        $studio.connect(username).then(() => {
+	        $studio.connect(username).then(function () {
 	            return $studio.studio();
-	        }).then(() => {
+	        }).then(function () {
 	            console.log("检查用户名");
 	            return $studio.checkUserName(username);
-	        }).then(() => {
+	        }).then(function () {
 	            console.log("进入房间");
 	            return $studio.enter(username, studioId);
-	        }).then(() => {
+	        }).then(function () {
 	            console.log("enterSence");
 	            return $studio.enterSence();
-	        }).then(() => {
+	        }).then(function () {
 	            console.log("登录成功");
 	            dispatch(Success({
-	                token: `${username} (${studioId})`,
+	                token: username + " (" + studioId + ")",
 	                user: {
 	                    username: username,
 	                    studioId: studioId
 	                }
 	            }));
-	        }).fail((msg) => {
+	        }).fail(function (msg) {
 	            dispatch(Fail(msg || "登录失败，请稍后再试"));
 	        });
 	    };
@@ -33635,10 +33642,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const actionTypes_1 = __webpack_require__(262);
-	const $studio = __webpack_require__(263);
-	const $ = __webpack_require__(277);
-	const config_1 = __webpack_require__(274);
+	var actionTypes_1 = __webpack_require__(262);
+	var $studio = __webpack_require__(263);
+	var $ = __webpack_require__(277);
+	var config_1 = __webpack_require__(274);
 	function showAddModal(isShow) {
 	    return (isShow ? { type: actionTypes_1.add.show } : { type: actionTypes_1.add.hide });
 	}
@@ -33669,7 +33676,8 @@
 	        queryString = url.substr(queryIndex + 1);
 	    }
 	    pairs = queryString.split('&');
-	    for (var pair of pairs) {
+	    for (var _i = 0, pairs_1 = pairs; _i < pairs_1.length; _i++) {
+	        var pair = pairs_1[_i];
 	        if (pair === '') {
 	            continue;
 	        }
@@ -33690,16 +33698,16 @@
 	    return queryObject;
 	}
 	function addMusic() {
-	    return (dispatch, getState) => {
-	        const add = getState().form.add;
-	        const url = add.url.value;
+	    return function (dispatch, getState) {
+	        var add = getState().form.add;
+	        var url = add.url.value;
 	        if (url == "") {
 	            dispatch(Fail("url error"));
 	            return;
 	        }
 	        if (url.indexOf("http://music.163.com") == 0) {
 	            dispatch(Pending());
-	            $studio.add(url).then(() => {
+	            $studio.add(url).then(function () {
 	                dispatch(Success());
 	            });
 	        }
@@ -33711,7 +33719,7 @@
 	                    url: "http://mp3.sogou.com/tiny/song?json=1&query=getlyric&tid=" + queryParams.tid,
 	                    dataType: 'jsonp',
 	                    jsonpCallback: "MusicJsonCallback"
-	                }).done((json) => {
+	                }).done(function (json) {
 	                    var album_str = json.album_id + "";
 	                    $studio.importMusic([{
 	                            id: 'sogou-' + json.song_id,
@@ -33721,7 +33729,7 @@
 	                            image: "http://imgcache.qq.com/music/photo/album_300/" + parseInt(album_str.substr(album_str.length - 2)) + "/300_albumpic_" + json.album_id + "_0.jpg",
 	                            resourceUrl: json.play_url,
 	                            orderer: sessionStorage['username2'] || ""
-	                        }]).then(() => {
+	                        }]).then(function () {
 	                        dispatch(Success());
 	                    });
 	                });
@@ -33738,22 +33746,22 @@
 	            var sp = str.split('/');
 	            var id = sp[sp.length - 1];
 	            dispatch(Pending());
-	            return $.getJSON(`//api.soundcloud.com/tracks/${id}?client_id=${config_1.keys.soundcloud_key}`)
-	                .done((data) => {
+	            return $.getJSON("//api.soundcloud.com/tracks/" + id + "?client_id=" + config_1.keys.soundcloud_key)
+	                .done(function (data) {
 	                var music = {
-	                    id: `soundcloud-${data.id}`,
+	                    id: "soundcloud-" + data.id,
 	                    name: data.title,
 	                    artists: [data.user.username],
 	                    album: data.genre,
 	                    image: data.artwork_url,
-	                    resourceUrl: `${data.stream_url}?client_id=${config_1.keys.soundcloud_key}`,
+	                    resourceUrl: data.stream_url + "?client_id=" + config_1.keys.soundcloud_key,
 	                    orderer: sessionStorage['username2'] || ""
 	                };
 	                $studio.importMusic([music])
-	                    .then(() => {
+	                    .then(function () {
 	                    dispatch(Success());
 	                });
-	            }).fail(err => {
+	            }).fail(function (err) {
 	                dispatch(Fail("reques soundclound fail!"));
 	            });
 	        }
@@ -43615,28 +43623,33 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const react_redux_1 = __webpack_require__(169);
-	const player_1 = __webpack_require__(261);
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(2);
+	var react_redux_1 = __webpack_require__(169);
+	var player_1 = __webpack_require__(261);
 	function mapStateToProps(state) {
 	    return state.player;
 	}
 	function mapDispatchToProps(dispatch) {
 	    return {
-	        play: (id) => dispatch(player_1.play(id))
+	        play: function (id) { return dispatch(player_1.play(id)); }
 	    };
 	}
 	;
 	function padZero(num, size) {
-	    let s = String(num);
+	    var s = String(num);
 	    while (s.length < size) {
-	        s = `0${s}`;
+	        s = "0" + s;
 	    }
 	    return s;
 	}
 	function offsetLeft(element) {
-	    let el = element;
-	    let x = el.offsetLeft;
+	    var el = element;
+	    var x = el.offsetLeft;
 	    while (el.offsetParent) {
 	        x += el.offsetParent.offsetLeft;
 	        el = el.offsetParent;
@@ -43644,13 +43657,21 @@
 	    return x;
 	}
 	function formatSeconds(num) {
-	    const minutes = padZero(Math.floor(num / 60), 2);
-	    const seconds = padZero(num % 60, 2);
-	    return `${minutes}:${seconds}`;
+	    var minutes = padZero(Math.floor(num / 60), 2);
+	    var seconds = padZero(num % 60, 2);
+	    return minutes + ":" + seconds;
 	}
-	class Player extends React.Component {
-	    constructor(props, state) {
-	        super(props, state);
+	function findIndex(array, callback) {
+	    for (var index = 0; index < array.length; index++) {
+	        if (callback(array[index])) {
+	            return index;
+	        }
+	    }
+	}
+	var Player = (function (_super) {
+	    __extends(Player, _super);
+	    function Player(props, state) {
+	        _super.call(this, props, state);
 	        this.state = {
 	            isPlaying: false,
 	            duration: 0,
@@ -43666,7 +43687,7 @@
 	        this.handleTimeUpdate = this.handleTimeUpdate.bind(this);
 	        this.handleVolumeChange = this.handleVolumeChange.bind(this);
 	    }
-	    componentDidMount() {
+	    Player.prototype.componentDidMount = function () {
 	        var audioEl = this.refs["player"];
 	        audioEl.addEventListener("ended", this.handleEnded, false);
 	        audioEl.addEventListener('loadedmetadata', this.handleLoadedMetadata, false);
@@ -43676,8 +43697,8 @@
 	        audioEl.addEventListener("timeupdate", this.handleTimeUpdate, false);
 	        audioEl.addEventListener("volumechange", this.handleVolumeChange, false);
 	        audioEl.addEventListener("error", this.handleError, false);
-	    }
-	    componentWillUnmount() {
+	    };
+	    Player.prototype.componentWillUnmount = function () {
 	        var audioEl = this.refs["player"];
 	        audioEl.removeEventListener('ended', this.handleEnded, false);
 	        audioEl.removeEventListener('loadedmetadata', this.handleLoadedMetadata, false);
@@ -43687,53 +43708,53 @@
 	        audioEl.removeEventListener('timeupdate', this.handleTimeUpdate, false);
 	        audioEl.removeEventListener('volumechange', this.handleVolumeChange, false);
 	        audioEl.removeEventListener("error", this.handleError, false);
-	    }
-	    handleError() {
+	    };
+	    Player.prototype.handleError = function () {
 	        var self = this;
 	        setTimeout(function () {
 	            self.playNext();
 	        }, 1000);
-	    }
-	    handleEnded() {
+	    };
+	    Player.prototype.handleEnded = function () {
 	        this.playNext();
-	    }
-	    handleLoadedMetadata() {
-	        const audioElement = this.refs["player"];
+	    };
+	    Player.prototype.handleLoadedMetadata = function () {
+	        var audioElement = this.refs["player"];
 	        this.setState({
 	            duration: Math.floor(audioElement.duration),
 	        });
 	        audioElement.play();
-	    }
-	    handleLoadStart() {
+	    };
+	    Player.prototype.handleLoadStart = function () {
 	        this.setState({
 	            duration: 0
 	        });
-	    }
-	    handlePause() {
+	    };
+	    Player.prototype.handlePause = function () {
 	        this.setState({
 	            isPlaying: false
 	        });
-	    }
-	    handlePlay() {
+	    };
+	    Player.prototype.handlePlay = function () {
 	        this.setState({
 	            isPlaying: true
 	        });
-	    }
-	    handleTimeUpdate(e) {
+	    };
+	    Player.prototype.handleTimeUpdate = function (e) {
 	        var audioEl = this.refs["player"];
 	        this.setState({
 	            currentTime: Math.floor(audioEl.currentTime)
 	        });
-	    }
-	    handleVolumeChange(e) {
-	        const audioEl = this.refs["player"];
+	    };
+	    Player.prototype.handleVolumeChange = function (e) {
+	        var audioEl = this.refs["player"];
 	        this.setState({
 	            volume: audioEl.volume
 	        });
-	    }
-	    playPrev() {
-	        var { playSong, playlist, play } = this.props;
-	        var index = playlist.findIndex(s => s.id == playSong.id);
+	    };
+	    Player.prototype.playPrev = function () {
+	        var _a = this.props, playSong = _a.playSong, playlist = _a.playlist, play = _a.play;
+	        var index = findIndex(playlist, function (s) { return s.id == playSong.id; });
 	        var next;
 	        if (index > 0) {
 	            next = playlist[index - 1];
@@ -43742,10 +43763,10 @@
 	            next = playlist[playlist.length - 1];
 	        }
 	        play(next.id);
-	    }
-	    playNext() {
-	        var { playSong, playlist, play } = this.props;
-	        var index = playlist.findIndex(s => s.id == playSong.id);
+	    };
+	    Player.prototype.playNext = function () {
+	        var _a = this.props, playSong = _a.playSong, playlist = _a.playlist, play = _a.play;
+	        var index = findIndex(playlist, function (s) { return s.id == playSong.id; });
 	        var next;
 	        if (index < playlist.length - 1) {
 	            next = playlist[index + 1];
@@ -43754,31 +43775,32 @@
 	            next = playlist[0];
 	        }
 	        play(next.id);
-	    }
-	    tooglePlay() {
+	    };
+	    Player.prototype.tooglePlay = function () {
 	        var audioEl = this.refs["player"];
 	        audioEl.paused ? audioEl.play() : audioEl.pause();
-	    }
-	    seek(e) {
-	        const audioEl = this.refs["player"];
-	        const percent = (e.clientX - offsetLeft(e.currentTarget)) / e.currentTarget.offsetWidth;
-	        const currentTime = Math.floor(percent * this.state.duration);
+	    };
+	    Player.prototype.seek = function (e) {
+	        var audioEl = this.refs["player"];
+	        var percent = (e.clientX - offsetLeft(e.currentTarget)) / e.currentTarget.offsetWidth;
+	        var currentTime = Math.floor(percent * this.state.duration);
 	        audioEl.currentTime = currentTime;
-	    }
-	    changeVolume(e) {
-	        const audioEl = this.refs["player"];
-	        const volume = (e.clientX - offsetLeft(e.currentTarget)) / e.currentTarget.offsetWidth;
+	    };
+	    Player.prototype.changeVolume = function (e) {
+	        var audioEl = this.refs["player"];
+	        var volume = (e.clientX - offsetLeft(e.currentTarget)) / e.currentTarget.offsetWidth;
 	        audioEl.volume = volume;
-	    }
-	    render() {
-	        var { playSong, mainPlayer } = this.props;
+	    };
+	    Player.prototype.render = function () {
+	        var _a = this.props, playSong = _a.playSong, mainPlayer = _a.mainPlayer;
 	        var resourceUrl = playSong ? playSong.resourceUrl : '';
 	        var image = playSong ? playSong.image : "";
 	        var musicName = playSong ? playSong.name : "";
 	        var orderer = playSong ? playSong.orderer : "";
-	        return React.createElement("div", {className: "player fixed bottom-0 left-0 right-0"}, React.createElement("audio", {id: "player", ref: "player", src: resourceUrl}), React.createElement("div", {className: "player-main"}, React.createElement("div", {className: "player-section player-info"}, React.createElement("img", {className: "player-image", src: image}), React.createElement("div", {className: "song-card-details"}, React.createElement("a", {className: "song-card-title"}, musicName), React.createElement("a", {className: "song-card-user-username"}, orderer))), React.createElement("div", {className: "player-section"}, React.createElement("div", {className: "player-button", onClick: this.playPrev.bind(this)}, React.createElement("i", {className: "icon ion-ios-rewind"})), React.createElement("div", {className: "player-button", onClick: this.tooglePlay.bind(this)}, React.createElement("i", {className: this.state.isPlaying ? 'icon ion-ios-pause' : 'icon ion-ios-play'})), React.createElement("div", {className: "player-button", onClick: this.playNext.bind(this)}, React.createElement("i", {className: "icon ion-ios-fastforward"}))), React.createElement("div", {className: "player-section player-seek"}, React.createElement("div", {className: "player-seek-bar-wrap", onClick: this.seek.bind(this)}, React.createElement("div", {className: "player-seek-bar"}, React.createElement("div", {className: "player-seek-duration-bar", style: { width: `${this.state.currentTime / this.state.duration * 100}%` }}, React.createElement("div", {className: "player-seek-handle"})))), React.createElement("div", {className: "player-time"}, React.createElement("span", null, formatSeconds(this.state.currentTime)), React.createElement("span", {className: "player-time-divider"}, "/"), React.createElement("span", null, formatSeconds(this.state.duration)))), React.createElement("div", {className: "player-section"}, React.createElement("div", {className: "player-button player-volume-button"}, React.createElement("div", {className: "player-volume-button-wrap"}, React.createElement("i", {className: "icon ion-android-volume-up"}), React.createElement("i", {className: "icon ion-android-volume-mute"}))), React.createElement("div", {className: "player-volume"}, React.createElement("div", {className: "player-seek-bar-wrap", onClick: this.changeVolume.bind(this)}, React.createElement("div", {className: "player-seek-bar"}, React.createElement("div", {className: "player-seek-duration-bar", style: { width: `${this.state.volume * 100}%` }}, React.createElement("div", {className: "player-seek-handle"}))))))));
-	    }
-	}
+	        return React.createElement("div", {className: "player fixed bottom-0 left-0 right-0"}, React.createElement("audio", {id: "player", ref: "player", src: resourceUrl}), React.createElement("div", {className: "player-main"}, React.createElement("div", {className: "player-section player-info"}, React.createElement("img", {className: "player-image", src: image}), React.createElement("div", {className: "song-card-details"}, React.createElement("a", {className: "song-card-title"}, musicName), React.createElement("a", {className: "song-card-user-username"}, orderer))), React.createElement("div", {className: "player-section"}, React.createElement("div", {className: "player-button", onClick: this.playPrev.bind(this)}, React.createElement("i", {className: "icon ion-ios-rewind"})), React.createElement("div", {className: "player-button", onClick: this.tooglePlay.bind(this)}, React.createElement("i", {className: this.state.isPlaying ? 'icon ion-ios-pause' : 'icon ion-ios-play'})), React.createElement("div", {className: "player-button", onClick: this.playNext.bind(this)}, React.createElement("i", {className: "icon ion-ios-fastforward"}))), React.createElement("div", {className: "player-section player-seek"}, React.createElement("div", {className: "player-seek-bar-wrap", onClick: this.seek.bind(this)}, React.createElement("div", {className: "player-seek-bar"}, React.createElement("div", {className: "player-seek-duration-bar", style: { width: this.state.currentTime / this.state.duration * 100 + "%" }}, React.createElement("div", {className: "player-seek-handle"})))), React.createElement("div", {className: "player-time"}, React.createElement("span", null, formatSeconds(this.state.currentTime)), React.createElement("span", {className: "player-time-divider"}, "/"), React.createElement("span", null, formatSeconds(this.state.duration)))), React.createElement("div", {className: "player-section"}, React.createElement("div", {className: "player-button player-volume-button"}, React.createElement("div", {className: "player-volume-button-wrap"}, React.createElement("i", {className: "icon ion-android-volume-up"}), React.createElement("i", {className: "icon ion-android-volume-mute"}))), React.createElement("div", {className: "player-volume"}, React.createElement("div", {className: "player-seek-bar-wrap", onClick: this.changeVolume.bind(this)}, React.createElement("div", {className: "player-seek-bar"}, React.createElement("div", {className: "player-seek-duration-bar", style: { width: this.state.volume * 100 + "%" }}, React.createElement("div", {className: "player-seek-handle"}))))))));
+	    };
+	    return Player;
+	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(mapStateToProps, mapDispatchToProps)(Player);
 
@@ -43788,9 +43810,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
+	var React = __webpack_require__(2);
 	;
-	function Content({ children = null, isVisible }) {
+	function Content(_a) {
+	    var _b = _a.children, children = _b === void 0 ? null : _b, isVisible = _a.isVisible;
 	    return (React.createElement("main", {className: "mt4 mb4 ml4 mr4"}, isVisible ? children : null));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -43802,11 +43825,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const modal_1 = __webpack_require__(281);
-	const login_form_1 = __webpack_require__(289);
+	var React = __webpack_require__(2);
+	var modal_1 = __webpack_require__(281);
+	var login_form_1 = __webpack_require__(289);
 	;
-	function LoginModal({ isVisible, isPending, hasError, errorMessage, onSubmit }) {
+	function LoginModal(_a) {
+	    var isVisible = _a.isVisible, isPending = _a.isPending, hasError = _a.hasError, errorMessage = _a.errorMessage, onSubmit = _a.onSubmit;
 	    return (React.createElement(modal_1.Modal, {isVisible: isVisible}, React.createElement(modal_1.ModalContent, null, React.createElement("h1", {className: "mt0"}, "Login"), React.createElement(login_form_1.default, {isPending: isPending, hasError: hasError, errorMessage: errorMessage, onSubmit: onSubmit}))));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -43818,9 +43842,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const index_1 = __webpack_require__(282);
+	var index_1 = __webpack_require__(282);
 	exports.ModalContent = index_1.default;
-	const index_2 = __webpack_require__(288);
+	var index_2 = __webpack_require__(288);
 	exports.Modal = index_2.default;
 
 
@@ -43829,12 +43853,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const classNames = __webpack_require__(283);
-	const Styles = __webpack_require__(284);
+	var React = __webpack_require__(2);
+	var classNames = __webpack_require__(283);
+	var Styles = __webpack_require__(284);
 	;
-	function ModalContent({ children = null }) {
-	    const classDef = classNames('p2', 'z2', 'bg-white', 'relative', Styles.modal);
+	function ModalContent(_a) {
+	    var _b = _a.children, children = _b === void 0 ? null : _b;
+	    var classDef = classNames('p2', 'z2', 'bg-white', 'relative', Styles.modal);
 	    return (React.createElement("div", {className: classDef}, children));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -44250,10 +44275,11 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
+	var React = __webpack_require__(2);
 	;
-	function Modal({ isVisible = false, children = null }) {
-	    const styles = {
+	function Modal(_a) {
+	    var _b = _a.isVisible, isVisible = _b === void 0 ? false : _b, _c = _a.children, children = _c === void 0 ? null : _c;
+	    var styles = {
 	        visibility: isVisible ? 'visible' : 'hidden',
 	        opacity: isVisible ? 1 : 0,
 	    };
@@ -44269,6 +44295,11 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
 	var __assign = (this && this.__assign) || Object.assign || function(t) {
 	    for (var s, i = 1, n = arguments.length; i < n; i++) {
 	        s = arguments[i];
@@ -44277,25 +44308,29 @@
 	    }
 	    return t;
 	};
-	const React = __webpack_require__(2);
-	const redux_form_1 = __webpack_require__(290);
-	const _1 = __webpack_require__(334);
-	const form_group_1 = __webpack_require__(335);
-	const form_label_1 = __webpack_require__(336);
-	const form_error_1 = __webpack_require__(337);
-	const form_input_1 = __webpack_require__(338);
-	const button_1 = __webpack_require__(339);
-	const alert_1 = __webpack_require__(340);
+	var React = __webpack_require__(2);
+	var redux_form_1 = __webpack_require__(290);
+	var _1 = __webpack_require__(334);
+	var form_group_1 = __webpack_require__(335);
+	var form_label_1 = __webpack_require__(336);
+	var form_error_1 = __webpack_require__(337);
+	var form_input_1 = __webpack_require__(338);
+	var button_1 = __webpack_require__(339);
+	var alert_1 = __webpack_require__(340);
 	;
 	// Making this a class-based component until redux-form typings support 
 	// stateless functional components.
-	class LoginForm extends React.Component {
-	    render() {
-	        const { handleSubmit, resetForm, isPending, hasError, errorMessage, fields: { username, studioId } } = this.props;
-	        return (React.createElement(_1.default, {handleSubmit: handleSubmit}, React.createElement(alert_1.default, {isVisible: isPending}, "Loading..."), React.createElement(alert_1.default, {id: "qa-alert", isVisible: hasError, status: "error"}, errorMessage || "Invalid username and password"), React.createElement(form_group_1.default, null, React.createElement(form_label_1.default, {id: "qa-uname-label"}, "Username"), React.createElement(form_input_1.default, {type: "text", fieldDefinition: username, id: "qa-uname-input"}), React.createElement(form_error_1.default, {id: "qa-uname-validation", isVisible: !!(username.touched && username.error)}, username.error)), React.createElement(form_group_1.default, null, React.createElement(form_label_1.default, {id: "qa-studioId-label"}, "Studio"), React.createElement("select", __assign({}, studioId, {value: studioId.value, id: "qa-studioId-select", className: "block col-12 mb1 select"}), React.createElement("option", {value: ""}, "select a studio..."), React.createElement("option", {value: "1"}, "Sparxo Drug Manufacturing Laboratories"), React.createElement("option", {value: "2"}, "Sparxo Lovely Cottage")), React.createElement(form_error_1.default, {id: "qa-ustudio-validation", isVisible: !!(studioId.touched && studioId.error)}, studioId.error)), React.createElement(form_group_1.default, null, React.createElement(button_1.default, {type: "submit", className: "mr1", id: "qa-login-button"}, "Login"), React.createElement(button_1.default, {onClick: resetForm, type: "reset", className: "bg-red", id: "qa-clear-button"}, "Clear"))));
+	var LoginForm = (function (_super) {
+	    __extends(LoginForm, _super);
+	    function LoginForm() {
+	        _super.apply(this, arguments);
 	    }
-	    static validate(values) {
-	        const errors = { username: '', studioId: '' };
+	    LoginForm.prototype.render = function () {
+	        var _a = this.props, handleSubmit = _a.handleSubmit, resetForm = _a.resetForm, isPending = _a.isPending, hasError = _a.hasError, errorMessage = _a.errorMessage, _b = _a.fields, username = _b.username, studioId = _b.studioId;
+	        return (React.createElement(_1.default, {handleSubmit: handleSubmit}, React.createElement(alert_1.default, {isVisible: isPending}, "Loading..."), React.createElement(alert_1.default, {id: "qa-alert", isVisible: hasError, status: "error"}, errorMessage || "Invalid username and password"), React.createElement(form_group_1.default, null, React.createElement(form_label_1.default, {id: "qa-uname-label"}, "Username"), React.createElement(form_input_1.default, {type: "text", fieldDefinition: username, id: "qa-uname-input"}), React.createElement(form_error_1.default, {id: "qa-uname-validation", isVisible: !!(username.touched && username.error)}, username.error)), React.createElement(form_group_1.default, null, React.createElement(form_label_1.default, {id: "qa-studioId-label"}, "Studio"), React.createElement("select", __assign({}, studioId, {value: studioId.value, id: "qa-studioId-select", className: "block col-12 mb1 select"}), React.createElement("option", {value: ""}, "select a studio..."), React.createElement("option", {value: "1"}, "Sparxo Drug Manufacturing Laboratories"), React.createElement("option", {value: "2"}, "Sparxo Lovely Cottage")), React.createElement(form_error_1.default, {id: "qa-ustudio-validation", isVisible: !!(studioId.touched && studioId.error)}, studioId.error)), React.createElement(form_group_1.default, null, React.createElement(button_1.default, {type: "submit", className: "mr1", id: "qa-login-button"}, "Login"), React.createElement(button_1.default, {onClick: resetForm, type: "reset", className: "bg-red", id: "qa-clear-button"}, "Clear"))));
+	    };
+	    LoginForm.validate = function (values) {
+	        var errors = { username: '', studioId: '' };
 	        if (!values.username) {
 	            errors.username = 'Username is required.';
 	        }
@@ -44303,8 +44338,9 @@
 	            errors.studioId = 'studio is required.';
 	        }
 	        return errors;
-	    }
-	}
+	    };
+	    return LoginForm;
+	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = redux_form_1.reduxForm({
 	    form: 'login',
@@ -44313,7 +44349,7 @@
 	        'studioId',
 	    ],
 	    validate: LoginForm.validate,
-	}, (state) => {
+	}, function (state) {
 	    return {
 	        initialValues: {
 	            username: sessionStorage['username2'] || "",
@@ -47351,10 +47387,11 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
+	var React = __webpack_require__(2);
 	;
-	function Form({ children = null, handleSubmit }) {
-	    return (React.createElement("form", {onSubmit: (e) => {
+	function Form(_a) {
+	    var _b = _a.children, children = _b === void 0 ? null : _b, handleSubmit = _a.handleSubmit;
+	    return (React.createElement("form", {onSubmit: function (e) {
 	        e.preventDefault();
 	        handleSubmit();
 	    }}, children));
@@ -47368,9 +47405,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
+	var React = __webpack_require__(2);
 	;
-	function FormGroup({ children = null }) {
+	function FormGroup(_a) {
+	    var _b = _a.children, children = _b === void 0 ? null : _b;
 	    return (React.createElement("div", {className: "py2"}, children));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -47382,9 +47420,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
+	var React = __webpack_require__(2);
 	;
-	function FormLabel({ children = null, id = '' }) {
+	function FormLabel(_a) {
+	    var _b = _a.children, children = _b === void 0 ? null : _b, _c = _a.id, id = _c === void 0 ? '' : _c;
 	    return (React.createElement("label", {id: id}, children));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -47396,11 +47435,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const classNames = __webpack_require__(283);
+	var React = __webpack_require__(2);
+	var classNames = __webpack_require__(283);
 	;
-	function FormError({ children = null, isVisible, id = '' }) {
-	    const formErrorClasses = classNames('bold', 'black', { 'hide': !isVisible });
+	function FormError(_a) {
+	    var _b = _a.children, children = _b === void 0 ? null : _b, isVisible = _a.isVisible, _c = _a.id, id = _c === void 0 ? '' : _c;
+	    var formErrorClasses = classNames('bold', 'black', { 'hide': !isVisible });
 	    return (React.createElement("div", {className: formErrorClasses, id: id}, children));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -47420,9 +47460,10 @@
 	    }
 	    return t;
 	};
-	const React = __webpack_require__(2);
+	var React = __webpack_require__(2);
 	;
-	function Input({ type = 'text', placeholder = '', fieldDefinition, id = '' }) {
+	function Input(_a) {
+	    var _b = _a.type, type = _b === void 0 ? 'text' : _b, _c = _a.placeholder, placeholder = _c === void 0 ? '' : _c, fieldDefinition = _a.fieldDefinition, _d = _a.id, id = _d === void 0 ? '' : _d;
 	    return (React.createElement("input", __assign({id: id, className: "block col-12 mb1 input", type: type, placeholder: placeholder}, fieldDefinition)));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -47434,11 +47475,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const classNames = __webpack_require__(283);
+	var React = __webpack_require__(2);
+	var classNames = __webpack_require__(283);
 	;
-	function Button({ onClick = null, type = 'button', className = '', id = '', children = null }) {
-	    const buttonClasses = classNames('btn', 'btn-primary', className);
+	function Button(_a) {
+	    var _b = _a.onClick, onClick = _b === void 0 ? null : _b, _c = _a.type, type = _c === void 0 ? 'button' : _c, _d = _a.className, className = _d === void 0 ? '' : _d, _e = _a.id, id = _e === void 0 ? '' : _e, _f = _a.children, children = _f === void 0 ? null : _f;
+	    var buttonClasses = classNames('btn', 'btn-primary', className);
 	    return (React.createElement("button", {id: id, type: type, className: buttonClasses, onClick: onClick}, children));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -47450,22 +47492,26 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const classNames = __webpack_require__(283);
+	var React = __webpack_require__(2);
+	var classNames = __webpack_require__(283);
 	;
-	const statusClasses = {
+	var statusClasses = {
 	    info: 'bg-blue white',
 	    warning: 'bg-yellow black',
 	    success: 'bg-green black',
 	    error: 'bg-red white',
 	};
-	function Alert({ children = null, isVisible, status = 'info', id = '' }) {
-	    const alertClasses = classNames(['p2', 'bold'], {
-	        block: isVisible,
-	        hide: !isVisible,
-	        [statusClasses[status]]: true,
-	    });
+	function Alert(_a) {
+	    var _b = _a.children, children = _b === void 0 ? null : _b, isVisible = _a.isVisible, _c = _a.status, status = _c === void 0 ? 'info' : _c, _d = _a.id, id = _d === void 0 ? '' : _d;
+	    var alertClasses = classNames(['p2', 'bold'], (_e = {
+	            block: isVisible,
+	            hide: !isVisible
+	        },
+	        _e[statusClasses[status]] = true,
+	        _e
+	    ));
 	    return (React.createElement("div", {id: id, className: alertClasses}, children));
+	    var _e;
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = Alert;
@@ -47477,8 +47523,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const styles = { width: 128 };
+	var React = __webpack_require__(2);
+	var styles = { width: 128 };
 	function Logo() {
 	    return (React.createElement("div", {className: "flex items-center", style: { fontSize: '22px' }}, "Sparxo Player"));
 	}
@@ -47491,8 +47537,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	function Navigator({ children = null }) {
+	var React = __webpack_require__(2);
+	function Navigator(_a) {
+	    var _b = _a.children, children = _b === void 0 ? null : _b;
 	    return (React.createElement("nav", {className: "fixed top-0 z2 left-0 right-0 flex items-center p1 bg-white border-bottom"}, children));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -47504,11 +47551,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const classNames = __webpack_require__(283);
+	var React = __webpack_require__(2);
+	var classNames = __webpack_require__(283);
 	;
-	function NavigatorItem({ children = null, isVisible = true, mr = false, ml = false, }) {
-	    const navItemClasses = classNames('truncate', {
+	function NavigatorItem(_a) {
+	    var _b = _a.children, children = _b === void 0 ? null : _b, _c = _a.isVisible, isVisible = _c === void 0 ? true : _c, _d = _a.mr, mr = _d === void 0 ? false : _d, _e = _a.ml, ml = _e === void 0 ? false : _e;
+	    var navItemClasses = classNames('truncate', {
 	        hide: !isVisible,
 	        mr2: mr,
 	        ml2: ml,
@@ -47525,17 +47573,22 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const modal_1 = __webpack_require__(281);
-	const add_1 = __webpack_require__(276);
-	const redux_form_1 = __webpack_require__(290);
-	const _1 = __webpack_require__(334);
-	const form_group_1 = __webpack_require__(335);
-	const form_label_1 = __webpack_require__(336);
-	const form_error_1 = __webpack_require__(337);
-	const form_input_1 = __webpack_require__(338);
-	const button_1 = __webpack_require__(339);
-	const alert_1 = __webpack_require__(340);
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(2);
+	var modal_1 = __webpack_require__(281);
+	var add_1 = __webpack_require__(276);
+	var redux_form_1 = __webpack_require__(290);
+	var _1 = __webpack_require__(334);
+	var form_group_1 = __webpack_require__(335);
+	var form_label_1 = __webpack_require__(336);
+	var form_error_1 = __webpack_require__(337);
+	var form_input_1 = __webpack_require__(338);
+	var button_1 = __webpack_require__(339);
+	var alert_1 = __webpack_require__(340);
 	;
 	function mapStateToProps(state) {
 	    return {
@@ -47545,19 +47598,23 @@
 	}
 	function mapDispatchToProps(dispatch) {
 	    return {
-	        showAddModal: () => dispatch(add_1.showAddModal(false)),
-	        onAddMusic: () => {
+	        showAddModal: function () { return dispatch(add_1.showAddModal(false)); },
+	        onAddMusic: function () {
 	            return dispatch(add_1.addMusic());
 	        }
 	    };
 	}
-	class AddModal extends React.Component {
-	    render() {
-	        var { add, showAddModal, onAddMusic, resetForm, fields: { url } } = this.props;
-	        return (React.createElement(modal_1.Modal, {isVisible: add.visible}, React.createElement(modal_1.ModalContent, null, React.createElement("div", {className: "relative"}, React.createElement("h1", {className: "mt0"}, "Add"), React.createElement("a", {href: "javascript:;", style: { display: "block", width: '20px', height: '20px', textDecoration: 'none', textAlign: 'center', lineHeight: '15px' }, className: "absolute right-0 top-0 border circle", onClick: showAddModal}, "× ")), React.createElement(_1.default, {handleSubmit: onAddMusic}, React.createElement(alert_1.default, {isVisible: add.isLoading}, "Please wait..."), React.createElement(alert_1.default, {id: "qa-alert", isVisible: add.hasError, status: "error"}, add.errorMessage), React.createElement(form_group_1.default, null, React.createElement(form_label_1.default, {id: "qa-url-label"}, "Url"), React.createElement(form_input_1.default, {placeholder: "Music Url...", type: "text", fieldDefinition: url, id: "qa-url-input"}), React.createElement(form_error_1.default, {id: "qa-url-validation", isVisible: !!(url.touched && url.error)}, url.error)), React.createElement(form_group_1.default, null, React.createElement(button_1.default, {type: "submit", className: "mr1", id: "qa-login-button"}, "Add"), React.createElement(button_1.default, {onClick: resetForm, type: "reset", className: "bg-red", id: "qa-clear-button"}, "Clear"))))));
+	var AddModal = (function (_super) {
+	    __extends(AddModal, _super);
+	    function AddModal() {
+	        _super.apply(this, arguments);
 	    }
-	    static validate(values) {
-	        const errors = { url: '', studioId: '' };
+	    AddModal.prototype.render = function () {
+	        var _a = this.props, add = _a.add, showAddModal = _a.showAddModal, onAddMusic = _a.onAddMusic, resetForm = _a.resetForm, url = _a.fields.url;
+	        return (React.createElement(modal_1.Modal, {isVisible: add.visible}, React.createElement(modal_1.ModalContent, null, React.createElement("div", {className: "relative"}, React.createElement("h1", {className: "mt0"}, "Add"), React.createElement("a", {href: "javascript:;", style: { display: "block", width: '20px', height: '20px', textDecoration: 'none', textAlign: 'center', lineHeight: '15px' }, className: "absolute right-0 top-0 border circle", onClick: showAddModal}, "× ")), React.createElement(_1.default, {handleSubmit: onAddMusic}, React.createElement(alert_1.default, {isVisible: add.isLoading}, "Please wait..."), React.createElement(alert_1.default, {id: "qa-alert", isVisible: add.hasError, status: "error"}, add.errorMessage), React.createElement(form_group_1.default, null, React.createElement(form_label_1.default, {id: "qa-url-label"}, "Url"), React.createElement(form_input_1.default, {placeholder: "Music Url...", type: "text", fieldDefinition: url, id: "qa-url-input"}), React.createElement(form_error_1.default, {id: "qa-url-validation", isVisible: !!(url.touched && url.error)}, url.error)), React.createElement(form_group_1.default, null, React.createElement(button_1.default, {type: "submit", className: "mr1", id: "qa-login-button"}, "Add"), React.createElement(button_1.default, {onClick: resetForm, type: "reset", className: "bg-red", id: "qa-clear-button"}, "Clear"))))));
+	    };
+	    AddModal.validate = function (values) {
+	        var errors = { url: '', studioId: '' };
 	        if (!values.url) {
 	            errors.url = 'url is required.';
 	        }
@@ -47569,8 +47626,9 @@
 	            }
 	        }
 	        return errors;
-	    }
-	}
+	    };
+	    return AddModal;
+	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = redux_form_1.reduxForm({
 	    form: 'add',
@@ -47586,33 +47644,43 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const React = __webpack_require__(2);
-	const react_redux_1 = __webpack_require__(169);
-	const player_1 = __webpack_require__(261);
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(2);
+	var react_redux_1 = __webpack_require__(169);
+	var player_1 = __webpack_require__(261);
 	function mapStateToProps(state) {
 	    return state.player;
 	}
 	function mapDispatchToProps(dispatch) {
 	    return {
-	        play: (id) => dispatch(player_1.play(id)),
-	        remove: (id) => dispatch(player_1.remove(id)),
-	        init: () => dispatch(player_1.init())
+	        play: function (id) { return dispatch(player_1.play(id)); },
+	        remove: function (id) { return dispatch(player_1.remove(id)); },
+	        init: function () { return dispatch(player_1.init()); }
 	    };
 	}
 	;
-	class List extends React.Component {
-	    componentDidMount() {
-	        this.props.init();
+	var List = (function (_super) {
+	    __extends(List, _super);
+	    function List() {
+	        _super.apply(this, arguments);
 	    }
-	    render() {
-	        const { play, filter, remove, playSong, playlist } = this.props;
-	        return React.createElement("div", {className: "flex flex-wrap"}, playlist.map(d => {
+	    List.prototype.componentDidMount = function () {
+	        this.props.init();
+	    };
+	    List.prototype.render = function () {
+	        var _a = this.props, play = _a.play, filter = _a.filter, remove = _a.remove, playSong = _a.playSong, playlist = _a.playlist;
+	        return React.createElement("div", {className: "flex flex-wrap"}, playlist.map(function (d) {
 	            if (d.name.toLocaleLowerCase().indexOf(filter.toLocaleLowerCase()) > -1) {
-	                return (React.createElement("div", {key: d.id, className: "col"}, React.createElement("div", {key: d.id, className: `${(playSong && d.id == playSong.id) ? 'playing' : ''} card`}, React.createElement("div", {className: "card-info", style: { backgroundImage: `url(${d.image})` }}, React.createElement("div", {className: "card-image"}, (playSong && d.id == playSong.id) ? (React.createElement("div", {className: "card-btn-play"}, React.createElement("i", {className: "icon ion-radio-waves"}))) : (React.createElement("div", {className: "card-btn-play", onClick: play.bind(null, d.id)}, React.createElement("i", {className: "icon ion-ios-play"})))), React.createElement("div", {className: "card-footer"}, React.createElement("div", {className: "card-name"}, d.name), React.createElement("div", {className: "card-user"}, d.orderer, React.createElement("a", {href: "javascript:;", onClick: remove.bind(null, d.id)}, React.createElement("i", {className: "icon ion-trash-a"})), React.createElement("div", {className: "clearfix"})))))));
+	                return (React.createElement("div", {key: d.id, className: "col"}, React.createElement("div", {key: d.id, className: ((playSong && d.id == playSong.id) ? 'playing' : '') + " card"}, React.createElement("div", {className: "card-info", style: { backgroundImage: "url(" + d.image + ")" }}, React.createElement("div", {className: "card-image"}, (playSong && d.id == playSong.id) ? (React.createElement("div", {className: "card-btn-play"}, React.createElement("i", {className: "icon ion-radio-waves"}))) : (React.createElement("div", {className: "card-btn-play", onClick: play.bind(null, d.id)}, React.createElement("i", {className: "icon ion-ios-play"})))), React.createElement("div", {className: "card-footer"}, React.createElement("div", {className: "card-name"}, d.name), React.createElement("div", {className: "card-user"}, d.orderer, React.createElement("a", {href: "javascript:;", onClick: remove.bind(null, d.id)}, React.createElement("i", {className: "icon ion-trash-a"})), React.createElement("div", {className: "clearfix"})))))));
 	            }
 	        }));
-	    }
-	}
+	    };
+	    return List;
+	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(mapStateToProps, mapDispatchToProps)(List);
 
@@ -47622,12 +47690,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const redux_1 = __webpack_require__(176);
-	const redux_thunk_1 = __webpack_require__(347);
-	const reducers_1 = __webpack_require__(348);
-	const createStoreWithMiddleware = redux_1.applyMiddleware(redux_thunk_1.default)(redux_1.createStore);
+	var redux_1 = __webpack_require__(176);
+	var redux_thunk_1 = __webpack_require__(347);
+	var reducers_1 = __webpack_require__(348);
+	var createStoreWithMiddleware = redux_1.applyMiddleware(redux_thunk_1.default)(redux_1.createStore);
 	function configureStore(initialState) {
-	    const store = createStoreWithMiddleware(reducers_1.default, initialState);
+	    var store = createStoreWithMiddleware(reducers_1.default, initialState);
 	    return store;
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -47667,13 +47735,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const redux_1 = __webpack_require__(176);
-	const react_router_redux_1 = __webpack_require__(254);
-	const redux_form_1 = __webpack_require__(290);
-	const player_1 = __webpack_require__(349);
-	const session_1 = __webpack_require__(350);
-	const add_1 = __webpack_require__(351);
-	const rootReducer = redux_1.combineReducers({
+	var redux_1 = __webpack_require__(176);
+	var react_router_redux_1 = __webpack_require__(254);
+	var redux_form_1 = __webpack_require__(290);
+	var player_1 = __webpack_require__(349);
+	var session_1 = __webpack_require__(350);
+	var add_1 = __webpack_require__(351);
+	var rootReducer = redux_1.combineReducers({
 	    routing: react_router_redux_1.routerReducer,
 	    form: redux_form_1.reducer,
 	    player: player_1.default,
@@ -47689,55 +47757,58 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const actionTypes_1 = __webpack_require__(262);
+	var actionTypes_1 = __webpack_require__(262);
 	var isMainPlayer = localStorage["isMainPlayer2"] || "0";
-	const initialState = {
+	var initialState = {
 	    mainPlayer: isMainPlayer == "1",
 	    useSoundcloud: false,
 	    playSong: null,
 	    filter: "",
 	    playlist: []
 	};
-	var handlers = {
-	    [actionTypes_1.player.play]: function (state, action) {
-	        return Object.assign({}, state, {
+	var handlers = (_a = {},
+	    _a[actionTypes_1.player.play] = function (state, action) {
+	        return $.extend({}, state, {
 	            playSong: action.playSong
 	        });
 	    },
-	    [actionTypes_1.player.add]: function (state, action) {
-	        return Object.assign({}, state, {
-	            playlist: [action.data, ...state.playlist]
+	    _a[actionTypes_1.player.add] = function (state, action) {
+	        return $.extend({}, state, {
+	            playlist: [action.data].concat(state.playlist)
 	        });
 	    },
-	    [actionTypes_1.player.remove]: function (state, action) {
-	        return Object.assign({}, state, {
-	            playlist: state.playlist.filter(data => {
+	    _a[actionTypes_1.player.remove] = function (state, action) {
+	        return $.extend({}, state, {
+	            playlist: state.playlist.filter(function (data) {
 	                return data.id != action.id;
 	            })
 	        });
 	    },
-	    [actionTypes_1.player.list]: function (state, action) {
-	        return Object.assign({}, state, {
+	    _a[actionTypes_1.player.list] = function (state, action) {
+	        return $.extend({}, state, {
 	            playlist: action.playlist,
 	            playSong: action.playSong
 	        });
 	    },
-	    [actionTypes_1.player.filter]: function (state, action) {
-	        return Object.assign({}, state, {
+	    _a[actionTypes_1.player.filter] = function (state, action) {
+	        return $.extend({}, state, {
 	            filter: action.keyword
 	        });
 	    },
-	    [actionTypes_1.player.toogle]: function (state, action) {
+	    _a[actionTypes_1.player.toogle] = function (state, action) {
 	        localStorage["isMainPlayer2"] = state.mainPlayer ? '0' : '1';
-	        return Object.assign({}, state, {
+	        return $.extend({}, state, {
 	            mainPlayer: !state.mainPlayer
 	        });
-	    }
-	};
+	    },
+	    _a
+	);
 	/**
 	 * 操作
 	 */
-	function playerReducer(state = initialState, action = { type: "" }) {
+	function playerReducer(state, action) {
+	    if (state === void 0) { state = initialState; }
+	    if (action === void 0) { action = { type: "" }; }
 	    var func = handlers[action.type];
 	    if (func) {
 	        return func(state, action);
@@ -47746,6 +47817,7 @@
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = playerReducer;
+	var _a;
 
 
 /***/ },
@@ -47753,41 +47825,44 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const actionTypes_1 = __webpack_require__(262);
-	const initialState = {
+	var actionTypes_1 = __webpack_require__(262);
+	var initialState = {
 	    token: null,
 	    user: {},
 	    errorMessage: null,
 	    hasError: false,
 	    isLoading: false
 	};
-	var handlers = {
-	    [actionTypes_1.session.pending]: function (state) {
-	        return Object.assign({}, state, {
+	var handlers = (_a = {},
+	    _a[actionTypes_1.session.pending] = function (state) {
+	        return $.extend({}, state, {
 	            isLoading: true,
 	            hasError: false
 	        });
 	    },
-	    [actionTypes_1.session.success]: function (state, action) {
+	    _a[actionTypes_1.session.success] = function (state, action) {
 	        sessionStorage['username2'] = action.data.user.username;
 	        sessionStorage['studioid2'] = action.data.user.studioId;
-	        return Object.assign({}, state, action.data, {
+	        return $.extend({}, state, action.data, {
 	            hasError: false,
 	            isLoading: false
 	        });
 	    },
-	    [actionTypes_1.session.error]: function (state, action) {
-	        return Object.assign({}, state, {
+	    _a[actionTypes_1.session.error] = function (state, action) {
+	        return $.extend({}, state, {
 	            hasError: true,
 	            isLoading: false,
 	            errorMessage: action.errorMessage
 	        });
-	    }
-	};
+	    },
+	    _a
+	);
 	/**
 	 * 操作
 	 */
-	function sessionReducer(state = initialState, action = { type: "" }) {
+	function sessionReducer(state, action) {
+	    if (state === void 0) { state = initialState; }
+	    if (action === void 0) { action = { type: "" }; }
 	    var func = handlers[action.type];
 	    if (func) {
 	        return func(state, action);
@@ -47796,6 +47871,7 @@
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = sessionReducer;
+	var _a;
 
 
 /***/ },
@@ -47803,51 +47879,55 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	const actionTypes_1 = __webpack_require__(262);
-	const initialState = {
+	var actionTypes_1 = __webpack_require__(262);
+	var $ = __webpack_require__(277);
+	var initialState = {
 	    url: '',
 	    visible: null,
 	    errorMessage: null,
 	    hasError: false,
 	    isLoading: false
 	};
-	var handlers = {
-	    [actionTypes_1.add.pending]: function (state) {
-	        return Object.assign({}, state, {
+	var handlers = (_a = {},
+	    _a[actionTypes_1.add.pending] = function (state) {
+	        return $.extend({}, state, {
 	            isLoading: true,
 	            hasError: false
 	        });
 	    },
-	    [actionTypes_1.add.success]: function (state) {
-	        return Object.assign({}, state, {
+	    _a[actionTypes_1.add.success] = function (state) {
+	        return $.extend({}, state, {
 	            visible: false,
 	            isLoading: false,
 	            url: ""
 	        });
 	    },
-	    [actionTypes_1.add.error]: function (state, action) {
-	        return Object.assign({}, state, {
+	    _a[actionTypes_1.add.error] = function (state, action) {
+	        return $.extend({}, state, {
 	            hasError: true,
 	            isLoading: false,
 	            errorMessage: action.errorMessage
 	        });
 	    },
-	    [actionTypes_1.add.show]: function (state) {
-	        return Object.assign({}, state, {
+	    _a[actionTypes_1.add.show] = function (state) {
+	        return $.extend({}, state, {
 	            visible: true
 	        });
 	    },
-	    [actionTypes_1.add.hide]: function (state, action) {
-	        return Object.assign({}, state, action.data, {
+	    _a[actionTypes_1.add.hide] = function (state, action) {
+	        return $.extend({}, state, action.data, {
 	            visible: false,
 	            url: ''
 	        });
-	    }
-	};
+	    },
+	    _a
+	);
 	/**
 	 * 操作
 	 */
-	function addReducer(state = initialState, action = { type: "" }) {
+	function addReducer(state, action) {
+	    if (state === void 0) { state = initialState; }
+	    if (action === void 0) { action = { type: "" }; }
 	    var func = handlers[action.type];
 	    if (func) {
 	        return func(state, action);
@@ -47856,6 +47936,7 @@
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = addReducer;
+	var _a;
 
 
 /***/ },

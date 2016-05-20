@@ -14,37 +14,37 @@ const initialState = {
 var handlers = {
    
     [player.play]: function (state, action) {
-        return Object.assign({}, state, {
+        return $.extend({}, state, {
             playSong: action.playSong
         });
     },
     [player.add]: function (state, action) {
-        return Object.assign({}, state, {
+        return $.extend({}, state, {
             playlist: [action.data, ...state.playlist]
         });
     },
     [player.remove]: function (state, action) {
 
-        return Object.assign({}, state, {
+        return $.extend({}, state, {
             playlist: state.playlist.filter(data => {
                 return data.id != action.id;
             })
         });
     },
     [player.list]: function (state, action) {
-        return Object.assign({}, state, {
+        return $.extend({}, state, {
             playlist: action.playlist,
             playSong: action.playSong
         });
     },
     [player.filter]: function (state, action) {
-        return Object.assign({}, state, {
+        return $.extend({}, state, {
             filter:action.keyword
         });
     },
     [player.toogle]: function (state, action) {
         localStorage["isMainPlayer2"]=state.mainPlayer?'0':'1';
-        return Object.assign({}, state, {
+        return $.extend({}, state, {
             mainPlayer: !state.mainPlayer
         });
     }

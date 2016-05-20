@@ -1,5 +1,5 @@
 import {add} from "../constants/actionTypes"
-
+import * as $ from "jquery";
 const initialState = {
     url:'',
     visible: null,
@@ -11,32 +11,32 @@ const initialState = {
 
 var handlers = { 
     [add.pending]:function (state) {
-        return Object.assign({},state,{
+        return $.extend({},state,{
             isLoading:true,
             hasError:false
         })
     },
     [add.success]:function(state) {
-      return Object.assign({},state,{
+      return $.extend({},state,{
           visible:false,
           isLoading:false,
           url:""
       });  
     },
     [add.error]:function(state,action) {
-        return Object.assign({},state,{
+        return $.extend({},state,{
           hasError:true,
           isLoading:false,
           errorMessage:action.errorMessage
       });  
     },
     [add.show]: function (state) {
-        return Object.assign({}, state, {
+        return $.extend({}, state, {
             visible: true      
         });
     },
     [add.hide]: function (state, action) {
-        return Object.assign({}, state, action.data, {
+        return $.extend({}, state, action.data, {
             visible: false,
             url:''
         });

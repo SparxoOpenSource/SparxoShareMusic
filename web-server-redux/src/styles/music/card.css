@@ -35,7 +35,7 @@
     -webkit-transition: all 0.3s;
     -moz-transition: all 0.3s;
     transition: all 0.3s;   
-    color: #a6d2a5;
+    color: #f84171;
     font-size: 28px;
     opacity: 0;
     -webkit-transition: opacity .2s ease-in-out;
@@ -64,5 +64,5 @@
 .card .card-user a{
     float: right;
     font-size: 14px;
-    color: #fff;
+    color: #f84171;
 }

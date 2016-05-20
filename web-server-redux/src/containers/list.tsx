@@ -34,12 +34,12 @@ class List extends React.Component<IListProps, void> {
         if (d.name.toLocaleLowerCase().indexOf(filter.toLocaleLowerCase()) > -1) {
           return (
             <div key={d.id} className="col">
-              <div key={d.id} className="card">
+              <div key={d.id} className={`${(playSong && d.id == playSong.id)?'playing':''} card`}>
                 <div className="card-info"  style={{ backgroundImage: `url(${d.image})` }}>
                   <div className="card-image">
                     {
                       (playSong && d.id == playSong.id) ? (
-                        <div className="card-btn-play playing">
+                        <div className="card-btn-play">
                           <i className="icon ion-radio-waves"></i>
                         </div>
                       ) : (

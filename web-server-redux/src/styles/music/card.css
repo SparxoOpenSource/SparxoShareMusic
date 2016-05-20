@@ -41,7 +41,7 @@
     -webkit-transition: opacity .2s ease-in-out;
     transition: opacity .2s ease-in-out;
 }
-.card .card-btn-play.playing{
+.card.playing .card-btn-play{
     opacity: 1 !important;
 }
 .card .card-image:hover .card-btn-play{
@@ -54,6 +54,10 @@
     padding: 3px 5px;
     color: #fff;
     background: rgba(0,0,0,0.6);   
+}
+.card.playing .card-footer{
+    color: #000;
+    background: rgba(255,255,255,0.6);   
 }
 .card .card-name{
     display:block;

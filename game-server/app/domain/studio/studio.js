@@ -140,6 +140,7 @@ studio.prototype.playMusic = function (id, userName, cb) {
 
 studio.prototype.removeMusic = function (id, userName, cb) {
     var songs = this.songs;
+    var music = this.playerList[id];
     delete this.playerList[id];
     for (var n in songs) {
         if (songs[n].id == id) {
@@ -152,7 +153,8 @@ studio.prototype.removeMusic = function (id, userName, cb) {
             this.playingSong = null;
         }
     }
-    this.getChannel().pushMessage('onMusicRemove', { id: id, deleter: userName }, cb);
+    music.deleter = userName;
+    this.getChannel().pushMessage('onMusicRemove', music, cb);
 };
 
 studio.prototype.getUser = function (userName) {

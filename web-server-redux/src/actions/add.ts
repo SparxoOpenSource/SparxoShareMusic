@@ -87,7 +87,7 @@ export function addMusic() {
                         album: json.album_name,
                         image: "http://imgcache.qq.com/music/photo/album_300/" + parseInt(album_str.substr(album_str.length - 2)) + "/300_albumpic_" + json.album_id + "_0.jpg",
                         resourceUrl: json.play_url,
-                        orderer: sessionStorage['username'] || ""
+                        orderer: sessionStorage['username2'] || ""
                     }]).then(() => {
                         dispatch(Success());
                     })

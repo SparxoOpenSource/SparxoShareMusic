@@ -32,8 +32,7 @@ var handlers = {
     },
     [add.show]: function (state) {
         return Object.assign({}, state, {
-            visible: true,
-            url:''
+            visible: true      
         });
     },
     [add.hide]: function (state, action) {

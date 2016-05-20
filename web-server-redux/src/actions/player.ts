@@ -76,15 +76,15 @@ export function init() {
   return (dispatch, getState) => {
     $studio.on("onMusicAdd", (data) => {
       console.log("add", data);
-      $notify.show(data.name,`${data.orderer} Add`,data.image);
+      $notify.show(data.name,`${data.orderer} add`,data.image);
       dispatch(receiveAdd(data));
     }).on("onMusicRemove", (data) => {
       console.log('remove', data);     
-      $notify.show(data.name,`${data.deleter} Delete`,data.image);
+      $notify.show(data.name,`${data.deleter} delete`,data.image);
       dispatch(receiveRemove(data.id));
     }).on("onMusicPlay", (data) => {
       console.log('play', data);
-      $notify.show(data.name,`${data.playby} Play`,data.image);
+      $notify.show(data.name,`${data.playby} play`,data.image);
       dispatch(receivePlay(data));
     }).on("onUserLeave", (data) => {
 

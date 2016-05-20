@@ -1,5 +1,5 @@
 import {session} from "../constants/actionTypes"
-
+import * as $ from "jquery";
 const initialState = {
     token:null,
     user:{},

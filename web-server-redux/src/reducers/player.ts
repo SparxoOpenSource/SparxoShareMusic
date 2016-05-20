@@ -1,5 +1,5 @@
 import {player} from "../constants/actionTypes"
-
+import * as $ from "jquery";
 var isMainPlayer = localStorage["isMainPlayer2"] || "0";
 
 const initialState = {

@@ -84,7 +84,7 @@ export function init() {
       dispatch(receiveRemove(data.id));
     }).on("onMusicPlay", (data) => {
       console.log('play', data);
-      $notify.show(data.name,`${data.playby} Playing`,data.image);
+      $notify.show(data.name,`${data.playby} Play`,data.image);
       dispatch(receivePlay(data));
     }).on("onUserLeave", (data) => {
 

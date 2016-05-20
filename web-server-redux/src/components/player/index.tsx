@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {play} from '../../actions/player';
+import {play, toogleRandom} from '../../actions/player';
 import * as $ from 'jquery';
 
 function mapStateToProps(state) {
@@ -8,14 +8,18 @@ function mapStateToProps(state) {
 }
 function mapDispatchToProps(dispatch) {
     return {
-        play: (id) => dispatch(play(id))
+        play: (id) => dispatch(play(id)),
+
+        toogleRandom: (id) => dispatch(toogleRandom()),
     };
 }
 interface IPlayerProps extends React.Props<any> {
     mainPlayer: boolean;
+    isRandom: boolean;
     playSong: any;
     playlist: Array<any>;
     play: (id) => void;
+    toogleRandom: () => void;
 };
 
 function padZero(num, size) {
@@ -42,9 +46,9 @@ function formatSeconds(num) {
     return `${minutes}:${seconds}`;
 }
 
-function  findIndex(array:Array<any>,callback) {
+function findIndex(array: Array<any>, callback) {
     for (var index = 0; index < array.length; index++) {
-        if(callback(array[index])){
+        if (callback(array[index])) {
             return index;
         }
     }
@@ -58,7 +62,7 @@ class Player extends React.Component<IPlayerProps, {}> {
         volume: 1
     }
     constructor(props, state) {
-        super(props, state);        
+        super(props, state);
         this.handleError = this.handleError.bind(this);
         this.handleEnded = this.handleEnded.bind(this);
         this.handleLoadedMetadata = this.handleLoadedMetadata.bind(this);
@@ -77,7 +81,7 @@ class Player extends React.Component<IPlayerProps, {}> {
         audioEl.addEventListener("play", this.handlePlay, false);
         audioEl.addEventListener("timeupdate", this.handleTimeUpdate, false);
         audioEl.addEventListener("volumechange", this.handleVolumeChange, false);
-        audioEl.addEventListener("error",this.handleError,false);
+        audioEl.addEventListener("error", this.handleError, false);
     }
     componentWillUnmount() {
         var audioEl = this.refs["player"] as HTMLAudioElement;
@@ -87,12 +91,12 @@ class Player extends React.Component<IPlayerProps, {}> {
         audioEl.removeEventListener('pause', this.handlePause, false);
         audioEl.removeEventListener('play', this.handlePlay, false);
         audioEl.removeEventListener('timeupdate', this.handleTimeUpdate, false);
-        audioEl.removeEventListener('volumechange', this.handleVolumeChange, false);  
-        audioEl.removeEventListener("error",this.handleError,false);
+        audioEl.removeEventListener('volumechange', this.handleVolumeChange, false);
+        audioEl.removeEventListener("error", this.handleError, false);
     }
-    handleError(){
-        var self=this;
-        setTimeout(function() {
+    handleError() {
+        var self = this;
+        setTimeout(function () {
             self.playNext();
         }, 1000);
     }
@@ -135,8 +139,8 @@ class Player extends React.Component<IPlayerProps, {}> {
     }
     playPrev() {
         var {playSong, playlist, play} = this.props;
-        
-        var index = findIndex(playlist,s => s.id == playSong.id);
+
+        var index = findIndex(playlist, s => s.id == playSong.id);
         var next;
         if (index > 0) {
             next = playlist[index - 1];
@@ -148,14 +152,20 @@ class Player extends React.Component<IPlayerProps, {}> {
 
     }
     playNext() {
-        var {playSong, playlist, play} = this.props;
-        var index = findIndex(playlist,s => s.id == playSong.id);
+        var {playSong, playlist, play, isRandom} = this.props;
         var next;
-        if (index < playlist.length - 1) {
-            next = playlist[index + 1];
+        if (isRandom) { 
+            var index=Math.ceil(Math.random()*playlist.length);
+            next=playlist[index];
         }
         else {
-            next = playlist[0];
+            var index = findIndex(playlist, s => s.id == playSong.id);
+            if (index < playlist.length - 1) {
+                next = playlist[index + 1];
+            }
+            else {
+                next = playlist[0];
+            }
         }
         play(next.id);
     }
@@ -175,7 +185,7 @@ class Player extends React.Component<IPlayerProps, {}> {
         audioEl.volume = volume;
     }
     render() {
-        var {playSong, mainPlayer} = this.props;
+        var {playSong, mainPlayer, isRandom, toogleRandom} = this.props;
         var resourceUrl = playSong ? playSong.resourceUrl : '';
         var image = playSong ? playSong.image : "";
         var musicName = playSong ? playSong.name : "";
@@ -193,13 +203,13 @@ class Player extends React.Component<IPlayerProps, {}> {
                     </div>
                 </div>
                 <div className="player-section">
-                    <div className="player-button" onClick={this.playPrev.bind(this)}>
+                    <div className="player-button" onClick={this.playPrev.bind(this) }>
                         <i className="icon ion-ios-rewind"></i>
                     </div>
                     <div className="player-button" onClick={this.tooglePlay.bind(this) }>
                         <i className={this.state.isPlaying ? 'icon ion-ios-pause' : 'icon ion-ios-play'}></i>
                     </div>
-                    <div className="player-button" onClick={this.playNext.bind(this)}>
+                    <div className="player-button" onClick={this.playNext.bind(this) }>
                         <i className="icon ion-ios-fastforward"></i>
                     </div>
                 </div>
@@ -219,6 +229,9 @@ class Player extends React.Component<IPlayerProps, {}> {
                     </div>
                 </div>
                 <div className="player-section">
+                    <div className={isRandom ? 'player-button active' : 'player-button'} onClick={toogleRandom} >
+                        <i className="icon ion-shuffle"></i>
+                    </div>
                     <div className="player-button player-volume-button">
                         <div className="player-volume-button-wrap">
                             <i className="icon ion-android-volume-up"></i>
@@ -241,5 +254,5 @@ class Player extends React.Component<IPlayerProps, {}> {
         </div>;
     }
 }
-export default connect(mapStateToProps,mapDispatchToProps)(Player);
+export default connect(mapStateToProps, mapDispatchToProps)(Player);
 

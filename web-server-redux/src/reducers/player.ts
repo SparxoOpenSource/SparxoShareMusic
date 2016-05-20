@@ -1,10 +1,10 @@
 import {player} from "../constants/actionTypes"
 import * as $ from "jquery";
 var isMainPlayer = localStorage["isMainPlayer2"] || "0";
-
+var isRandom=localStorage["random"]||'0';
 const initialState = {
     mainPlayer: isMainPlayer == "1",
-    useSoundcloud:false,
+    isRandom:isRandom=='1',
     playSong: null,
     filter:"",
     playlist: []
@@ -46,6 +46,12 @@ var handlers = {
         localStorage["isMainPlayer2"]=state.mainPlayer?'0':'1';
         return $.extend({}, state, {
             mainPlayer: !state.mainPlayer
+        });
+    },
+    [player.random]: function (state, action) {
+        localStorage["random"]=state.mainPlayer?'0':'1';
+        return $.extend({}, state, {
+            isRandom: !state.isRandom
         });
     }
 }

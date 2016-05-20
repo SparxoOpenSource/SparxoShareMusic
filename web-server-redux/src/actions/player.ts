@@ -66,6 +66,11 @@ export function importMusic(musics) {
     alert("导入成功");
   });
 }
+export function toogleRandom() {
+  return {
+    type:player.random
+  };
+}
 export function init() {
   $notify.checkPermission();
   return (dispatch, getState) => {

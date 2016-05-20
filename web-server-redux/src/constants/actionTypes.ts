@@ -5,7 +5,8 @@ export const player={
     add:"PLAY_LIST_ADD",
     filter:"PLAY_LIST_FILTER",
     remove:"PLAY_LIST_REMOVE",
-    toogle:"TOOGLE_MAIN_PLAYER"
+    toogle:"TOOGLE_MAIN_PLAYER",
+    random:"TOOGLE_PLAYER_RANDOM"
 }
 
 export const session={    

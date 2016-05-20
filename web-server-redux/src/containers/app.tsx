@@ -92,7 +92,7 @@ class App extends React.Component<IAppProps, {}> {
                     <input placeholder="search" ref="searchBox" type="text" value={player.filter} onChange={this.filter.bind(this) }/>
                 </NavigatorItem>
                 <NavigatorItem mr isVisible={isLoggedIn}>
-                    <a href={`data:application/octet-stream,${JSON.stringify(player.playlist.reverse())}`} target="_blank">Export</a>
+                    <a download={`playlist-${new Date().valueOf()}.json`} href={`data:application/octet-stream,${JSON.stringify(player.playlist.reverse())}`} target="_blank">Export</a>
                 </NavigatorItem>
                 <NavigatorItem mr isVisible={isLoggedIn}>
                     <a href="#add" onClick={this.onImport.bind(this)}>Import</a>

@@ -48,12 +48,13 @@ handler.addMusic = function (msg, session, next) {
 
 handler.removeMusic = function (msg, session, next) {
 	var studio = session.studio;
+	var userName = session.get('userName');
 	var musicId = msg.id;
 	if (!msg.id) {
 		next(null, { code: 500, msg: 'need music id! ' });
 		return;
 	}
-	studio.removeMusic(musicId, function (err) {
+	studio.removeMusic(musicId, userName, function (err) {
 		if (!!err) {
 			next(null, { code: 500 });
 		}
@@ -63,12 +64,13 @@ handler.removeMusic = function (msg, session, next) {
 
 handler.playMusic = function (msg, session, next) {
 	var studio = session.studio;
+	var userName = session.get('userName');
 	var musicId = msg.id;
 	if (!msg.id) {
 		next(null, { code: 500, msg: 'need music id! ' });
 		return;
 	}
-	studio.playMusic(musicId, function (err) {
+	studio.playMusic(musicId, userName, function (err) {
 		if (!!err) {
 			next(null, { code: 500 });
 		}
@@ -83,7 +85,7 @@ handler.importMusic = function (msg, session, next) {
 	if (!list) {
 		next(null, { code: 500, msg: 'need music list! ' });
 		return;
-	}	
+	}
 	studio.importMusic(list, userName, function (err) {
 		if (!!err) {
 			next(null, { code: 500 });

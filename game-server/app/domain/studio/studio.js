@@ -127,17 +127,18 @@ studio.prototype.importMusic = function (list, userName, cb) {
     }
 }
 
-studio.prototype.playMusic = function (id, cb) {
+studio.prototype.playMusic = function (id, userName, cb) {
     var music = this.playerList[id];
     if (!music) {
         cb('music not exist! ');
         return;
     }
+    music.playby = userName;
     this.playingSong = music;
     this.getChannel().pushMessage('onMusicPlay', music, cb);
 };
 
-studio.prototype.removeMusic = function (id, cb) {
+studio.prototype.removeMusic = function (id, userName, cb) {
     var songs = this.songs;
     delete this.playerList[id];
     for (var n in songs) {
@@ -151,7 +152,7 @@ studio.prototype.removeMusic = function (id, cb) {
             this.playingSong = null;
         }
     }
-    this.getChannel().pushMessage('onMusicRemove', { id: id }, cb);
+    this.getChannel().pushMessage('onMusicRemove', { id: id, deleter: userName }, cb);
 };
 
 studio.prototype.getUser = function (userName) {

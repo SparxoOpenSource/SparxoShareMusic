@@ -72,18 +72,6 @@ class App extends React.Component<IAppProps, {}> {
         }, 1000);
     }
 
-    onExport() {
-        var {player} = this.props;
-        var musics = player.playlist.reverse();
-        var a = document.createElement('a');
-        a.setAttribute("download", "playlist.json");
-        a.href = "data:application/octet-stream," + JSON.stringify(musics);
-        a.target = "_blank";
-        a.click();
-        setTimeout(function () {
-            a.remove();
-        }, 1000);
-    }
     render() {
         let {children, session, add, filter, player, login, toogle, showAddModal} = this.props;
         let isLoggedIn = session.token != null;
@@ -104,7 +92,7 @@ class App extends React.Component<IAppProps, {}> {
                     <input placeholder="search" ref="searchBox" type="text" value={player.filter} onChange={this.filter.bind(this) }/>
                 </NavigatorItem>
                 <NavigatorItem mr isVisible={isLoggedIn}>
-                    <a href="#add" onClick={this.onExport.bind(this)}>Export</a>
+                    <a href={`data:application/octet-stream,${JSON.stringify(player.playlist.reverse())}`} target="_blank">Export</a>
                 </NavigatorItem>
                 <NavigatorItem mr isVisible={isLoggedIn}>
                     <a href="#add" onClick={this.onImport.bind(this)}>Import</a>

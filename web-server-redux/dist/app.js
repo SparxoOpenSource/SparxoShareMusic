@@ -27697,22 +27697,10 @@
 	            s.remove();
 	        }, 1000);
 	    };
-	    App.prototype.onExport = function () {
-	        var player = this.props.player;
-	        var musics = player.playlist.reverse();
-	        var a = document.createElement('a');
-	        a.setAttribute("download", "playlist.json");
-	        a.href = "data:application/octet-stream," + JSON.stringify(musics);
-	        a.target = "_blank";
-	        a.click();
-	        setTimeout(function () {
-	            a.remove();
-	        }, 1000);
-	    };
 	    App.prototype.render = function () {
 	        var _a = this.props, children = _a.children, session = _a.session, add = _a.add, filter = _a.filter, player = _a.player, login = _a.login, toogle = _a.toogle, showAddModal = _a.showAddModal;
 	        var isLoggedIn = session.token != null;
-	        return (React.createElement("div", null, React.createElement(login_modal_1.default, {onSubmit: login, isPending: session.isLoading || false, hasError: session.hasError || false, isVisible: !isLoggedIn, errorMessage: session.errorMessage}), React.createElement(addModal_1.default, null), React.createElement(navigator_1.default, null, React.createElement(navigator_item_1.default, {mr: true}, React.createElement(logo_1.default, null)), React.createElement("div", {className: "flex flex-auto"}), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("input", {placeholder: "search", ref: "searchBox", type: "text", value: player.filter, onChange: this.filter.bind(this)})), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("a", {href: "#add", onClick: this.onExport.bind(this)}, "Export")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("a", {href: "#add", onClick: this.onImport.bind(this)}, "Import")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("a", {href: "#add", onClick: showAddModal}, "Add")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("label", null, React.createElement("input", {type: "checkbox", onChange: toogle, checked: player.mainPlayer}), "Main")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("b", null, session.token))), React.createElement(content_1.default, {isVisible: isLoggedIn}, children, player.mainPlayer ? React.createElement(player_1.default, null) : null)));
+	        return (React.createElement("div", null, React.createElement(login_modal_1.default, {onSubmit: login, isPending: session.isLoading || false, hasError: session.hasError || false, isVisible: !isLoggedIn, errorMessage: session.errorMessage}), React.createElement(addModal_1.default, null), React.createElement(navigator_1.default, null, React.createElement(navigator_item_1.default, {mr: true}, React.createElement(logo_1.default, null)), React.createElement("div", {className: "flex flex-auto"}), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("input", {placeholder: "search", ref: "searchBox", type: "text", value: player.filter, onChange: this.filter.bind(this)})), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("a", {href: "data:application/octet-stream," + JSON.stringify(player.playlist.reverse()), target: "_blank"}, "Export")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("a", {href: "#add", onClick: this.onImport.bind(this)}, "Import")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("a", {href: "#add", onClick: showAddModal}, "Add")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("label", null, React.createElement("input", {type: "checkbox", onChange: toogle, checked: player.mainPlayer}), "Main")), React.createElement(navigator_item_1.default, {mr: true, isVisible: isLoggedIn}, React.createElement("b", null, session.token))), React.createElement(content_1.default, {isVisible: isLoggedIn}, children, player.mainPlayer ? React.createElement(player_1.default, null) : null)));
 	    };
 	    return App;
 	}(React.Component));

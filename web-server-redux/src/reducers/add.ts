@@ -37,9 +37,9 @@ var handlers = {
         });
     },
     [add.hide]: function (state, action) {
-        debugger
         return $.extend({}, state, action.data, {
             visible: false,
+            hasError:false,
             url:''
         });
     }

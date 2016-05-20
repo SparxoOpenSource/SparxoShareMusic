@@ -1,7 +1,7 @@
 import {player} from "../constants/actionTypes"
 import * as $player from "../api/player";
 import * as $studio from '../api/studio';
-
+import * as $notify from "../api/notify";
 
 function receivePlay(song) {
   return {
@@ -67,15 +67,19 @@ export function importMusic(musics) {
   });
 }
 export function init() {
+  $notify.checkPermission();
   return (dispatch, getState) => {
     $studio.on("onMusicAdd", (data) => {
       console.log("add", data);
+      $notify.show(data.name,`${data.orderer} Add a song`,data.image);
       dispatch(receiveAdd(data));
     }).on("onMusicRemove", (data) => {
-      console.log('remove', data);
+      console.log('remove', data);     
+      $notify.show(data.name,`Delete a song`,data.image);
       dispatch(receiveRemove(data.id));
     }).on("onMusicPlay", (data) => {
       console.log('play', data);
+      $notify.show(data.name,`Playing`,data.image);
       dispatch(receivePlay(data));
     }).on("onUserLeave", (data) => {
 

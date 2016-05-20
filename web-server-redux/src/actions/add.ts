@@ -60,10 +60,6 @@ export function addMusic() {
     return (dispatch, getState) => {
         const add = getState().form.add;
         const url = add.url.value;
-        if (url == "") {
-            dispatch(Fail("url error"));
-            return;
-        }
         if (url.indexOf("http://music.163.com") == 0) {               
             dispatch(Pending());
             $studio.add(url).then(() => {
@@ -96,7 +92,7 @@ export function addMusic() {
                 dispatch(Fail("url格式可能错误，没有找到tid字段"));
             }
         }
-        else {
+        else if(url.indexOf("soundcloud.com")!=-1) {
             var str = "";
             if (url.indexOf('?')) {
                 str = url.split('?')[0];
@@ -122,6 +118,8 @@ export function addMusic() {
                 }).fail(err => {
                     dispatch(Fail("reques soundclound fail!"))
                 });
+        }else{
+            dispatch(Fail("url error"));
         }
     }
 }

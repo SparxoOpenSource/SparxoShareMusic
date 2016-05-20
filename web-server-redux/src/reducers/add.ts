@@ -17,6 +17,7 @@ var handlers = {
         })
     },
     [add.success]:function(state) {
+        debugger
       return $.extend({},state,{
           visible:false,
           isLoading:false,
@@ -36,6 +37,7 @@ var handlers = {
         });
     },
     [add.hide]: function (state, action) {
+        debugger
         return $.extend({}, state, action.data, {
             visible: false,
             url:''

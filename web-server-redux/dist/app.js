@@ -58,8 +58,8 @@
 	var react_router_1 = __webpack_require__(195);
 	var react_router_redux_1 = __webpack_require__(254);
 	var routes_1 = __webpack_require__(259);
-	var configure_store_1 = __webpack_require__(346);
-	__webpack_require__(352);
+	var configure_store_1 = __webpack_require__(347);
+	__webpack_require__(353);
 	var store = configure_store_1.default({});
 	var history = react_router_redux_1.syncHistoryWithStore(react_router_1.browserHistory, store);
 	ReactDOM.render(React.createElement("div", null, React.createElement(react_redux_1.Provider, {store: store}, React.createElement(react_router_1.Router, {history: history}, routes_1.default))), document.getElementById('app'));
@@ -27622,7 +27622,7 @@
 	var React = __webpack_require__(2);
 	var react_router_1 = __webpack_require__(195);
 	var app_1 = __webpack_require__(260);
-	var list_1 = __webpack_require__(345);
+	var list_1 = __webpack_require__(346);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = (React.createElement(react_router_1.Route, {path: "/", component: app_1.default}, React.createElement(react_router_1.IndexRoute, {component: list_1.default})));
 
@@ -27640,15 +27640,15 @@
 	var React = __webpack_require__(2);
 	var react_redux_1 = __webpack_require__(169);
 	var $player = __webpack_require__(261);
-	var $session = __webpack_require__(275);
-	var $add = __webpack_require__(276);
-	var player_1 = __webpack_require__(278);
-	var content_1 = __webpack_require__(279);
-	var login_modal_1 = __webpack_require__(280);
-	var logo_1 = __webpack_require__(341);
-	var navigator_1 = __webpack_require__(342);
-	var navigator_item_1 = __webpack_require__(343);
-	var addModal_1 = __webpack_require__(344);
+	var $session = __webpack_require__(276);
+	var $add = __webpack_require__(277);
+	var player_1 = __webpack_require__(279);
+	var content_1 = __webpack_require__(280);
+	var login_modal_1 = __webpack_require__(281);
+	var logo_1 = __webpack_require__(342);
+	var navigator_1 = __webpack_require__(343);
+	var navigator_item_1 = __webpack_require__(344);
+	var addModal_1 = __webpack_require__(345);
 	function mapStateToProps(state) {
 	    return {
 	        player: state.player,
@@ -27715,6 +27715,7 @@
 	"use strict";
 	var actionTypes_1 = __webpack_require__(262);
 	var $studio = __webpack_require__(263);
+	var $notify = __webpack_require__(275);
 	function receivePlay(song) {
 	    return {
 	        type: actionTypes_1.player.play,
@@ -27779,15 +27780,19 @@
 	}
 	exports.importMusic = importMusic;
 	function init() {
+	    $notify.checkPermission();
 	    return function (dispatch, getState) {
 	        $studio.on("onMusicAdd", function (data) {
 	            console.log("add", data);
+	            $notify.show(data.name, data.orderer + " Add a song", data.image);
 	            dispatch(receiveAdd(data));
 	        }).on("onMusicRemove", function (data) {
 	            console.log('remove', data);
+	            $notify.show(data.name, "Delete a song", data.image);
 	            dispatch(receiveRemove(data.id));
 	        }).on("onMusicPlay", function (data) {
 	            console.log('play', data);
+	            $notify.show(data.name, "Playing", data.image);
 	            dispatch(receivePlay(data));
 	        }).on("onUserLeave", function (data) {
 	        });
@@ -33566,6 +33571,49 @@
 
 /***/ },
 /* 275 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function checkPermission() {
+	    if (Notification) {
+	        if (Notification.permission == "default") {
+	            Notification.requestPermission();
+	        }
+	    }
+	}
+	exports.checkPermission = checkPermission;
+	var messages = [];
+	var started = false;
+	function show(body, title, icon) {
+	    if (title === void 0) { title = "通知"; }
+	    if (icon === void 0) { icon = ""; }
+	    if (Notification) {
+	        messages.push({
+	            title: title,
+	            body: body,
+	            icon: icon
+	        });
+	        !started && start();
+	        started = true;
+	    }
+	}
+	exports.show = show;
+	var notifys = [];
+	function start() {
+	    setInterval(function () {
+	        if (messages.length > 0) {
+	            if (notifys.length > 0) {
+	                notifys.shift().close();
+	            }
+	            var s = messages.shift();
+	            notifys.push(new Notification(s.title, { body: s.body, icon: s.icon }));
+	        }
+	    }, 2000);
+	}
+
+
+/***/ },
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -33626,13 +33674,13 @@
 
 
 /***/ },
-/* 276 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var actionTypes_1 = __webpack_require__(262);
 	var $studio = __webpack_require__(263);
-	var $ = __webpack_require__(277);
+	var $ = __webpack_require__(278);
 	var config_1 = __webpack_require__(274);
 	function showAddModal(isShow) {
 	    return (isShow ? { type: actionTypes_1.add.show } : { type: actionTypes_1.add.hide });
@@ -33689,10 +33737,6 @@
 	    return function (dispatch, getState) {
 	        var add = getState().form.add;
 	        var url = add.url.value;
-	        if (url == "") {
-	            dispatch(Fail("url error"));
-	            return;
-	        }
 	        if (url.indexOf("http://music.163.com") == 0) {
 	            dispatch(Pending());
 	            $studio.add(url).then(function () {
@@ -33726,7 +33770,7 @@
 	                dispatch(Fail("url格式可能错误，没有找到tid字段"));
 	            }
 	        }
-	        else {
+	        else if (url.indexOf("soundcloud.com") != -1) {
 	            var str = "";
 	            if (url.indexOf('?')) {
 	                str = url.split('?')[0];
@@ -33753,13 +33797,16 @@
 	                dispatch(Fail("reques soundclound fail!"));
 	            });
 	        }
+	        else {
+	            dispatch(Fail("url error"));
+	        }
 	    };
 	}
 	exports.addMusic = addMusic;
 
 
 /***/ },
-/* 277 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -43607,7 +43654,7 @@
 
 
 /***/ },
-/* 278 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -43794,7 +43841,7 @@
 
 
 /***/ },
-/* 279 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -43809,13 +43856,13 @@
 
 
 /***/ },
-/* 280 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var React = __webpack_require__(2);
-	var modal_1 = __webpack_require__(281);
-	var login_form_1 = __webpack_require__(289);
+	var modal_1 = __webpack_require__(282);
+	var login_form_1 = __webpack_require__(290);
 	;
 	function LoginModal(_a) {
 	    var isVisible = _a.isVisible, isPending = _a.isPending, hasError = _a.hasError, errorMessage = _a.errorMessage, onSubmit = _a.onSubmit;
@@ -43826,24 +43873,24 @@
 
 
 /***/ },
-/* 281 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var index_1 = __webpack_require__(282);
-	exports.ModalContent = index_1.default;
-	var index_2 = __webpack_require__(288);
-	exports.Modal = index_2.default;
-
-
-/***/ },
 /* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var index_1 = __webpack_require__(283);
+	exports.ModalContent = index_1.default;
+	var index_2 = __webpack_require__(289);
+	exports.Modal = index_2.default;
+
+
+/***/ },
+/* 283 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(283);
-	var Styles = __webpack_require__(284);
+	var classNames = __webpack_require__(284);
+	var Styles = __webpack_require__(285);
 	;
 	function ModalContent(_a) {
 	    var _b = _a.children, children = _b === void 0 ? null : _b;
@@ -43855,7 +43902,7 @@
 
 
 /***/ },
-/* 283 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -43909,16 +43956,16 @@
 
 
 /***/ },
-/* 284 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(285);
+	var content = __webpack_require__(286);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(287)(content, {});
+	var update = __webpack_require__(288)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -43935,10 +43982,10 @@
 	}
 
 /***/ },
-/* 285 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(286)();
+	exports = module.exports = __webpack_require__(287)();
 	// imports
 
 
@@ -43951,7 +43998,7 @@
 	};
 
 /***/ },
-/* 286 */
+/* 287 */
 /***/ function(module, exports) {
 
 	/*
@@ -44007,7 +44054,7 @@
 
 
 /***/ },
-/* 287 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -44259,7 +44306,7 @@
 
 
 /***/ },
-/* 288 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -44279,7 +44326,7 @@
 
 
 /***/ },
-/* 289 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -44297,14 +44344,14 @@
 	    return t;
 	};
 	var React = __webpack_require__(2);
-	var redux_form_1 = __webpack_require__(290);
-	var _1 = __webpack_require__(334);
-	var form_group_1 = __webpack_require__(335);
-	var form_label_1 = __webpack_require__(336);
-	var form_error_1 = __webpack_require__(337);
-	var form_input_1 = __webpack_require__(338);
-	var button_1 = __webpack_require__(339);
-	var alert_1 = __webpack_require__(340);
+	var redux_form_1 = __webpack_require__(291);
+	var _1 = __webpack_require__(335);
+	var form_group_1 = __webpack_require__(336);
+	var form_label_1 = __webpack_require__(337);
+	var form_error_1 = __webpack_require__(338);
+	var form_input_1 = __webpack_require__(339);
+	var button_1 = __webpack_require__(340);
+	var alert_1 = __webpack_require__(341);
 	;
 	// Making this a class-based component until redux-form typings support 
 	// stateless functional components.
@@ -44348,7 +44395,7 @@
 
 
 /***/ },
-/* 290 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44362,7 +44409,7 @@
 
 	var _reactRedux = __webpack_require__(169);
 
-	var _createAll2 = __webpack_require__(291);
+	var _createAll2 = __webpack_require__(292);
 
 	var _createAll3 = _interopRequireDefault(_createAll2);
 
@@ -44426,7 +44473,7 @@
 	exports.untouchWithKey = untouchWithKey;
 
 /***/ },
-/* 291 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44437,35 +44484,35 @@
 
 	exports.default = createAll;
 
-	var _reducer = __webpack_require__(292);
+	var _reducer = __webpack_require__(293);
 
 	var _reducer2 = _interopRequireDefault(_reducer);
 
-	var _createReduxForm = __webpack_require__(303);
+	var _createReduxForm = __webpack_require__(304);
 
 	var _createReduxForm2 = _interopRequireDefault(_createReduxForm);
 
-	var _mapValues = __webpack_require__(294);
+	var _mapValues = __webpack_require__(295);
 
 	var _mapValues2 = _interopRequireDefault(_mapValues);
 
-	var _bindActionData = __webpack_require__(310);
+	var _bindActionData = __webpack_require__(311);
 
 	var _bindActionData2 = _interopRequireDefault(_bindActionData);
 
-	var _actions = __webpack_require__(309);
+	var _actions = __webpack_require__(310);
 
 	var actions = _interopRequireWildcard(_actions);
 
-	var _actionTypes = __webpack_require__(293);
+	var _actionTypes = __webpack_require__(294);
 
 	var actionTypes = _interopRequireWildcard(_actionTypes);
 
-	var _createPropTypes = __webpack_require__(333);
+	var _createPropTypes = __webpack_require__(334);
 
 	var _createPropTypes2 = _interopRequireDefault(_createPropTypes);
 
-	var _getValuesFromState = __webpack_require__(297);
+	var _getValuesFromState = __webpack_require__(298);
 
 	var _getValuesFromState2 = _interopRequireDefault(_getValuesFromState);
 
@@ -44582,7 +44629,7 @@
 	}
 
 /***/ },
-/* 292 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44594,39 +44641,39 @@
 
 	var _initialState, _behaviors;
 
-	var _actionTypes = __webpack_require__(293);
+	var _actionTypes = __webpack_require__(294);
 
-	var _mapValues = __webpack_require__(294);
+	var _mapValues = __webpack_require__(295);
 
 	var _mapValues2 = _interopRequireDefault(_mapValues);
 
-	var _read = __webpack_require__(295);
+	var _read = __webpack_require__(296);
 
 	var _read2 = _interopRequireDefault(_read);
 
-	var _write = __webpack_require__(296);
+	var _write = __webpack_require__(297);
 
 	var _write2 = _interopRequireDefault(_write);
 
-	var _getValuesFromState = __webpack_require__(297);
+	var _getValuesFromState = __webpack_require__(298);
 
 	var _getValuesFromState2 = _interopRequireDefault(_getValuesFromState);
 
-	var _initializeState = __webpack_require__(299);
+	var _initializeState = __webpack_require__(300);
 
 	var _initializeState2 = _interopRequireDefault(_initializeState);
 
-	var _resetState = __webpack_require__(300);
+	var _resetState = __webpack_require__(301);
 
 	var _resetState2 = _interopRequireDefault(_resetState);
 
-	var _setErrors = __webpack_require__(301);
+	var _setErrors = __webpack_require__(302);
 
 	var _setErrors2 = _interopRequireDefault(_setErrors);
 
-	var _fieldValue = __webpack_require__(298);
+	var _fieldValue = __webpack_require__(299);
 
-	var _normalizeFields = __webpack_require__(302);
+	var _normalizeFields = __webpack_require__(303);
 
 	var _normalizeFields2 = _interopRequireDefault(_normalizeFields);
 
@@ -44919,7 +44966,7 @@
 	exports.default = decorate(formReducer);
 
 /***/ },
-/* 293 */
+/* 294 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -44944,7 +44991,7 @@
 	var UNTOUCH = exports.UNTOUCH = 'redux-form/UNTOUCH';
 
 /***/ },
-/* 294 */
+/* 295 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -44966,7 +45013,7 @@
 	}
 
 /***/ },
-/* 295 */
+/* 296 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -45012,7 +45059,7 @@
 	exports.default = read;
 
 /***/ },
-/* 296 */
+/* 297 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -45118,14 +45165,14 @@
 	exports.default = write;
 
 /***/ },
-/* 297 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _fieldValue = __webpack_require__(298);
+	var _fieldValue = __webpack_require__(299);
 
 	/**
 	 * A different version of getValues() that does not need the fields array
@@ -45164,7 +45211,7 @@
 	exports.default = getValuesFromState;
 
 /***/ },
-/* 298 */
+/* 299 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -45189,7 +45236,7 @@
 	}
 
 /***/ },
-/* 299 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45198,7 +45245,7 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _fieldValue = __webpack_require__(298);
+	var _fieldValue = __webpack_require__(299);
 
 	var makeEntry = function makeEntry(value, previousValue, overwriteValues) {
 	  return (0, _fieldValue.makeFieldValue)(value === undefined ? {} : {
@@ -45270,14 +45317,14 @@
 	exports.default = initializeState;
 
 /***/ },
-/* 300 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _fieldValue = __webpack_require__(298);
+	var _fieldValue = __webpack_require__(299);
 
 	var reset = function reset(value) {
 	  return (0, _fieldValue.makeFieldValue)(value === undefined || value && value.initial === undefined ? {} : { initial: value.initial, value: value.initial });
@@ -45309,7 +45356,7 @@
 	exports.default = resetState;
 
 /***/ },
-/* 301 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45318,7 +45365,7 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _fieldValue = __webpack_require__(298);
+	var _fieldValue = __webpack_require__(299);
 
 	var isMetaKey = function isMetaKey(key) {
 	  return key[0] === '_';
@@ -45403,7 +45450,7 @@
 	exports.default = setErrors;
 
 /***/ },
-/* 302 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45414,7 +45461,7 @@
 
 	exports.default = normalizeFields;
 
-	var _fieldValue = __webpack_require__(298);
+	var _fieldValue = __webpack_require__(299);
 
 	function extractKey(field) {
 	  var dotIndex = field.indexOf('.');
@@ -45500,7 +45547,7 @@
 	}
 
 /***/ },
-/* 303 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45509,7 +45556,7 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _createReduxFormConnector = __webpack_require__(304);
+	var _createReduxFormConnector = __webpack_require__(305);
 
 	var _createReduxFormConnector2 = _interopRequireDefault(_createReduxFormConnector);
 
@@ -45574,22 +45621,22 @@
 	exports.default = createReduxForm;
 
 /***/ },
-/* 304 */
+/* 305 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _noGetters = __webpack_require__(305);
+	var _noGetters = __webpack_require__(306);
 
 	var _noGetters2 = _interopRequireDefault(_noGetters);
 
-	var _getDisplayName = __webpack_require__(307);
+	var _getDisplayName = __webpack_require__(308);
 
 	var _getDisplayName2 = _interopRequireDefault(_getDisplayName);
 
-	var _createHigherOrderComponent = __webpack_require__(308);
+	var _createHigherOrderComponent = __webpack_require__(309);
 
 	var _createHigherOrderComponent2 = _interopRequireDefault(_createHigherOrderComponent);
 
@@ -45679,14 +45726,14 @@
 	exports.default = createReduxFormConnector;
 
 /***/ },
-/* 305 */
+/* 306 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(306);
+	module.exports = __webpack_require__(307);
 
 
 /***/ },
-/* 306 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45781,7 +45828,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 307 */
+/* 308 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -45793,7 +45840,7 @@
 	}
 
 /***/ },
-/* 308 */
+/* 309 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45802,57 +45849,57 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _actions = __webpack_require__(309);
+	var _actions = __webpack_require__(310);
 
 	var importedActions = _interopRequireWildcard(_actions);
 
-	var _getDisplayName = __webpack_require__(307);
+	var _getDisplayName = __webpack_require__(308);
 
 	var _getDisplayName2 = _interopRequireDefault(_getDisplayName);
 
-	var _reducer = __webpack_require__(292);
+	var _reducer = __webpack_require__(293);
 
 	var _deepEqual = __webpack_require__(212);
 
 	var _deepEqual2 = _interopRequireDefault(_deepEqual);
 
-	var _bindActionData = __webpack_require__(310);
+	var _bindActionData = __webpack_require__(311);
 
 	var _bindActionData2 = _interopRequireDefault(_bindActionData);
 
-	var _getValues = __webpack_require__(311);
+	var _getValues = __webpack_require__(312);
 
 	var _getValues2 = _interopRequireDefault(_getValues);
 
-	var _isValid = __webpack_require__(312);
+	var _isValid = __webpack_require__(313);
 
 	var _isValid2 = _interopRequireDefault(_isValid);
 
-	var _readFields = __webpack_require__(313);
+	var _readFields = __webpack_require__(314);
 
 	var _readFields2 = _interopRequireDefault(_readFields);
 
-	var _handleSubmit2 = __webpack_require__(327);
+	var _handleSubmit2 = __webpack_require__(328);
 
 	var _handleSubmit3 = _interopRequireDefault(_handleSubmit2);
 
-	var _asyncValidation = __webpack_require__(328);
+	var _asyncValidation = __webpack_require__(329);
 
 	var _asyncValidation2 = _interopRequireDefault(_asyncValidation);
 
-	var _silenceEvents = __webpack_require__(329);
+	var _silenceEvents = __webpack_require__(330);
 
 	var _silenceEvents2 = _interopRequireDefault(_silenceEvents);
 
-	var _silenceEvent = __webpack_require__(330);
+	var _silenceEvent = __webpack_require__(331);
 
 	var _silenceEvent2 = _interopRequireDefault(_silenceEvent);
 
-	var _wrapMapDispatchToProps = __webpack_require__(331);
+	var _wrapMapDispatchToProps = __webpack_require__(332);
 
 	var _wrapMapDispatchToProps2 = _interopRequireDefault(_wrapMapDispatchToProps);
 
-	var _wrapMapStateToProps = __webpack_require__(332);
+	var _wrapMapStateToProps = __webpack_require__(333);
 
 	var _wrapMapStateToProps2 = _interopRequireDefault(_wrapMapStateToProps);
 
@@ -46164,7 +46211,7 @@
 	exports.default = createHigherOrderComponent;
 
 /***/ },
-/* 309 */
+/* 310 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46172,7 +46219,7 @@
 	exports.__esModule = true;
 	exports.untouch = exports.touch = exports.swapArrayValues = exports.submitFailed = exports.stopSubmit = exports.stopAsyncValidation = exports.startSubmit = exports.startAsyncValidation = exports.reset = exports.removeArrayValue = exports.initialize = exports.focus = exports.destroy = exports.change = exports.blur = exports.autofill = exports.addArrayValue = undefined;
 
-	var _actionTypes = __webpack_require__(293);
+	var _actionTypes = __webpack_require__(294);
 
 	var addArrayValue = exports.addArrayValue = function addArrayValue(path, value, index, fields) {
 	  return { type: _actionTypes.ADD_ARRAY_VALUE, path: path, value: value, index: index, fields: fields };
@@ -46256,7 +46303,7 @@
 	};
 
 /***/ },
-/* 310 */
+/* 311 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46267,7 +46314,7 @@
 
 	exports.default = bindActionData;
 
-	var _mapValues = __webpack_require__(294);
+	var _mapValues = __webpack_require__(295);
 
 	var _mapValues2 = _interopRequireDefault(_mapValues);
 
@@ -46291,7 +46338,7 @@
 	}
 
 /***/ },
-/* 311 */
+/* 312 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -46361,7 +46408,7 @@
 	exports.default = getValues;
 
 /***/ },
-/* 312 */
+/* 313 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -46383,7 +46430,7 @@
 	}
 
 /***/ },
-/* 313 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46392,19 +46439,19 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _readField = __webpack_require__(314);
+	var _readField = __webpack_require__(315);
 
 	var _readField2 = _interopRequireDefault(_readField);
 
-	var _write = __webpack_require__(296);
+	var _write = __webpack_require__(297);
 
 	var _write2 = _interopRequireDefault(_write);
 
-	var _getValues = __webpack_require__(311);
+	var _getValues = __webpack_require__(312);
 
 	var _getValues2 = _interopRequireDefault(_getValues);
 
-	var _removeField = __webpack_require__(326);
+	var _removeField = __webpack_require__(327);
 
 	var _removeField2 = _interopRequireDefault(_removeField);
 
@@ -46454,7 +46501,7 @@
 	exports.default = readFields;
 
 /***/ },
-/* 314 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46463,35 +46510,35 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _createOnBlur = __webpack_require__(315);
+	var _createOnBlur = __webpack_require__(316);
 
 	var _createOnBlur2 = _interopRequireDefault(_createOnBlur);
 
-	var _createOnChange = __webpack_require__(318);
+	var _createOnChange = __webpack_require__(319);
 
 	var _createOnChange2 = _interopRequireDefault(_createOnChange);
 
-	var _createOnDragStart = __webpack_require__(319);
+	var _createOnDragStart = __webpack_require__(320);
 
 	var _createOnDragStart2 = _interopRequireDefault(_createOnDragStart);
 
-	var _createOnDrop = __webpack_require__(320);
+	var _createOnDrop = __webpack_require__(321);
 
 	var _createOnDrop2 = _interopRequireDefault(_createOnDrop);
 
-	var _createOnFocus = __webpack_require__(321);
+	var _createOnFocus = __webpack_require__(322);
 
 	var _createOnFocus2 = _interopRequireDefault(_createOnFocus);
 
-	var _silencePromise = __webpack_require__(322);
+	var _silencePromise = __webpack_require__(323);
 
 	var _silencePromise2 = _interopRequireDefault(_silencePromise);
 
-	var _read = __webpack_require__(295);
+	var _read = __webpack_require__(296);
 
 	var _read2 = _interopRequireDefault(_read);
 
-	var _updateField = __webpack_require__(324);
+	var _updateField = __webpack_require__(325);
 
 	var _updateField2 = _interopRequireDefault(_updateField);
 
@@ -46677,14 +46724,14 @@
 	exports.default = readField;
 
 /***/ },
-/* 315 */
+/* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _getValue = __webpack_require__(316);
+	var _getValue = __webpack_require__(317);
 
 	var _getValue2 = _interopRequireDefault(_getValue);
 
@@ -46702,14 +46749,14 @@
 	exports.default = createOnBlur;
 
 /***/ },
-/* 316 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _isEvent = __webpack_require__(317);
+	var _isEvent = __webpack_require__(318);
 
 	var _isEvent2 = _interopRequireDefault(_isEvent);
 
@@ -46762,7 +46809,7 @@
 	exports.default = getValue;
 
 /***/ },
-/* 317 */
+/* 318 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -46775,14 +46822,14 @@
 	exports.default = isEvent;
 
 /***/ },
-/* 318 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _getValue = __webpack_require__(316);
+	var _getValue = __webpack_require__(317);
 
 	var _getValue2 = _interopRequireDefault(_getValue);
 
@@ -46796,7 +46843,7 @@
 	exports.default = createOnChange;
 
 /***/ },
-/* 319 */
+/* 320 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -46812,14 +46859,14 @@
 	exports.default = createOnDragStart;
 
 /***/ },
-/* 320 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _createOnDragStart = __webpack_require__(319);
+	var _createOnDragStart = __webpack_require__(320);
 
 	var createOnDrop = function createOnDrop(name, change) {
 	  return function (event) {
@@ -46829,7 +46876,7 @@
 	exports.default = createOnDrop;
 
 /***/ },
-/* 321 */
+/* 322 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -46843,14 +46890,14 @@
 	exports.default = createOnFocus;
 
 /***/ },
-/* 322 */
+/* 323 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _isPromise = __webpack_require__(323);
+	var _isPromise = __webpack_require__(324);
 
 	var _isPromise2 = _interopRequireDefault(_isPromise);
 
@@ -46867,7 +46914,7 @@
 	exports.default = silencePromise;
 
 /***/ },
-/* 323 */
+/* 324 */
 /***/ function(module, exports) {
 
 	module.exports = isPromise;
@@ -46878,7 +46925,7 @@
 
 
 /***/ },
-/* 324 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46887,11 +46934,11 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _isPristine = __webpack_require__(325);
+	var _isPristine = __webpack_require__(326);
 
 	var _isPristine2 = _interopRequireDefault(_isPristine);
 
-	var _isValid = __webpack_require__(312);
+	var _isValid = __webpack_require__(313);
 
 	var _isValid2 = _interopRequireDefault(_isValid);
 
@@ -46953,7 +47000,7 @@
 	exports.default = updateField;
 
 /***/ },
-/* 325 */
+/* 326 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -46991,7 +47038,7 @@
 	}
 
 /***/ },
-/* 326 */
+/* 327 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -47071,18 +47118,18 @@
 	exports.default = removeField;
 
 /***/ },
-/* 327 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _isPromise = __webpack_require__(323);
+	var _isPromise = __webpack_require__(324);
 
 	var _isPromise2 = _interopRequireDefault(_isPromise);
 
-	var _isValid = __webpack_require__(312);
+	var _isValid = __webpack_require__(313);
 
 	var _isValid2 = _interopRequireDefault(_isValid);
 
@@ -47153,18 +47200,18 @@
 	exports.default = handleSubmit;
 
 /***/ },
-/* 328 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _isPromise = __webpack_require__(323);
+	var _isPromise = __webpack_require__(324);
 
 	var _isPromise2 = _interopRequireDefault(_isPromise);
 
-	var _isValid = __webpack_require__(312);
+	var _isValid = __webpack_require__(313);
 
 	var _isValid2 = _interopRequireDefault(_isValid);
 
@@ -47195,14 +47242,14 @@
 	exports.default = asyncValidation;
 
 /***/ },
-/* 329 */
+/* 330 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _silenceEvent = __webpack_require__(330);
+	var _silenceEvent = __webpack_require__(331);
 
 	var _silenceEvent2 = _interopRequireDefault(_silenceEvent);
 
@@ -47221,14 +47268,14 @@
 	exports.default = silenceEvents;
 
 /***/ },
-/* 330 */
+/* 331 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _isEvent = __webpack_require__(317);
+	var _isEvent = __webpack_require__(318);
 
 	var _isEvent2 = _interopRequireDefault(_isEvent);
 
@@ -47245,7 +47292,7 @@
 	exports.default = silenceEvent;
 
 /***/ },
-/* 331 */
+/* 332 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47288,7 +47335,7 @@
 	exports.default = wrapMapDispatchToProps;
 
 /***/ },
-/* 332 */
+/* 333 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -47325,7 +47372,7 @@
 	exports.default = wrapMapStateToProps;
 
 /***/ },
-/* 333 */
+/* 334 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -47371,7 +47418,7 @@
 	exports.default = createPropTypes;
 
 /***/ },
-/* 334 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -47389,7 +47436,7 @@
 
 
 /***/ },
-/* 335 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -47404,7 +47451,7 @@
 
 
 /***/ },
-/* 336 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -47419,12 +47466,12 @@
 
 
 /***/ },
-/* 337 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(283);
+	var classNames = __webpack_require__(284);
 	;
 	function FormError(_a) {
 	    var _b = _a.children, children = _b === void 0 ? null : _b, isVisible = _a.isVisible, _c = _a.id, id = _c === void 0 ? '' : _c;
@@ -47436,7 +47483,7 @@
 
 
 /***/ },
-/* 338 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -47459,12 +47506,12 @@
 
 
 /***/ },
-/* 339 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(283);
+	var classNames = __webpack_require__(284);
 	;
 	function Button(_a) {
 	    var _b = _a.onClick, onClick = _b === void 0 ? null : _b, _c = _a.type, type = _c === void 0 ? 'button' : _c, _d = _a.className, className = _d === void 0 ? '' : _d, _e = _a.id, id = _e === void 0 ? '' : _e, _f = _a.children, children = _f === void 0 ? null : _f;
@@ -47476,12 +47523,12 @@
 
 
 /***/ },
-/* 340 */
+/* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(283);
+	var classNames = __webpack_require__(284);
 	;
 	var statusClasses = {
 	    info: 'bg-blue white',
@@ -47507,7 +47554,7 @@
 
 
 /***/ },
-/* 341 */
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -47521,7 +47568,7 @@
 
 
 /***/ },
-/* 342 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -47535,12 +47582,12 @@
 
 
 /***/ },
-/* 343 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var React = __webpack_require__(2);
-	var classNames = __webpack_require__(283);
+	var classNames = __webpack_require__(284);
 	;
 	function NavigatorItem(_a) {
 	    var _b = _a.children, children = _b === void 0 ? null : _b, _c = _a.isVisible, isVisible = _c === void 0 ? true : _c, _d = _a.mr, mr = _d === void 0 ? false : _d, _e = _a.ml, ml = _e === void 0 ? false : _e;
@@ -47557,7 +47604,7 @@
 
 
 /***/ },
-/* 344 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -47567,16 +47614,15 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(2);
-	var modal_1 = __webpack_require__(281);
-	var add_1 = __webpack_require__(276);
-	var redux_form_1 = __webpack_require__(290);
-	var _1 = __webpack_require__(334);
-	var form_group_1 = __webpack_require__(335);
-	var form_label_1 = __webpack_require__(336);
-	var form_error_1 = __webpack_require__(337);
-	var form_input_1 = __webpack_require__(338);
-	var button_1 = __webpack_require__(339);
-	var alert_1 = __webpack_require__(340);
+	var modal_1 = __webpack_require__(282);
+	var add_1 = __webpack_require__(277);
+	var redux_form_1 = __webpack_require__(291);
+	var _1 = __webpack_require__(335);
+	var form_label_1 = __webpack_require__(337);
+	var form_error_1 = __webpack_require__(338);
+	var form_input_1 = __webpack_require__(339);
+	var button_1 = __webpack_require__(340);
+	var alert_1 = __webpack_require__(341);
 	;
 	function mapStateToProps(state) {
 	    return {
@@ -47599,21 +47645,7 @@
 	    }
 	    AddModal.prototype.render = function () {
 	        var _a = this.props, add = _a.add, showAddModal = _a.showAddModal, onAddMusic = _a.onAddMusic, resetForm = _a.resetForm, url = _a.fields.url;
-	        return (React.createElement(modal_1.Modal, {isVisible: add.visible}, React.createElement(modal_1.ModalContent, null, React.createElement("div", {className: "relative"}, React.createElement("h1", {className: "mt0"}, "Add"), React.createElement("a", {href: "javascript:;", style: { display: "block", width: '20px', height: '20px', textDecoration: 'none', textAlign: 'center', lineHeight: '15px' }, className: "absolute right-0 top-0 border circle", onClick: showAddModal}, "× ")), React.createElement(_1.default, {handleSubmit: onAddMusic}, React.createElement(alert_1.default, {isVisible: add.isLoading}, "Please wait..."), React.createElement(alert_1.default, {id: "qa-alert", isVisible: add.hasError, status: "error"}, add.errorMessage), React.createElement(form_group_1.default, null, React.createElement(form_label_1.default, {id: "qa-url-label"}, "Url"), React.createElement(form_input_1.default, {placeholder: "Music Url...", type: "text", fieldDefinition: url, id: "qa-url-input"}), React.createElement(form_error_1.default, {id: "qa-url-validation", isVisible: !!(url.touched && url.error)}, url.error)), React.createElement(form_group_1.default, null, React.createElement(button_1.default, {type: "submit", className: "mr1", id: "qa-login-button"}, "Add"), React.createElement(button_1.default, {onClick: resetForm, type: "reset", className: "bg-red", id: "qa-clear-button"}, "Clear"))))));
-	    };
-	    AddModal.validate = function (values) {
-	        var errors = { url: '', studioId: '' };
-	        if (!values.url) {
-	            errors.url = 'url is required.';
-	        }
-	        if (values.url && values.url.indexOf("http://mp3.sogou.com/tiny/song") != 0) {
-	            if (values.url.indexOf("http://music.163.com") != 0 &&
-	                values.url.indexOf('http://mp3.sogou.com/tiny/song') != 0
-	                && values.url.indexOf("soundcloud.com") == -1) {
-	                errors.url = "url error";
-	            }
-	        }
-	        return errors;
+	        return (React.createElement(modal_1.Modal, {isVisible: add.visible}, React.createElement(modal_1.ModalContent, null, React.createElement("div", {className: "relative"}, React.createElement("h1", {className: "mt0"}, "Add"), React.createElement("a", {href: "javascript:;", style: { display: "block", width: '20px', height: '20px', textDecoration: 'none', textAlign: 'center', lineHeight: '15px' }, className: "absolute right-0 top-0 border circle", onClick: showAddModal}, "× ")), React.createElement(_1.default, {handleSubmit: onAddMusic}, React.createElement(alert_1.default, {isVisible: add.isLoading}, "Please wait..."), React.createElement(alert_1.default, {id: "qa-alert", isVisible: add.hasError, status: "error"}, add.errorMessage), React.createElement("div", {className: "py2", style: { display: add.isLoading ? 'none' : '' }}, React.createElement(form_label_1.default, {id: "qa-url-label"}, "Url"), React.createElement(form_input_1.default, {placeholder: "Music Url...", type: "text", fieldDefinition: url, id: "qa-url-input"}), React.createElement(form_error_1.default, {id: "qa-url-validation", isVisible: !!(url.touched && url.error)}, url.error)), React.createElement("div", {className: "py2", style: { display: add.isLoading ? 'none' : '' }}, React.createElement(button_1.default, {type: "submit", className: "mr1", id: "qa-login-button"}, "Add"))))));
 	    };
 	    return AddModal;
 	}(React.Component));
@@ -47622,13 +47654,12 @@
 	    form: 'add',
 	    fields: [
 	        'url'
-	    ],
-	    validate: AddModal.validate,
+	    ]
 	}, mapStateToProps, mapDispatchToProps)(AddModal);
 
 
 /***/ },
-/* 345 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -47674,13 +47705,13 @@
 
 
 /***/ },
-/* 346 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var redux_1 = __webpack_require__(176);
-	var redux_thunk_1 = __webpack_require__(347);
-	var reducers_1 = __webpack_require__(348);
+	var redux_thunk_1 = __webpack_require__(348);
+	var reducers_1 = __webpack_require__(349);
 	var createStoreWithMiddleware = redux_1.applyMiddleware(redux_thunk_1.default)(redux_1.createStore);
 	function configureStore(initialState) {
 	    var store = createStoreWithMiddleware(reducers_1.default, initialState);
@@ -47691,7 +47722,7 @@
 
 
 /***/ },
-/* 347 */
+/* 348 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -47719,16 +47750,16 @@
 	exports['default'] = thunk;
 
 /***/ },
-/* 348 */
+/* 349 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var redux_1 = __webpack_require__(176);
 	var react_router_redux_1 = __webpack_require__(254);
-	var redux_form_1 = __webpack_require__(290);
-	var player_1 = __webpack_require__(349);
-	var session_1 = __webpack_require__(350);
-	var add_1 = __webpack_require__(351);
+	var redux_form_1 = __webpack_require__(291);
+	var player_1 = __webpack_require__(350);
+	var session_1 = __webpack_require__(351);
+	var add_1 = __webpack_require__(352);
 	var rootReducer = redux_1.combineReducers({
 	    routing: react_router_redux_1.routerReducer,
 	    form: redux_form_1.reducer,
@@ -47741,12 +47772,12 @@
 
 
 /***/ },
-/* 349 */
+/* 350 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var actionTypes_1 = __webpack_require__(262);
-	var $ = __webpack_require__(277);
+	var $ = __webpack_require__(278);
 	var isMainPlayer = localStorage["isMainPlayer2"] || "0";
 	var initialState = {
 	    mainPlayer: isMainPlayer == "1",
@@ -47810,12 +47841,12 @@
 
 
 /***/ },
-/* 350 */
+/* 351 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var actionTypes_1 = __webpack_require__(262);
-	var $ = __webpack_require__(277);
+	var $ = __webpack_require__(278);
 	var initialState = {
 	    token: null,
 	    user: {},
@@ -47865,12 +47896,12 @@
 
 
 /***/ },
-/* 351 */
+/* 352 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var actionTypes_1 = __webpack_require__(262);
-	var $ = __webpack_require__(277);
+	var $ = __webpack_require__(278);
 	var initialState = {
 	    url: '',
 	    visible: null,
@@ -47886,6 +47917,7 @@
 	        });
 	    },
 	    _a[actionTypes_1.add.success] = function (state) {
+	        debugger;
 	        return $.extend({}, state, {
 	            visible: false,
 	            isLoading: false,
@@ -47905,6 +47937,7 @@
 	        });
 	    },
 	    _a[actionTypes_1.add.hide] = function (state, action) {
+	        debugger;
 	        return $.extend({}, state, action.data, {
 	            visible: false,
 	            url: ''
@@ -47930,16 +47963,16 @@
 
 
 /***/ },
-/* 352 */
+/* 353 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(353);
+	var content = __webpack_require__(354);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(287)(content, {});
+	var update = __webpack_require__(288)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -47956,15 +47989,15 @@
 	}
 
 /***/ },
-/* 353 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(286)();
+	exports = module.exports = __webpack_require__(287)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "/* Basscss Basic */\n\n* {\n  box-sizing: border-box;\n}\n\nbody {\n  font-family:\n    -apple-system,\n    BlinkMacSystemFont,\n    'Segoe UI',\n    'Roboto',\n    'Helvetica Neue',\n    Helvetica,\n    sans-serif;\n  line-height: 1.5;\n  margin: 0;\n  color: #111;\n  background-color: #fff;\n}\n\nimg {\n  max-width: 100%;\n  height: auto;\n}\n\nsvg {\n  max-height: 100%;\n}\n\na {\n  color: #07c;\n}\n\nh1, h2, h3,\nh4, h5, h6 {\n  font-weight: 600;\n  line-height: 1.25;\n  margin-top: 1em;\n  margin-bottom: .5em;\n}\n\nh1 { font-size: 2rem }\n\nh2 { font-size: 1.5rem }\n\nh3 { font-size: 1.25rem }\n\nh4 { font-size: 1rem }\n\nh5 { font-size: .875rem }\n\nh6 { font-size: .75rem }\n\np, dl, ol, ul, pre, blockquote {\n  margin-top: 1em;\n  margin-bottom: 1em;\n}\n\ncode,\npre,\nsamp {\n  font-family:\n    'Roboto Mono',\n    'Source Code Pro',\n    Menlo,\n    Consolas,\n    'Liberation Mono',\n    monospace;\n}\n\ncode, samp {\n  font-size: 87.5%;\n  padding: .125em;\n}\n\npre {\n  font-size: 87.5%;\n  overflow: scroll;\n}\n\nblockquote {\n  font-size: 1.25rem;\n  font-style: italic;\n  margin-left: 0;\n}\n\nhr {\n  margin-top: 1.5em;\n  margin-bottom: 1.5em;\n  border: 0;\n  border-bottom-width: 1px;\n  border-bottom-style: solid;\n  border-bottom-color: #ccc;\n}\n\n/* Add-on Modules */\n\n/* Basscss Btn */\n\n.btn {\n  font-family: inherit;\n  font-size: inherit;\n  font-weight: bold;\n  text-decoration: none;\n  cursor: pointer;\n  display: inline-block;\n  line-height: 1.125rem;\n  padding: .5rem 1rem;\n  margin: 0;\n  height: auto;\n  border: 1px solid transparent;\n  vertical-align: middle;\n  -webkit-appearance: none;\n  color: inherit;\n  background-color: transparent;\n}\n\n.btn:hover {\n  text-decoration: none;\n}\n\n.btn:focus {\n  outline: none;\n  border-color: #000000;\n  border-color: rgba(0, 0, 0, .125);\n  box-shadow: 0 0 0 3px rgba(0, 0, 0, .25);\n}\n\n::-moz-focus-inner {\n  border: 0;\n  padding: 0;\n}\n\n/* Basscss Btn Primary */\n\n.btn-primary {\n  color: #fff;\n  background-color: #0074D9;\n  border-radius: 3px;\n}\n\n.btn-primary:hover {\n  box-shadow: inset 0 0 0 20rem rgba(0, 0, 0, .0625);\n}\n\n.btn-primary:active {\n  box-shadow: inset 0 0 0 20rem rgba(0, 0, 0, .125),\n    inset 0 3px 4px 0 rgba(0, 0, 0, .25),\n    0 0 1px rgba(0, 0, 0, .125);\n}\n\n.btn-primary:disabled,\n.btn-primary.is-disabled {\n  opacity: .5;\n}\n\n/* Basscss Background Colors */\n\n/* \n\n   VARIABLES\n\n   - Cool\n   - Warm\n   - Gray Scale\n\n*/\n\n.bg-black  { background-color: #111111 }\n\n.bg-gray   { background-color: #AAAAAA }\n\n.bg-silver { background-color: #DDDDDD }\n\n.bg-white  { background-color: #FFFFFF }\n\n.bg-aqua  { background-color: #7FDBFF }\n\n.bg-blue  { background-color: #0074D9 }\n\n.bg-navy  { background-color: #001F3F }\n\n.bg-teal  { background-color: #39CCCC }\n\n.bg-green { background-color: #2ECC40 }\n\n.bg-olive { background-color: #3D9970 }\n\n.bg-lime  { background-color: #01FF70 }\n\n.bg-yellow  { background-color: #FFDC00 }\n\n.bg-orange  { background-color: #FF851B }\n\n.bg-red     { background-color: #FF4136 }\n\n.bg-fuchsia { background-color: #F012BE }\n\n.bg-purple  { background-color: #B10DC9 }\n\n.bg-maroon  { background-color: #85144B }\n\n/* Basscss Colors */\n\n.black  { color: #111111 }\n\n.gray   { color: #AAAAAA }\n\n.silver { color: #DDDDDD }\n\n.white  { color: #FFFFFF }\n\n.aqua  { color: #7FDBFF }\n\n.blue  { color: #0074D9 }\n\n.navy  { color: #001F3F }\n\n.teal  { color: #39CCCC }\n\n.green { color: #2ECC40 }\n\n.olive { color: #3D9970 }\n\n.lime  { color: #01FF70 }\n\n.yellow  { color: #FFDC00 }\n\n.orange  { color: #FF851B }\n\n.red     { color: #FF4136 }\n\n.fuchsia { color: #F012BE }\n\n.purple  { color: #B10DC9 }\n\n.maroon  { color: #85144B }\n\n.color-inherit { color: inherit }\n\n.muted { opacity: .5 }\n\n/* Basscss Forms */\n\n.label {\n  font-size: .875rem;\n  font-weight: bold;\n  display: block;\n  margin-bottom: .5rem;\n}\n\n.input {\n  font-family: inherit;\n  font-size: inherit;\n  display: block;\n  width: 100%;\n  height: 2.5rem;\n  padding: .5rem;\n  margin-bottom: 1rem;\n  border: 1px solid #ccc;\n  border-radius: 3px;\n}\n\n.select {\n  font-family: inherit;\n  font-size: inherit;\n  display: block;\n  width: 100%;\n  height: 2.5rem;\n  padding: .5rem;\n  margin-bottom: 1rem;\n  border: 1px solid #ccc;\n  border-radius: 3px;\n}\n\n.textarea {\n  font-family: inherit;\n  font-size: inherit;\n  display: block;\n  width: 100%;\n  padding: .5rem;\n  margin-bottom: 1rem;\n  border: 1px solid #ccc;\n  border-radius: 3px;\n}\n\n/* Basscss Input Range */\n\n.input-range {\n  vertical-align: middle;\n  background-color: transparent;\n  padding-top: .5rem;\n  padding-bottom: .5rem;\n  color: inherit;\n  background-color: transparent;\n  -webkit-appearance: none;\n}\n\n.input-range::-webkit-slider-thumb {\n  position: relative;\n  width: .5rem;\n  height: 1.25rem;\n  cursor: pointer;\n  margin-top: -0.5rem;\n  border-radius: 3px;\n  background-color: currentcolor;\n  -webkit-appearance: none;\n}\n\n/* Touch screen friendly pseudo element */\n\n.input-range::-webkit-slider-thumb:before {\n  content: '';\n  display: block;\n  position: absolute;\n  top: -8px;\n  top: -0.5rem;\n  left: -14px;\n  left: -0.875rem;\n  width: 36px;\n  width: 2.25rem;\n  height: 36px;\n  height: 2.25rem;\n  opacity: 0;\n}\n\n.input-range::-moz-range-thumb {\n  width: .5rem;\n  height: 1.25rem;\n  cursor: pointer;\n  border-radius: 3px;\n  border-color: transparent;\n  border-width: 0;\n  background-color: currentcolor;\n}\n\n.input-range::-webkit-slider-runnable-track {\n  height: 0.25rem;\n  cursor: pointer;\n  border-radius: 3px;\n  background-color: #000000;\n  background-color: rgba(0, 0, 0, .25);\n}\n\n.input-range::-moz-range-track {\n  height: 0.25rem;\n  cursor: pointer;\n  border-radius: 3px;\n  background-color: #000000;\n  background-color: rgba(0, 0, 0, .25);\n}\n\n.input-range:focus {\n  outline: none;\n}\n\n/* Basscss Responsive Margin */\n\n@media (min-width: 40em) {\n\n  .sm-m0  { margin:        0 }\n  .sm-mt0 { margin-top:    0 }\n  .sm-mr0 { margin-right:  0 }\n  .sm-mb0 { margin-bottom: 0 }\n  .sm-ml0 { margin-left:   0 }\n  .sm-mx0 { margin-left:   0; margin-right:  0 }\n  .sm-my0 { margin-top:    0; margin-bottom: 0 }\n\n  .sm-m1  { margin: .5rem }\n  .sm-mt1 { margin-top: .5rem }\n  .sm-mr1 { margin-right: .5rem }\n  .sm-mb1 { margin-bottom: .5rem }\n  .sm-ml1 { margin-left: .5rem }\n  .sm-mx1 { margin-left: .5rem; margin-right: .5rem }\n  .sm-my1 { margin-top: .5rem; margin-bottom: .5rem }\n\n  .sm-m2  { margin: 1rem }\n  .sm-mt2 { margin-top: 1rem }\n  .sm-mr2 { margin-right: 1rem }\n  .sm-mb2 { margin-bottom: 1rem }\n  .sm-ml2 { margin-left: 1rem }\n  .sm-mx2 { margin-left: 1rem; margin-right: 1rem }\n  .sm-my2 { margin-top: 1rem; margin-bottom: 1rem }\n\n  .sm-m3  { margin: 2rem }\n  .sm-mt3 { margin-top: 2rem }\n  .sm-mr3 { margin-right: 2rem }\n  .sm-mb3 { margin-bottom: 2rem }\n  .sm-ml3 { margin-left: 2rem }\n  .sm-mx3 { margin-left: 2rem; margin-right: 2rem }\n  .sm-my3 { margin-top: 2rem; margin-bottom: 2rem }\n\n  .sm-m4  { margin: 4rem }\n  .sm-mt4 { margin-top: 4rem }\n  .sm-mr4 { margin-right: 4rem }\n  .sm-mb4 { margin-bottom: 4rem }\n  .sm-ml4 { margin-left: 4rem }\n  .sm-mx4 { margin-left: 4rem; margin-right: 4rem }\n  .sm-my4 { margin-top: 4rem; margin-bottom: 4rem }\n\n  .sm-mxn1 { margin-left: -.5rem; margin-right: -.5rem }\n  .sm-mxn2 { margin-left: -1rem; margin-right: -1rem }\n  .sm-mxn3 { margin-left: -2rem; margin-right: -2rem }\n  .sm-mxn4 { margin-left: -4rem; margin-right: -4rem }\n\n  .sm-ml-auto { margin-left:  auto }\n  .sm-mr-auto { margin-right: auto }\n  .sm-mx-auto { margin-left:  auto; margin-right: auto }\n\n}\n\n@media (min-width: 52em) {\n\n  .md-m0  { margin:        0 }\n  .md-mt0 { margin-top:    0 }\n  .md-mr0 { margin-right:  0 }\n  .md-mb0 { margin-bottom: 0 }\n  .md-ml0 { margin-left:   0 }\n  .md-mx0 { margin-left:   0; margin-right:  0 }\n  .md-my0 { margin-top:    0; margin-bottom: 0 }\n\n  .md-m1  { margin: .5rem }\n  .md-mt1 { margin-top: .5rem }\n  .md-mr1 { margin-right: .5rem }\n  .md-mb1 { margin-bottom: .5rem }\n  .md-ml1 { margin-left: .5rem }\n  .md-mx1 { margin-left: .5rem; margin-right: .5rem }\n  .md-my1 { margin-top: .5rem; margin-bottom: .5rem }\n\n  .md-m2  { margin: 1rem }\n  .md-mt2 { margin-top: 1rem }\n  .md-mr2 { margin-right: 1rem }\n  .md-mb2 { margin-bottom: 1rem }\n  .md-ml2 { margin-left: 1rem }\n  .md-mx2 { margin-left: 1rem; margin-right: 1rem }\n  .md-my2 { margin-top: 1rem; margin-bottom: 1rem }\n\n  .md-m3  { margin: 2rem }\n  .md-mt3 { margin-top: 2rem }\n  .md-mr3 { margin-right: 2rem }\n  .md-mb3 { margin-bottom: 2rem }\n  .md-ml3 { margin-left: 2rem }\n  .md-mx3 { margin-left: 2rem; margin-right: 2rem }\n  .md-my3 { margin-top: 2rem; margin-bottom: 2rem }\n\n  .md-m4  { margin: 4rem }\n  .md-mt4 { margin-top: 4rem }\n  .md-mr4 { margin-right: 4rem }\n  .md-mb4 { margin-bottom: 4rem }\n  .md-ml4 { margin-left: 4rem }\n  .md-mx4 { margin-left: 4rem; margin-right: 4rem }\n  .md-my4 { margin-top: 4rem; margin-bottom: 4rem }\n\n  .md-mxn1 { margin-left: -.5rem; margin-right: -.5rem; }\n  .md-mxn2 { margin-left: -1rem; margin-right: -1rem; }\n  .md-mxn3 { margin-left: -2rem; margin-right: -2rem; }\n  .md-mxn4 { margin-left: -4rem; margin-right: -4rem; }\n\n  .md-ml-auto { margin-left:  auto }\n  .md-mr-auto { margin-right: auto }\n  .md-mx-auto { margin-left: auto; margin-right: auto; }\n\n}\n\n@media (min-width: 64em) {\n\n  .lg-m0  { margin:        0 }\n  .lg-mt0 { margin-top:    0 }\n  .lg-mr0 { margin-right:  0 }\n  .lg-mb0 { margin-bottom: 0 }\n  .lg-ml0 { margin-left:   0 }\n  .lg-mx0 { margin-left:   0; margin-right:  0 }\n  .lg-my0 { margin-top:    0; margin-bottom: 0 }\n\n  .lg-m1  { margin: .5rem }\n  .lg-mt1 { margin-top: .5rem }\n  .lg-mr1 { margin-right: .5rem }\n  .lg-mb1 { margin-bottom: .5rem }\n  .lg-ml1 { margin-left: .5rem }\n  .lg-mx1 { margin-left: .5rem; margin-right: .5rem }\n  .lg-my1 { margin-top: .5rem; margin-bottom: .5rem }\n\n  .lg-m2  { margin: 1rem }\n  .lg-mt2 { margin-top: 1rem }\n  .lg-mr2 { margin-right: 1rem }\n  .lg-mb2 { margin-bottom: 1rem }\n  .lg-ml2 { margin-left: 1rem }\n  .lg-mx2 { margin-left: 1rem; margin-right: 1rem }\n  .lg-my2 { margin-top: 1rem; margin-bottom: 1rem }\n\n  .lg-m3  { margin: 2rem }\n  .lg-mt3 { margin-top: 2rem }\n  .lg-mr3 { margin-right: 2rem }\n  .lg-mb3 { margin-bottom: 2rem }\n  .lg-ml3 { margin-left: 2rem }\n  .lg-mx3 { margin-left: 2rem; margin-right: 2rem }\n  .lg-my3 { margin-top: 2rem; margin-bottom: 2rem }\n\n  .lg-m4  { margin: 4rem }\n  .lg-mt4 { margin-top: 4rem }\n  .lg-mr4 { margin-right: 4rem }\n  .lg-mb4 { margin-bottom: 4rem }\n  .lg-ml4 { margin-left: 4rem }\n  .lg-mx4 { margin-left: 4rem; margin-right: 4rem }\n  .lg-my4 { margin-top: 4rem; margin-bottom: 4rem }\n\n  .lg-mxn1 { margin-left: -.5rem; margin-right: -.5rem; }\n  .lg-mxn2 { margin-left: -1rem; margin-right: -1rem; }\n  .lg-mxn3 { margin-left: -2rem; margin-right: -2rem; }\n  .lg-mxn4 { margin-left: -4rem; margin-right: -4rem; }\n\n  .lg-ml-auto { margin-left:  auto }\n  .lg-mr-auto { margin-right: auto }\n  .lg-mx-auto { margin-left: auto; margin-right: auto; }\n\n}\n\n/* Basscss Responsive Padding */\n\n@media (min-width: 40em) {\n\n  .sm-p0  { padding:        0 }\n  .sm-pt0 { padding-top:    0 }\n  .sm-pr0 { padding-right:  0 }\n  .sm-pb0 { padding-bottom: 0 }\n  .sm-pl0 { padding-left:   0 }\n  .sm-px0 { padding-left:   0; padding-right:  0 }\n  .sm-py0 { padding-top:    0; padding-bottom: 0 }\n\n  .sm-p1  { padding: .5rem }\n  .sm-pt1 { padding-top: .5rem }\n  .sm-pr1 { padding-right: .5rem }\n  .sm-pb1 { padding-bottom: .5rem }\n  .sm-pl1 { padding-left: .5rem }\n  .sm-px1 { padding-left: .5rem; padding-right: .5rem }\n  .sm-py1 { padding-top: .5rem; padding-bottom: .5rem }\n\n  .sm-p2  { padding: 1rem }\n  .sm-pt2 { padding-top: 1rem }\n  .sm-pr2 { padding-right: 1rem }\n  .sm-pb2 { padding-bottom: 1rem }\n  .sm-pl2 { padding-left: 1rem }\n  .sm-px2 { padding-left: 1rem; padding-right: 1rem }\n  .sm-py2 { padding-top: 1rem; padding-bottom: 1rem }\n\n  .sm-p3  { padding: 2rem }\n  .sm-pt3 { padding-top: 2rem }\n  .sm-pr3 { padding-right: 2rem }\n  .sm-pb3 { padding-bottom: 2rem }\n  .sm-pl3 { padding-left: 2rem }\n  .sm-px3 { padding-left: 2rem; padding-right: 2rem }\n  .sm-py3 { padding-top: 2rem; padding-bottom: 2rem }\n\n  .sm-p4  { padding: 4rem }\n  .sm-pt4 { padding-top: 4rem }\n  .sm-pr4 { padding-right: 4rem }\n  .sm-pb4 { padding-bottom: 4rem }\n  .sm-pl4 { padding-left: 4rem }\n  .sm-px4 { padding-left: 4rem; padding-right: 4rem }\n  .sm-py4 { padding-top: 4rem; padding-bottom: 4rem }\n\n}\n\n@media (min-width: 52em) {\n\n  .md-p0  { padding:        0 }\n  .md-pt0 { padding-top:    0 }\n  .md-pr0 { padding-right:  0 }\n  .md-pb0 { padding-bottom: 0 }\n  .md-pl0 { padding-left:   0 }\n  .md-px0 { padding-left:   0; padding-right:  0 }\n  .md-py0 { padding-top:    0; padding-bottom: 0 }\n\n  .md-p1  { padding: .5rem }\n  .md-pt1 { padding-top: .5rem }\n  .md-pr1 { padding-right: .5rem }\n  .md-pb1 { padding-bottom: .5rem }\n  .md-pl1 { padding-left: .5rem }\n  .md-px1 { padding-left: .5rem; padding-right: .5rem }\n  .md-py1 { padding-top: .5rem; padding-bottom: .5rem }\n\n  .md-p2  { padding: 1rem }\n  .md-pt2 { padding-top: 1rem }\n  .md-pr2 { padding-right: 1rem }\n  .md-pb2 { padding-bottom: 1rem }\n  .md-pl2 { padding-left: 1rem }\n  .md-px2 { padding-left: 1rem; padding-right: 1rem }\n  .md-py2 { padding-top: 1rem; padding-bottom: 1rem }\n\n  .md-p3  { padding: 2rem }\n  .md-pt3 { padding-top: 2rem }\n  .md-pr3 { padding-right: 2rem }\n  .md-pb3 { padding-bottom: 2rem }\n  .md-pl3 { padding-left: 2rem }\n  .md-px3 { padding-left: 2rem; padding-right: 2rem }\n  .md-py3 { padding-top: 2rem; padding-bottom: 2rem }\n\n  .md-p4  { padding: 4rem }\n  .md-pt4 { padding-top: 4rem }\n  .md-pr4 { padding-right: 4rem }\n  .md-pb4 { padding-bottom: 4rem }\n  .md-pl4 { padding-left: 4rem }\n  .md-px4 { padding-left: 4rem; padding-right: 4rem }\n  .md-py4 { padding-top: 4rem; padding-bottom: 4rem }\n\n}\n\n@media (min-width: 64em) {\n\n  .lg-p0  { padding:        0 }\n  .lg-pt0 { padding-top:    0 }\n  .lg-pr0 { padding-right:  0 }\n  .lg-pb0 { padding-bottom: 0 }\n  .lg-pl0 { padding-left:   0 }\n  .lg-px0 { padding-left:   0; padding-right:  0 }\n  .lg-py0 { padding-top:    0; padding-bottom: 0 }\n\n  .lg-p1  { padding: .5rem }\n  .lg-pt1 { padding-top: .5rem }\n  .lg-pr1 { padding-right: .5rem }\n  .lg-pb1 { padding-bottom: .5rem }\n  .lg-pl1 { padding-left: .5rem }\n  .lg-px1 { padding-left: .5rem; padding-right: .5rem }\n  .lg-py1 { padding-top: .5rem; padding-bottom: .5rem }\n\n  .lg-p2  { padding: 1rem }\n  .lg-pt2 { padding-top: 1rem }\n  .lg-pr2 { padding-right: 1rem }\n  .lg-pb2 { padding-bottom: 1rem }\n  .lg-pl2 { padding-left: 1rem }\n  .lg-px2 { padding-left: 1rem; padding-right: 1rem }\n  .lg-py2 { padding-top: 1rem; padding-bottom: 1rem }\n\n  .lg-p3  { padding: 2rem }\n  .lg-pt3 { padding-top: 2rem }\n  .lg-pr3 { padding-right: 2rem }\n  .lg-pb3 { padding-bottom: 2rem }\n  .lg-pl3 { padding-left: 2rem }\n  .lg-px3 { padding-left: 2rem; padding-right: 2rem }\n  .lg-py3 { padding-top: 2rem; padding-bottom: 2rem }\n\n  .lg-p4  { padding: 4rem }\n  .lg-pt4 { padding-top: 4rem }\n  .lg-pr4 { padding-right: 4rem }\n  .lg-pb4 { padding-bottom: 4rem }\n  .lg-pl4 { padding-left: 4rem }\n  .lg-px4 { padding-left: 4rem; padding-right: 4rem }\n  .lg-py4 { padding-top: 4rem; padding-bottom: 4rem }\n\n}\n\n/* Basscss Media Object */\n\n.media,\n.sm-media,\n.md-media,\n.lg-media {\n  margin-left: -.5rem;\n  margin-right: -.5rem;\n}\n\n.media {\n  display: -ms-flexbox;\n  display: flex;\n}\n\n.media-center {\n  -ms-flex-align: center;\n      -ms-grid-row-align: center;\n      align-items: center;\n}\n\n.media-bottom {\n  -ms-flex-align: end;\n      -ms-grid-row-align: flex-end;\n      align-items: flex-end;\n}\n\n.media-img,\n.media-body {\n  padding-left: .5rem;\n  padding-right: .5rem;\n}\n\n.media-body {\n  -ms-flex: 1 1 auto;\n      flex: 1 1 auto;\n}\n\n@media (min-width: 40em) {\n  .sm-media { display: -ms-flexbox; display: flex }\n}\n\n@media (min-width: 52em) {\n  .md-media { display: -ms-flexbox; display: flex }\n}\n\n@media (min-width: 64em) {\n  .lg-media { display: -ms-flexbox; display: flex }\n}\n\n/* Basscss All */\n\n.all-initial { animation: none 0s ease 0s 1 normal none running; backface-visibility: visible; background: transparent none repeat 0 0 / auto auto padding-box border-box scroll; border: medium none currentColor; border-collapse: separate; border-image: none; border-radius: 0; border-spacing: 0; bottom: auto; box-shadow: none; box-sizing: content-box; caption-side: top; clear: none; clip: auto; color: #000; -webkit-columns: auto; -moz-columns: auto; columns: auto; -webkit-column-count: auto; -moz-column-count: auto; column-count: auto; -webkit-column-fill: balance; -moz-column-fill: balance; column-fill: balance; -webkit-column-gap: normal; -moz-column-gap: normal; column-gap: normal; -webkit-column-rule: medium none currentColor; -moz-column-rule: medium none currentColor; column-rule: medium none currentColor; -webkit-column-span: 1; -moz-column-span: 1; column-span: 1; -webkit-column-width: auto; -moz-column-width: auto; column-width: auto; content: normal; counter-increment: none; counter-reset: none; cursor: auto; direction: ltr; display: inline; empty-cells: show; float: none; font-family: serif; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; line-height: normal; height: auto; -webkit-hyphens: none; -ms-hyphens: none; hyphens: none; left: auto; letter-spacing: normal; list-style: disc outside none; margin: 0; max-height: none; max-width: none; min-height: 0; min-width: 0; opacity: 1; orphans: 2; outline: medium none invert; overflow: visible; overflow-x: visible; overflow-y: visible; padding: 0; page-break-after: auto; page-break-before: auto; page-break-inside: auto; perspective: none; perspective-origin: 50% 50%; position: static; right: auto; -moz-tab-size: 8; tab-size: 8; table-layout: auto; text-align: left; -moz-text-align-last: auto; text-align-last: auto; text-decoration: none; text-indent: 0; text-shadow: none; text-transform: none; top: auto; -ms-transform: none; transform: none; -ms-transform-origin: 50% 50% 0; transform-origin: 50% 50% 0; transform-style: flat; transition: none 0s ease 0s; unicode-bidi: normal; vertical-align: baseline; visibility: visible; white-space: normal; widows: 2; width: auto; word-spacing: normal; z-index: auto; all: initial }\n\n.all-unset { all: unset }\n\n.all-inherit { all: inherit }\n\n/* Basscss Progress */\n\n.progress {\n  display: block;\n  width: 100%;\n  height: 0.5625rem;\n  margin: .5rem 0;\n  overflow: hidden;\n  background-color: #000000;\n  background-color: rgba(0, 0, 0, .125);\n  border: 0;\n  border-radius: 10000px;\n  -webkit-appearance: none;\n}\n\n.progress::-webkit-progress-bar {\n  -webkit-appearance: none;\n  background-color: #000000;\n  background-color: rgba(0, 0, 0, .125)\n}\n\n.progress::-webkit-progress-value {\n  -webkit-appearance: none;\n  background-color: currentcolor;\n}\n\n.progress::-moz-progress-bar {\n  background-color: currentcolor;\n}\n\n/* Basscss Lighten */\n\n.bg-lighten-1 { background-color: #ffffff; background-color: rgba(255, 255, 255, .0625) }\n\n.bg-lighten-2 { background-color: #ffffff; background-color: rgba(255, 255, 255, .125) }\n\n.bg-lighten-3 { background-color: #ffffff; background-color: rgba(255, 255, 255, .25) }\n\n.bg-lighten-4 { background-color: #ffffff; background-color: rgba(255, 255, 255, .5) }\n\n/* Basscss Background Images */\n\n.bg-cover   { background-size: cover }\n\n.bg-contain { background-size: contain }\n\n.bg-center  { background-position: center }\n\n.bg-top     { background-position: top }\n\n.bg-right   { background-position: right }\n\n.bg-bottom  { background-position: bottom }\n\n.bg-left    { background-position: left }\n\n/* Basscss Darken */\n\n.bg-darken-1 { background-color: #000000; background-color: rgba(0, 0, 0, .0625) }\n\n.bg-darken-2 { background-color: #000000; background-color: rgba(0, 0, 0, .125) }\n\n.bg-darken-3 { background-color: #000000; background-color: rgba(0, 0, 0, .25) }\n\n.bg-darken-4 { background-color: #000000; background-color: rgba(0, 0, 0, .5) }\n\n/* Base Modules */\n\n/* Basscss Type Scale */\n\n.h1 { font-size: 2rem }\n\n.h2 { font-size: 1.5rem }\n\n.h3 { font-size: 1.25rem }\n\n.h4 { font-size: 1rem }\n\n.h5 { font-size: .875rem }\n\n.h6 { font-size: .75rem }\n\n/* Basscss Typography */\n\n.font-family-inherit { font-family: inherit }\n\n.font-size-inherit { font-size: inherit }\n\n.text-decoration-none { text-decoration: none }\n\n.bold    { font-weight: bold; font-weight: bold }\n\n.regular { font-weight: normal }\n\n.italic  { font-style: italic }\n\n.caps    { text-transform: uppercase; letter-spacing: .2em; }\n\n.left-align   { text-align: left }\n\n.center       { text-align: center }\n\n.right-align  { text-align: right }\n\n.justify      { text-align: justify }\n\n.nowrap { white-space: nowrap }\n\n.break-word { word-wrap: break-word }\n\n.line-height-1 { line-height: 1 }\n\n.line-height-2 { line-height: 1.125 }\n\n.line-height-3 { line-height: 1.25 }\n\n.line-height-4 { line-height: 1.5 }\n\n.list-style-none { list-style: none }\n\n.underline { text-decoration: underline }\n\n.truncate {\n  max-width: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.list-reset {\n  list-style: none;\n  padding-left: 0;\n}\n\n/* Basscss Layout */\n\n.inline       { display: inline }\n\n.block        { display: block }\n\n.inline-block { display: inline-block }\n\n.table        { display: table }\n\n.table-cell   { display: table-cell }\n\n.overflow-hidden { overflow: hidden }\n\n.overflow-scroll { overflow: scroll }\n\n.overflow-auto   { overflow: auto }\n\n.clearfix:before,\n.clearfix:after {\n  content: \" \";\n  display: table\n}\n\n.clearfix:after { clear: both }\n\n.left  { float: left }\n\n.right { float: right }\n\n.fit { max-width: 100% }\n\n.max-width-1 { max-width: 24rem }\n\n.max-width-2 { max-width: 32rem }\n\n.max-width-3 { max-width: 48rem }\n\n.max-width-4 { max-width: 64rem }\n\n.border-box { box-sizing: border-box }\n\n/* Basscss Align */\n\n.align-baseline { vertical-align: baseline }\n\n.align-top      { vertical-align: top }\n\n.align-middle   { vertical-align: middle }\n\n.align-bottom   { vertical-align: bottom }\n\n/* Basscss Margin */\n\n.m0  { margin:        0 }\n\n.mt0 { margin-top:    0 }\n\n.mr0 { margin-right:  0 }\n\n.mb0 { margin-bottom: 0 }\n\n.ml0 { margin-left:   0 }\n\n.mx0 { margin-left:   0; margin-right:  0 }\n\n.my0 { margin-top:    0; margin-bottom: 0 }\n\n.m1  { margin: .5rem }\n\n.mt1 { margin-top: .5rem }\n\n.mr1 { margin-right: .5rem }\n\n.mb1 { margin-bottom: .5rem }\n\n.ml1 { margin-left: .5rem }\n\n.mx1 { margin-left: .5rem; margin-right: .5rem }\n\n.my1 { margin-top: .5rem; margin-bottom: .5rem }\n\n.m2  { margin: 1rem }\n\n.mt2 { margin-top: 1rem }\n\n.mr2 { margin-right: 1rem }\n\n.mb2 { margin-bottom: 1rem }\n\n.ml2 { margin-left: 1rem }\n\n.mx2 { margin-left: 1rem; margin-right: 1rem }\n\n.my2 { margin-top: 1rem; margin-bottom: 1rem }\n\n.m3  { margin: 2rem }\n\n.mt3 { margin-top: 2rem }\n\n.mr3 { margin-right: 2rem }\n\n.mb3 { margin-bottom: 2rem }\n\n.ml3 { margin-left: 2rem }\n\n.mx3 { margin-left: 2rem; margin-right: 2rem }\n\n.my3 { margin-top: 2rem; margin-bottom: 2rem }\n\n.m4  { margin: 4rem }\n\n.mt4 { margin-top: 4rem }\n\n.mr4 { margin-right: 4rem }\n\n.mb4 { margin-bottom: 4rem }\n\n.ml4 { margin-left: 4rem }\n\n.mx4 { margin-left: 4rem; margin-right: 4rem }\n\n.my4 { margin-top: 4rem; margin-bottom: 4rem }\n\n.mxn1 { margin-left: -.5rem; margin-right: -.5rem; }\n\n.mxn2 { margin-left: -1rem; margin-right: -1rem; }\n\n.mxn3 { margin-left: -2rem; margin-right: -2rem; }\n\n.mxn4 { margin-left: -4rem; margin-right: -4rem; }\n\n.ml-auto { margin-left: auto }\n\n.mr-auto { margin-right: auto }\n\n.mx-auto { margin-left: auto; margin-right: auto; }\n\n/* Basscss Padding */\n\n.p0  { padding: 0 }\n\n.pt0 { padding-top: 0 }\n\n.pr0 { padding-right: 0 }\n\n.pb0 { padding-bottom: 0 }\n\n.pl0 { padding-left: 0 }\n\n.px0 { padding-left: 0; padding-right:  0 }\n\n.py0 { padding-top: 0;  padding-bottom: 0 }\n\n.p1  { padding: .5rem }\n\n.pt1 { padding-top: .5rem }\n\n.pr1 { padding-right: .5rem }\n\n.pb1 { padding-bottom: .5rem }\n\n.pl1 { padding-left: .5rem }\n\n.py1 { padding-top: .5rem; padding-bottom: .5rem }\n\n.px1 { padding-left: .5rem; padding-right: .5rem }\n\n.p2  { padding: 1rem }\n\n.pt2 { padding-top: 1rem }\n\n.pr2 { padding-right: 1rem }\n\n.pb2 { padding-bottom: 1rem }\n\n.pl2 { padding-left: 1rem }\n\n.py2 { padding-top: 1rem; padding-bottom: 1rem }\n\n.px2 { padding-left: 1rem; padding-right: 1rem }\n\n.p3  { padding: 2rem }\n\n.pt3 { padding-top: 2rem }\n\n.pr3 { padding-right: 2rem }\n\n.pb3 { padding-bottom: 2rem }\n\n.pl3 { padding-left: 2rem }\n\n.py3 { padding-top: 2rem; padding-bottom: 2rem }\n\n.px3 { padding-left: 2rem; padding-right: 2rem }\n\n.p4  { padding: 4rem }\n\n.pt4 { padding-top: 4rem }\n\n.pr4 { padding-right: 4rem }\n\n.pb4 { padding-bottom: 4rem }\n\n.pl4 { padding-left: 4rem }\n\n.py4 { padding-top: 4rem; padding-bottom: 4rem }\n\n.px4 { padding-left: 4rem; padding-right: 4rem }\n\n/* Basscss Grid */\n\n.col {\n  float: left;\n  box-sizing: border-box;\n}\n\n.col-right {\n  float: right;\n  box-sizing: border-box;\n}\n\n.col-1 {\n  width: 8.33333%;\n}\n\n.col-2 {\n  width: 16.66667%;\n}\n\n.col-3 {\n  width: 25%;\n}\n\n.col-4 {\n  width: 33.33333%;\n}\n\n.col-5 {\n  width: 41.66667%;\n}\n\n.col-6 {\n  width: 50%;\n}\n\n.col-7 {\n  width: 58.33333%;\n}\n\n.col-8 {\n  width: 66.66667%;\n}\n\n.col-9 {\n  width: 75%;\n}\n\n.col-10 {\n  width: 83.33333%;\n}\n\n.col-11 {\n  width: 91.66667%;\n}\n\n.col-12 {\n  width: 100%;\n}\n\n@media (min-width: 40em) {\n\n  .sm-col {\n    float: left;\n    box-sizing: border-box;\n  }\n\n  .sm-col-right {\n    float: right;\n    box-sizing: border-box;\n  }\n\n  .sm-col-1 {\n    width: 8.33333%;\n  }\n\n  .sm-col-2 {\n    width: 16.66667%;\n  }\n\n  .sm-col-3 {\n    width: 25%;\n  }\n\n  .sm-col-4 {\n    width: 33.33333%;\n  }\n\n  .sm-col-5 {\n    width: 41.66667%;\n  }\n\n  .sm-col-6 {\n    width: 50%;\n  }\n\n  .sm-col-7 {\n    width: 58.33333%;\n  }\n\n  .sm-col-8 {\n    width: 66.66667%;\n  }\n\n  .sm-col-9 {\n    width: 75%;\n  }\n\n  .sm-col-10 {\n    width: 83.33333%;\n  }\n\n  .sm-col-11 {\n    width: 91.66667%;\n  }\n\n  .sm-col-12 {\n    width: 100%;\n  }\n\n}\n\n@media (min-width: 52em) {\n\n  .md-col {\n    float: left;\n    box-sizing: border-box;\n  }\n\n  .md-col-right {\n    float: right;\n    box-sizing: border-box;\n  }\n\n  .md-col-1 {\n    width: 8.33333%;\n  }\n\n  .md-col-2 {\n    width: 16.66667%;\n  }\n\n  .md-col-3 {\n    width: 25%;\n  }\n\n  .md-col-4 {\n    width: 33.33333%;\n  }\n\n  .md-col-5 {\n    width: 41.66667%;\n  }\n\n  .md-col-6 {\n    width: 50%;\n  }\n\n  .md-col-7 {\n    width: 58.33333%;\n  }\n\n  .md-col-8 {\n    width: 66.66667%;\n  }\n\n  .md-col-9 {\n    width: 75%;\n  }\n\n  .md-col-10 {\n    width: 83.33333%;\n  }\n\n  .md-col-11 {\n    width: 91.66667%;\n  }\n\n  .md-col-12 {\n    width: 100%;\n  }\n\n}\n\n@media (min-width: 64em) {\n\n  .lg-col {\n    float: left;\n    box-sizing: border-box;\n  }\n\n  .lg-col-right {\n    float: right;\n    box-sizing: border-box;\n  }\n\n  .lg-col-1 {\n    width: 8.33333%;\n  }\n\n  .lg-col-2 {\n    width: 16.66667%;\n  }\n\n  .lg-col-3 {\n    width: 25%;\n  }\n\n  .lg-col-4 {\n    width: 33.33333%;\n  }\n\n  .lg-col-5 {\n    width: 41.66667%;\n  }\n\n  .lg-col-6 {\n    width: 50%;\n  }\n\n  .lg-col-7 {\n    width: 58.33333%;\n  }\n\n  .lg-col-8 {\n    width: 66.66667%;\n  }\n\n  .lg-col-9 {\n    width: 75%;\n  }\n\n  .lg-col-10 {\n    width: 83.33333%;\n  }\n\n  .lg-col-11 {\n    width: 91.66667%;\n  }\n\n  .lg-col-12 {\n    width: 100%;\n  }\n\n}\n\n.flex { display: -ms-flexbox; display: flex }\n\n@media (min-width: 40em) {\n  .sm-flex { display: -ms-flexbox; display: flex }\n}\n\n@media (min-width: 52em) {\n  .md-flex { display: -ms-flexbox; display: flex }\n}\n\n@media (min-width: 64em) {\n  .lg-flex { display: -ms-flexbox; display: flex }\n}\n\n.flex-column  { -ms-flex-direction: column; flex-direction: column }\n\n.flex-wrap    { -ms-flex-wrap: wrap; flex-wrap: wrap }\n\n.items-start    { -ms-flex-align: start; -ms-grid-row-align: flex-start; align-items: flex-start }\n\n.items-end      { -ms-flex-align: end; -ms-grid-row-align: flex-end; align-items: flex-end }\n\n.items-center   { -ms-flex-align: center; -ms-grid-row-align: center; align-items: center }\n\n.items-baseline { -ms-flex-align: baseline; -ms-grid-row-align: baseline; align-items: baseline }\n\n.items-stretch  { -ms-flex-align: stretch; -ms-grid-row-align: stretch; align-items: stretch }\n\n.self-start    { -ms-flex-item-align: start; align-self: flex-start }\n\n.self-end      { -ms-flex-item-align: end; align-self: flex-end }\n\n.self-center   { -ms-flex-item-align: center; align-self: center }\n\n.self-baseline { -ms-flex-item-align: baseline; align-self: baseline }\n\n.self-stretch  { -ms-flex-item-align: stretch; align-self: stretch }\n\n.justify-start   { -ms-flex-pack: start; justify-content: flex-start }\n\n.justify-end     { -ms-flex-pack: end; justify-content: flex-end }\n\n.justify-center  { -ms-flex-pack: center; justify-content: center }\n\n.justify-between { -ms-flex-pack: justify; justify-content: space-between }\n\n.justify-around  { -ms-flex-pack: distribute; justify-content: space-around }\n\n.content-start   { -ms-flex-line-pack: start; align-content: flex-start }\n\n.content-end     { -ms-flex-line-pack: end; align-content: flex-end }\n\n.content-center  { -ms-flex-line-pack: center; align-content: center }\n\n.content-between { -ms-flex-line-pack: justify; align-content: space-between }\n\n.content-around  { -ms-flex-line-pack: distribute; align-content: space-around }\n\n.content-stretch { -ms-flex-line-pack: stretch; align-content: stretch }\n\n/* 1. Fix for Chrome 44 bug. https://code.google.com/p/chromium/issues/detail?id=506893 */\n\n.flex-auto {\n  -ms-flex: 1 1 auto;\n      flex: 1 1 auto;\n  min-width: 0; /* 1 */\n  min-height: 0; /* 1 */\n}\n\n.flex-none { -ms-flex: none; flex: none }\n\n.order-0 { -ms-flex-order: 0; order: 0 }\n\n.order-1 { -ms-flex-order: 1; order: 1 }\n\n.order-2 { -ms-flex-order: 2; order: 2 }\n\n.order-3 { -ms-flex-order: 3; order: 3 }\n\n.order-last { -ms-flex-order: 99999; order: 99999 }\n\n/* Basscss Position */\n\n.relative { position: relative }\n\n.absolute { position: absolute }\n\n.fixed    { position: fixed }\n\n.top-0    { top: 0 }\n\n.right-0  { right: 0 }\n\n.bottom-0 { bottom: 0 }\n\n.left-0   { left: 0 }\n\n.z1 { z-index: 1 }\n\n.z2 { z-index: 2 }\n\n.z3 { z-index: 3 }\n\n.z4 { z-index: 4 }\n\n/* Basscss Border */\n\n.border {\n  border-style: solid;\n  border-width: 1px;\n}\n\n.border-top {\n  border-top-style: solid;\n  border-top-width: 1px;\n}\n\n.border-right {\n  border-right-style: solid;\n  border-right-width: 1px;\n}\n\n.border-bottom {\n  border-bottom-style: solid;\n  border-bottom-width: 1px;\n}\n\n.border-left {\n  border-left-style: solid;\n  border-left-width: 1px;\n}\n\n.border-none { border: 0 }\n\n.rounded { border-radius: 3px }\n\n.circle  { border-radius: 50% }\n\n.rounded-top    { border-radius: 3px 3px 0 0 }\n\n.rounded-right  { border-radius: 0 3px 3px 0 }\n\n.rounded-bottom { border-radius: 0 0 3px 3px }\n\n.rounded-left   { border-radius: 3px 0 0 3px }\n\n.not-rounded { border-radius: 0 }\n\n/* Basscss Hide */\n\n.hide {\n  position: absolute !important;\n  height: 1px;\n  width: 1px;\n  overflow: hidden;\n  clip: rect(1px, 1px, 1px, 1px);\n}\n\n@media (max-width: 40em) {\n  .xs-hide { display: none !important }\n}\n\n@media (min-width: 40em) and (max-width: 52em) {\n  .sm-hide { display: none !important }\n}\n\n@media (min-width: 52em) and (max-width: 64em) {\n  .md-hide { display: none !important }\n}\n\n@media (min-width: 64em) {\n  .lg-hide { display: none !important }\n}\n\n.display-none { display: none !important }\n\n.card{\r\n    display:block;    \r\n    margin: 10px;\r\n    border:1px solid #e3e3e3;\r\n    font-size:12px;\r\n    width: 200px;\r\n}\n\n.card .card-info{\r\n    display: block;\r\n    width: 180px;\r\n    margin: 10px;\r\n    background-size: cover;\r\n    background-position: center;\r\n}\n\n.card .card-image{\r\n    display: block;\r\n    width: 180px;\r\n    height: 80px;\r\n    overflow: hidden;\r\n    position: relative;\r\n}\n\n.card .card-btn-play{\r\n    opacity: 0;\r\n    cursor: pointer;\r\n    background: #000000;\r\n    background: rgba(0, 0, 0, 0.5);\r\n    position: absolute;\r\n    left: 0;\r\n    top: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    text-align: center;\r\n    line-height: 80px;\r\n    transition: all 0.3s;   \r\n    color: #f84171;\r\n    font-size: 28px;\r\n    opacity: 0;\r\n    transition: opacity .2s ease-in-out;\r\n}\n\n.card.playing .card-btn-play{\r\n    opacity: 1 !important;\r\n}\n\n.card .card-image:hover .card-btn-play{\r\n    opacity: 1;\r\n}\n\n.card img{\r\n    width:100%;    \r\n}\n\n.card-footer{\r\n    padding: 3px 5px;\r\n    color: #fff;\r\n    background: #000000;\r\n    background: rgba(0,0,0,0.6);   \r\n}\n\n.card.playing .card-footer{\r\n    color: #000;\r\n    background: #ffffff;\r\n    background: rgba(255,255,255,0.6);   \r\n}\n\n.card .card-name{\r\n    display:block;\r\n    text-overflow: ellipsis;\r\n    overflow:hidden;\r\n    white-space: nowrap;\r\n}\n\n.card .card-user a{\r\n    float: right;\r\n    font-size: 14px;\r\n    color: #f84171;\r\n}\n\n.player {\r\n    position: fixed;\r\n    left: 0;\r\n    bottom: 0;\r\n    width: 100%;\r\n    background-color: #fff;\r\n    border-top: 1px solid #e3e3e3;\r\n    -moz-user-select: none;\r\n    -webkit-user-select: none;\r\n    -ms-user-select: none;\r\n    z-index: 999;\r\n}\n\n.player .song-card-details {\r\n        overflow: hidden;\r\n    }\n\n.player-section {\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-direction: row;\r\n        flex-direction: row;\r\n    -ms-flex-align: center;\r\n        align-items: center;\r\n}\n\n.player-section + .player-section {\r\n        margin-left: 40px;\r\n    }\n\n.player-main {\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-direction: row;\r\n        flex-direction: row;\r\n    padding: 8px;\r\n}\n\n.player-info {\r\n    width: 140px;\r\n    font-size:12px;\r\n}\n\n.player-info .song-card-details a{\r\n    display: block;\r\n    overflow: hidden;\r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n}\n\n.player-image {\r\n    width: 30px;\r\n    height: 30px;\r\n    float: left;\r\n    margin-right: 8px;\r\n    -ms-flex-negative: 0;\r\n        flex-shrink: 0;\r\n}\n\n.player-button {\r\n    padding: 4px;\r\n}\n\n.player-button > i {\r\n        color: #ccc;\r\n    }\n\n.player-button.active:hover i {\r\n        color: #86AB85;\r\n    }\n\n.player-button.active > i {\r\n        color: #A6D2A5;\r\n    }\n\n.player-button:hover {\r\n        cursor: pointer;\r\n    }\n\n.player-button:hover > i {\r\n            color: #222;\r\n        }\n\n.player-button:hover .ion-ios-pause {\r\n            color: #86AB85;\r\n        }\n\n.player-button + .player-button {\r\n        margin-left: 30px;\r\n    }\n\n.player-button .ion-ios-pause {\r\n        color: #A6D2A5;\r\n    }\n\n.player-seek {\r\n    -ms-flex: 1;\r\n        flex: 1;\r\n}\n\n.player-seek-bar-wrap {\r\n    padding: 6px 0;\r\n    -ms-flex: 1;\r\n        flex: 1;\r\n}\n\n.player-seek-bar-wrap:hover {\r\n        cursor: pointer;\r\n    }\n\n.player-seek-bar {\r\n    position: relative;\r\n    height: 2px;\r\n    background-color: #ddd;\r\n}\n\n.player-seek-duration-bar {\r\n    position: absolute;\r\n    top: 0;\r\n    left: 0;\r\n    height: 100%;\r\n    background-color: #A6D2A5;\r\n}\n\n.player-seek-handle {\r\n    position: absolute;\r\n    top: -5px;\r\n    right: -6px;\r\n    width: 12px;\r\n    height: 12px;\r\n    background-color: #fff;\r\n    border-radius: 50%;\r\n    border: 1px solid #e3e3e3;\r\n}\n\n.player-time {\r\n    margin-left: 30px;\r\n    color: #ccc;\r\n    font-size: 11px;\r\n}\n\n.player-time-divider {\r\n    margin: 0 10px;\r\n}\n\n.player-volume {\r\n    margin-left: 30px;\r\n    width: 100px;\r\n}\n\n.player-volume-button {\r\n    width: 12px;\r\n}\n\n.player-volume-button-wrap {\r\n    position: relative;\r\n}\n\n.player-volume-button-wrap .ion-android-volume-up, .player-volume-button-wrap .ion-android-volume-down {\r\n        z-index: 0;\r\n        color: #A6D2A5;\r\n    }\n\n.player-volume-button-wrap .ion-android-volume-mute {\r\n        position: absolute;\r\n        top: 0;\r\n        left: 0;\r\n        z-index: 1;\r\n        color: #ccc;\r\n    }   ", ""]);
+	exports.push([module.id, "/* Basscss Basic */\n\n* {\n  box-sizing: border-box;\n}\n\nbody {\n  font-family:\n    -apple-system,\n    BlinkMacSystemFont,\n    'Segoe UI',\n    'Roboto',\n    'Helvetica Neue',\n    Helvetica,\n    sans-serif;\n  line-height: 1.5;\n  margin: 0;\n  color: #111;\n  background-color: #fff;\n}\n\nimg {\n  max-width: 100%;\n  height: auto;\n}\n\nsvg {\n  max-height: 100%;\n}\n\na {\n  color: #07c;\n}\n\nh1, h2, h3,\nh4, h5, h6 {\n  font-weight: 600;\n  line-height: 1.25;\n  margin-top: 1em;\n  margin-bottom: .5em;\n}\n\nh1 { font-size: 2rem }\n\nh2 { font-size: 1.5rem }\n\nh3 { font-size: 1.25rem }\n\nh4 { font-size: 1rem }\n\nh5 { font-size: .875rem }\n\nh6 { font-size: .75rem }\n\np, dl, ol, ul, pre, blockquote {\n  margin-top: 1em;\n  margin-bottom: 1em;\n}\n\ncode,\npre,\nsamp {\n  font-family:\n    'Roboto Mono',\n    'Source Code Pro',\n    Menlo,\n    Consolas,\n    'Liberation Mono',\n    monospace;\n}\n\ncode, samp {\n  font-size: 87.5%;\n  padding: .125em;\n}\n\npre {\n  font-size: 87.5%;\n  overflow: scroll;\n}\n\nblockquote {\n  font-size: 1.25rem;\n  font-style: italic;\n  margin-left: 0;\n}\n\nhr {\n  margin-top: 1.5em;\n  margin-bottom: 1.5em;\n  border: 0;\n  border-bottom-width: 1px;\n  border-bottom-style: solid;\n  border-bottom-color: #ccc;\n}\n\n/* Add-on Modules */\n\n/* Basscss Btn */\n\n.btn {\n  font-family: inherit;\n  font-size: inherit;\n  font-weight: bold;\n  text-decoration: none;\n  cursor: pointer;\n  display: inline-block;\n  line-height: 1.125rem;\n  padding: .5rem 1rem;\n  margin: 0;\n  height: auto;\n  border: 1px solid transparent;\n  vertical-align: middle;\n  -webkit-appearance: none;\n  color: inherit;\n  background-color: transparent;\n}\n\n.btn:hover {\n  text-decoration: none;\n}\n\n.btn:focus {\n  outline: none;\n  border-color: #000000;\n  border-color: rgba(0, 0, 0, .125);\n  box-shadow: 0 0 0 3px rgba(0, 0, 0, .25);\n}\n\n::-moz-focus-inner {\n  border: 0;\n  padding: 0;\n}\n\n/* Basscss Btn Primary */\n\n.btn-primary {\n  color: #fff;\n  background-color: #0074D9;\n  border-radius: 3px;\n}\n\n.btn-primary:hover {\n  box-shadow: inset 0 0 0 20rem rgba(0, 0, 0, .0625);\n}\n\n.btn-primary:active {\n  box-shadow: inset 0 0 0 20rem rgba(0, 0, 0, .125),\n    inset 0 3px 4px 0 rgba(0, 0, 0, .25),\n    0 0 1px rgba(0, 0, 0, .125);\n}\n\n.btn-primary:disabled,\n.btn-primary.is-disabled {\n  opacity: .5;\n}\n\n/* Basscss Background Colors */\n\n.bg-black  { background-color: #111111 }\n\n.bg-gray   { background-color: #AAAAAA }\n\n.bg-silver { background-color: #DDDDDD }\n\n.bg-white  { background-color: #FFFFFF }\n\n.bg-aqua  { background-color: #7FDBFF }\n\n.bg-blue  { background-color: #0074D9 }\n\n.bg-navy  { background-color: #001F3F }\n\n.bg-teal  { background-color: #39CCCC }\n\n.bg-green { background-color: #2ECC40 }\n\n.bg-olive { background-color: #3D9970 }\n\n.bg-lime  { background-color: #01FF70 }\n\n.bg-yellow  { background-color: #FFDC00 }\n\n.bg-orange  { background-color: #FF851B }\n\n.bg-red     { background-color: #FF4136 }\n\n.bg-fuchsia { background-color: #F012BE }\n\n.bg-purple  { background-color: #B10DC9 }\n\n.bg-maroon  { background-color: #85144B }\n\n/* Basscss Colors */\n\n/* \n\n   VARIABLES\n\n   - Cool\n   - Warm\n   - Gray Scale\n\n*/\n\n.black  { color: #111111 }\n\n.gray   { color: #AAAAAA }\n\n.silver { color: #DDDDDD }\n\n.white  { color: #FFFFFF }\n\n.aqua  { color: #7FDBFF }\n\n.blue  { color: #0074D9 }\n\n.navy  { color: #001F3F }\n\n.teal  { color: #39CCCC }\n\n.green { color: #2ECC40 }\n\n.olive { color: #3D9970 }\n\n.lime  { color: #01FF70 }\n\n.yellow  { color: #FFDC00 }\n\n.orange  { color: #FF851B }\n\n.red     { color: #FF4136 }\n\n.fuchsia { color: #F012BE }\n\n.purple  { color: #B10DC9 }\n\n.maroon  { color: #85144B }\n\n.color-inherit { color: inherit }\n\n.muted { opacity: .5 }\n\n/* Basscss Forms */\n\n.label {\n  font-size: .875rem;\n  font-weight: bold;\n  display: block;\n  margin-bottom: .5rem;\n}\n\n.input {\n  font-family: inherit;\n  font-size: inherit;\n  display: block;\n  width: 100%;\n  height: 2.5rem;\n  padding: .5rem;\n  margin-bottom: 1rem;\n  border: 1px solid #ccc;\n  border-radius: 3px;\n}\n\n.select {\n  font-family: inherit;\n  font-size: inherit;\n  display: block;\n  width: 100%;\n  height: 2.5rem;\n  padding: .5rem;\n  margin-bottom: 1rem;\n  border: 1px solid #ccc;\n  border-radius: 3px;\n}\n\n.textarea {\n  font-family: inherit;\n  font-size: inherit;\n  display: block;\n  width: 100%;\n  padding: .5rem;\n  margin-bottom: 1rem;\n  border: 1px solid #ccc;\n  border-radius: 3px;\n}\n\n/* Basscss Input Range */\n\n.input-range {\n  vertical-align: middle;\n  background-color: transparent;\n  padding-top: .5rem;\n  padding-bottom: .5rem;\n  color: inherit;\n  background-color: transparent;\n  -webkit-appearance: none;\n}\n\n.input-range::-webkit-slider-thumb {\n  position: relative;\n  width: .5rem;\n  height: 1.25rem;\n  cursor: pointer;\n  margin-top: -0.5rem;\n  border-radius: 3px;\n  background-color: currentcolor;\n  -webkit-appearance: none;\n}\n\n/* Touch screen friendly pseudo element */\n\n.input-range::-webkit-slider-thumb:before {\n  content: '';\n  display: block;\n  position: absolute;\n  top: -8px;\n  top: -0.5rem;\n  left: -14px;\n  left: -0.875rem;\n  width: 36px;\n  width: 2.25rem;\n  height: 36px;\n  height: 2.25rem;\n  opacity: 0;\n}\n\n.input-range::-moz-range-thumb {\n  width: .5rem;\n  height: 1.25rem;\n  cursor: pointer;\n  border-radius: 3px;\n  border-color: transparent;\n  border-width: 0;\n  background-color: currentcolor;\n}\n\n.input-range::-webkit-slider-runnable-track {\n  height: 0.25rem;\n  cursor: pointer;\n  border-radius: 3px;\n  background-color: #000000;\n  background-color: rgba(0, 0, 0, .25);\n}\n\n.input-range::-moz-range-track {\n  height: 0.25rem;\n  cursor: pointer;\n  border-radius: 3px;\n  background-color: #000000;\n  background-color: rgba(0, 0, 0, .25);\n}\n\n.input-range:focus {\n  outline: none;\n}\n\n/* Basscss Responsive Margin */\n\n@media (min-width: 40em) {\n\n  .sm-m0  { margin:        0 }\n  .sm-mt0 { margin-top:    0 }\n  .sm-mr0 { margin-right:  0 }\n  .sm-mb0 { margin-bottom: 0 }\n  .sm-ml0 { margin-left:   0 }\n  .sm-mx0 { margin-left:   0; margin-right:  0 }\n  .sm-my0 { margin-top:    0; margin-bottom: 0 }\n\n  .sm-m1  { margin: .5rem }\n  .sm-mt1 { margin-top: .5rem }\n  .sm-mr1 { margin-right: .5rem }\n  .sm-mb1 { margin-bottom: .5rem }\n  .sm-ml1 { margin-left: .5rem }\n  .sm-mx1 { margin-left: .5rem; margin-right: .5rem }\n  .sm-my1 { margin-top: .5rem; margin-bottom: .5rem }\n\n  .sm-m2  { margin: 1rem }\n  .sm-mt2 { margin-top: 1rem }\n  .sm-mr2 { margin-right: 1rem }\n  .sm-mb2 { margin-bottom: 1rem }\n  .sm-ml2 { margin-left: 1rem }\n  .sm-mx2 { margin-left: 1rem; margin-right: 1rem }\n  .sm-my2 { margin-top: 1rem; margin-bottom: 1rem }\n\n  .sm-m3  { margin: 2rem }\n  .sm-mt3 { margin-top: 2rem }\n  .sm-mr3 { margin-right: 2rem }\n  .sm-mb3 { margin-bottom: 2rem }\n  .sm-ml3 { margin-left: 2rem }\n  .sm-mx3 { margin-left: 2rem; margin-right: 2rem }\n  .sm-my3 { margin-top: 2rem; margin-bottom: 2rem }\n\n  .sm-m4  { margin: 4rem }\n  .sm-mt4 { margin-top: 4rem }\n  .sm-mr4 { margin-right: 4rem }\n  .sm-mb4 { margin-bottom: 4rem }\n  .sm-ml4 { margin-left: 4rem }\n  .sm-mx4 { margin-left: 4rem; margin-right: 4rem }\n  .sm-my4 { margin-top: 4rem; margin-bottom: 4rem }\n\n  .sm-mxn1 { margin-left: -.5rem; margin-right: -.5rem }\n  .sm-mxn2 { margin-left: -1rem; margin-right: -1rem }\n  .sm-mxn3 { margin-left: -2rem; margin-right: -2rem }\n  .sm-mxn4 { margin-left: -4rem; margin-right: -4rem }\n\n  .sm-ml-auto { margin-left:  auto }\n  .sm-mr-auto { margin-right: auto }\n  .sm-mx-auto { margin-left:  auto; margin-right: auto }\n\n}\n\n@media (min-width: 52em) {\n\n  .md-m0  { margin:        0 }\n  .md-mt0 { margin-top:    0 }\n  .md-mr0 { margin-right:  0 }\n  .md-mb0 { margin-bottom: 0 }\n  .md-ml0 { margin-left:   0 }\n  .md-mx0 { margin-left:   0; margin-right:  0 }\n  .md-my0 { margin-top:    0; margin-bottom: 0 }\n\n  .md-m1  { margin: .5rem }\n  .md-mt1 { margin-top: .5rem }\n  .md-mr1 { margin-right: .5rem }\n  .md-mb1 { margin-bottom: .5rem }\n  .md-ml1 { margin-left: .5rem }\n  .md-mx1 { margin-left: .5rem; margin-right: .5rem }\n  .md-my1 { margin-top: .5rem; margin-bottom: .5rem }\n\n  .md-m2  { margin: 1rem }\n  .md-mt2 { margin-top: 1rem }\n  .md-mr2 { margin-right: 1rem }\n  .md-mb2 { margin-bottom: 1rem }\n  .md-ml2 { margin-left: 1rem }\n  .md-mx2 { margin-left: 1rem; margin-right: 1rem }\n  .md-my2 { margin-top: 1rem; margin-bottom: 1rem }\n\n  .md-m3  { margin: 2rem }\n  .md-mt3 { margin-top: 2rem }\n  .md-mr3 { margin-right: 2rem }\n  .md-mb3 { margin-bottom: 2rem }\n  .md-ml3 { margin-left: 2rem }\n  .md-mx3 { margin-left: 2rem; margin-right: 2rem }\n  .md-my3 { margin-top: 2rem; margin-bottom: 2rem }\n\n  .md-m4  { margin: 4rem }\n  .md-mt4 { margin-top: 4rem }\n  .md-mr4 { margin-right: 4rem }\n  .md-mb4 { margin-bottom: 4rem }\n  .md-ml4 { margin-left: 4rem }\n  .md-mx4 { margin-left: 4rem; margin-right: 4rem }\n  .md-my4 { margin-top: 4rem; margin-bottom: 4rem }\n\n  .md-mxn1 { margin-left: -.5rem; margin-right: -.5rem; }\n  .md-mxn2 { margin-left: -1rem; margin-right: -1rem; }\n  .md-mxn3 { margin-left: -2rem; margin-right: -2rem; }\n  .md-mxn4 { margin-left: -4rem; margin-right: -4rem; }\n\n  .md-ml-auto { margin-left:  auto }\n  .md-mr-auto { margin-right: auto }\n  .md-mx-auto { margin-left: auto; margin-right: auto; }\n\n}\n\n@media (min-width: 64em) {\n\n  .lg-m0  { margin:        0 }\n  .lg-mt0 { margin-top:    0 }\n  .lg-mr0 { margin-right:  0 }\n  .lg-mb0 { margin-bottom: 0 }\n  .lg-ml0 { margin-left:   0 }\n  .lg-mx0 { margin-left:   0; margin-right:  0 }\n  .lg-my0 { margin-top:    0; margin-bottom: 0 }\n\n  .lg-m1  { margin: .5rem }\n  .lg-mt1 { margin-top: .5rem }\n  .lg-mr1 { margin-right: .5rem }\n  .lg-mb1 { margin-bottom: .5rem }\n  .lg-ml1 { margin-left: .5rem }\n  .lg-mx1 { margin-left: .5rem; margin-right: .5rem }\n  .lg-my1 { margin-top: .5rem; margin-bottom: .5rem }\n\n  .lg-m2  { margin: 1rem }\n  .lg-mt2 { margin-top: 1rem }\n  .lg-mr2 { margin-right: 1rem }\n  .lg-mb2 { margin-bottom: 1rem }\n  .lg-ml2 { margin-left: 1rem }\n  .lg-mx2 { margin-left: 1rem; margin-right: 1rem }\n  .lg-my2 { margin-top: 1rem; margin-bottom: 1rem }\n\n  .lg-m3  { margin: 2rem }\n  .lg-mt3 { margin-top: 2rem }\n  .lg-mr3 { margin-right: 2rem }\n  .lg-mb3 { margin-bottom: 2rem }\n  .lg-ml3 { margin-left: 2rem }\n  .lg-mx3 { margin-left: 2rem; margin-right: 2rem }\n  .lg-my3 { margin-top: 2rem; margin-bottom: 2rem }\n\n  .lg-m4  { margin: 4rem }\n  .lg-mt4 { margin-top: 4rem }\n  .lg-mr4 { margin-right: 4rem }\n  .lg-mb4 { margin-bottom: 4rem }\n  .lg-ml4 { margin-left: 4rem }\n  .lg-mx4 { margin-left: 4rem; margin-right: 4rem }\n  .lg-my4 { margin-top: 4rem; margin-bottom: 4rem }\n\n  .lg-mxn1 { margin-left: -.5rem; margin-right: -.5rem; }\n  .lg-mxn2 { margin-left: -1rem; margin-right: -1rem; }\n  .lg-mxn3 { margin-left: -2rem; margin-right: -2rem; }\n  .lg-mxn4 { margin-left: -4rem; margin-right: -4rem; }\n\n  .lg-ml-auto { margin-left:  auto }\n  .lg-mr-auto { margin-right: auto }\n  .lg-mx-auto { margin-left: auto; margin-right: auto; }\n\n}\n\n/* Basscss Responsive Padding */\n\n@media (min-width: 40em) {\n\n  .sm-p0  { padding:        0 }\n  .sm-pt0 { padding-top:    0 }\n  .sm-pr0 { padding-right:  0 }\n  .sm-pb0 { padding-bottom: 0 }\n  .sm-pl0 { padding-left:   0 }\n  .sm-px0 { padding-left:   0; padding-right:  0 }\n  .sm-py0 { padding-top:    0; padding-bottom: 0 }\n\n  .sm-p1  { padding: .5rem }\n  .sm-pt1 { padding-top: .5rem }\n  .sm-pr1 { padding-right: .5rem }\n  .sm-pb1 { padding-bottom: .5rem }\n  .sm-pl1 { padding-left: .5rem }\n  .sm-px1 { padding-left: .5rem; padding-right: .5rem }\n  .sm-py1 { padding-top: .5rem; padding-bottom: .5rem }\n\n  .sm-p2  { padding: 1rem }\n  .sm-pt2 { padding-top: 1rem }\n  .sm-pr2 { padding-right: 1rem }\n  .sm-pb2 { padding-bottom: 1rem }\n  .sm-pl2 { padding-left: 1rem }\n  .sm-px2 { padding-left: 1rem; padding-right: 1rem }\n  .sm-py2 { padding-top: 1rem; padding-bottom: 1rem }\n\n  .sm-p3  { padding: 2rem }\n  .sm-pt3 { padding-top: 2rem }\n  .sm-pr3 { padding-right: 2rem }\n  .sm-pb3 { padding-bottom: 2rem }\n  .sm-pl3 { padding-left: 2rem }\n  .sm-px3 { padding-left: 2rem; padding-right: 2rem }\n  .sm-py3 { padding-top: 2rem; padding-bottom: 2rem }\n\n  .sm-p4  { padding: 4rem }\n  .sm-pt4 { padding-top: 4rem }\n  .sm-pr4 { padding-right: 4rem }\n  .sm-pb4 { padding-bottom: 4rem }\n  .sm-pl4 { padding-left: 4rem }\n  .sm-px4 { padding-left: 4rem; padding-right: 4rem }\n  .sm-py4 { padding-top: 4rem; padding-bottom: 4rem }\n\n}\n\n@media (min-width: 52em) {\n\n  .md-p0  { padding:        0 }\n  .md-pt0 { padding-top:    0 }\n  .md-pr0 { padding-right:  0 }\n  .md-pb0 { padding-bottom: 0 }\n  .md-pl0 { padding-left:   0 }\n  .md-px0 { padding-left:   0; padding-right:  0 }\n  .md-py0 { padding-top:    0; padding-bottom: 0 }\n\n  .md-p1  { padding: .5rem }\n  .md-pt1 { padding-top: .5rem }\n  .md-pr1 { padding-right: .5rem }\n  .md-pb1 { padding-bottom: .5rem }\n  .md-pl1 { padding-left: .5rem }\n  .md-px1 { padding-left: .5rem; padding-right: .5rem }\n  .md-py1 { padding-top: .5rem; padding-bottom: .5rem }\n\n  .md-p2  { padding: 1rem }\n  .md-pt2 { padding-top: 1rem }\n  .md-pr2 { padding-right: 1rem }\n  .md-pb2 { padding-bottom: 1rem }\n  .md-pl2 { padding-left: 1rem }\n  .md-px2 { padding-left: 1rem; padding-right: 1rem }\n  .md-py2 { padding-top: 1rem; padding-bottom: 1rem }\n\n  .md-p3  { padding: 2rem }\n  .md-pt3 { padding-top: 2rem }\n  .md-pr3 { padding-right: 2rem }\n  .md-pb3 { padding-bottom: 2rem }\n  .md-pl3 { padding-left: 2rem }\n  .md-px3 { padding-left: 2rem; padding-right: 2rem }\n  .md-py3 { padding-top: 2rem; padding-bottom: 2rem }\n\n  .md-p4  { padding: 4rem }\n  .md-pt4 { padding-top: 4rem }\n  .md-pr4 { padding-right: 4rem }\n  .md-pb4 { padding-bottom: 4rem }\n  .md-pl4 { padding-left: 4rem }\n  .md-px4 { padding-left: 4rem; padding-right: 4rem }\n  .md-py4 { padding-top: 4rem; padding-bottom: 4rem }\n\n}\n\n@media (min-width: 64em) {\n\n  .lg-p0  { padding:        0 }\n  .lg-pt0 { padding-top:    0 }\n  .lg-pr0 { padding-right:  0 }\n  .lg-pb0 { padding-bottom: 0 }\n  .lg-pl0 { padding-left:   0 }\n  .lg-px0 { padding-left:   0; padding-right:  0 }\n  .lg-py0 { padding-top:    0; padding-bottom: 0 }\n\n  .lg-p1  { padding: .5rem }\n  .lg-pt1 { padding-top: .5rem }\n  .lg-pr1 { padding-right: .5rem }\n  .lg-pb1 { padding-bottom: .5rem }\n  .lg-pl1 { padding-left: .5rem }\n  .lg-px1 { padding-left: .5rem; padding-right: .5rem }\n  .lg-py1 { padding-top: .5rem; padding-bottom: .5rem }\n\n  .lg-p2  { padding: 1rem }\n  .lg-pt2 { padding-top: 1rem }\n  .lg-pr2 { padding-right: 1rem }\n  .lg-pb2 { padding-bottom: 1rem }\n  .lg-pl2 { padding-left: 1rem }\n  .lg-px2 { padding-left: 1rem; padding-right: 1rem }\n  .lg-py2 { padding-top: 1rem; padding-bottom: 1rem }\n\n  .lg-p3  { padding: 2rem }\n  .lg-pt3 { padding-top: 2rem }\n  .lg-pr3 { padding-right: 2rem }\n  .lg-pb3 { padding-bottom: 2rem }\n  .lg-pl3 { padding-left: 2rem }\n  .lg-px3 { padding-left: 2rem; padding-right: 2rem }\n  .lg-py3 { padding-top: 2rem; padding-bottom: 2rem }\n\n  .lg-p4  { padding: 4rem }\n  .lg-pt4 { padding-top: 4rem }\n  .lg-pr4 { padding-right: 4rem }\n  .lg-pb4 { padding-bottom: 4rem }\n  .lg-pl4 { padding-left: 4rem }\n  .lg-px4 { padding-left: 4rem; padding-right: 4rem }\n  .lg-py4 { padding-top: 4rem; padding-bottom: 4rem }\n\n}\n\n/* Basscss Media Object */\n\n.media,\n.sm-media,\n.md-media,\n.lg-media {\n  margin-left: -.5rem;\n  margin-right: -.5rem;\n}\n\n.media {\n  display: -ms-flexbox;\n  display: flex;\n}\n\n.media-center {\n  -ms-flex-align: center;\n      -ms-grid-row-align: center;\n      align-items: center;\n}\n\n.media-bottom {\n  -ms-flex-align: end;\n      -ms-grid-row-align: flex-end;\n      align-items: flex-end;\n}\n\n.media-img,\n.media-body {\n  padding-left: .5rem;\n  padding-right: .5rem;\n}\n\n.media-body {\n  -ms-flex: 1 1 auto;\n      flex: 1 1 auto;\n}\n\n@media (min-width: 40em) {\n  .sm-media { display: -ms-flexbox; display: flex }\n}\n\n@media (min-width: 52em) {\n  .md-media { display: -ms-flexbox; display: flex }\n}\n\n@media (min-width: 64em) {\n  .lg-media { display: -ms-flexbox; display: flex }\n}\n\n/* Basscss All */\n\n.all-initial { animation: none 0s ease 0s 1 normal none running; backface-visibility: visible; background: transparent none repeat 0 0 / auto auto padding-box border-box scroll; border: medium none currentColor; border-collapse: separate; border-image: none; border-radius: 0; border-spacing: 0; bottom: auto; box-shadow: none; box-sizing: content-box; caption-side: top; clear: none; clip: auto; color: #000; -webkit-columns: auto; -moz-columns: auto; columns: auto; -webkit-column-count: auto; -moz-column-count: auto; column-count: auto; -webkit-column-fill: balance; -moz-column-fill: balance; column-fill: balance; -webkit-column-gap: normal; -moz-column-gap: normal; column-gap: normal; -webkit-column-rule: medium none currentColor; -moz-column-rule: medium none currentColor; column-rule: medium none currentColor; -webkit-column-span: 1; -moz-column-span: 1; column-span: 1; -webkit-column-width: auto; -moz-column-width: auto; column-width: auto; content: normal; counter-increment: none; counter-reset: none; cursor: auto; direction: ltr; display: inline; empty-cells: show; float: none; font-family: serif; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; line-height: normal; height: auto; -webkit-hyphens: none; -ms-hyphens: none; hyphens: none; left: auto; letter-spacing: normal; list-style: disc outside none; margin: 0; max-height: none; max-width: none; min-height: 0; min-width: 0; opacity: 1; orphans: 2; outline: medium none invert; overflow: visible; overflow-x: visible; overflow-y: visible; padding: 0; page-break-after: auto; page-break-before: auto; page-break-inside: auto; perspective: none; perspective-origin: 50% 50%; position: static; right: auto; -moz-tab-size: 8; tab-size: 8; table-layout: auto; text-align: left; -moz-text-align-last: auto; text-align-last: auto; text-decoration: none; text-indent: 0; text-shadow: none; text-transform: none; top: auto; -ms-transform: none; transform: none; -ms-transform-origin: 50% 50% 0; transform-origin: 50% 50% 0; transform-style: flat; transition: none 0s ease 0s; unicode-bidi: normal; vertical-align: baseline; visibility: visible; white-space: normal; widows: 2; width: auto; word-spacing: normal; z-index: auto; all: initial }\n\n.all-unset { all: unset }\n\n.all-inherit { all: inherit }\n\n/* Basscss Progress */\n\n.progress {\n  display: block;\n  width: 100%;\n  height: 0.5625rem;\n  margin: .5rem 0;\n  overflow: hidden;\n  background-color: #000000;\n  background-color: rgba(0, 0, 0, .125);\n  border: 0;\n  border-radius: 10000px;\n  -webkit-appearance: none;\n}\n\n.progress::-webkit-progress-bar {\n  -webkit-appearance: none;\n  background-color: #000000;\n  background-color: rgba(0, 0, 0, .125)\n}\n\n.progress::-webkit-progress-value {\n  -webkit-appearance: none;\n  background-color: currentcolor;\n}\n\n.progress::-moz-progress-bar {\n  background-color: currentcolor;\n}\n\n/* Basscss Lighten */\n\n.bg-lighten-1 { background-color: #ffffff; background-color: rgba(255, 255, 255, .0625) }\n\n.bg-lighten-2 { background-color: #ffffff; background-color: rgba(255, 255, 255, .125) }\n\n.bg-lighten-3 { background-color: #ffffff; background-color: rgba(255, 255, 255, .25) }\n\n.bg-lighten-4 { background-color: #ffffff; background-color: rgba(255, 255, 255, .5) }\n\n/* Basscss Background Images */\n\n.bg-cover   { background-size: cover }\n\n.bg-contain { background-size: contain }\n\n.bg-center  { background-position: center }\n\n.bg-top     { background-position: top }\n\n.bg-right   { background-position: right }\n\n.bg-bottom  { background-position: bottom }\n\n.bg-left    { background-position: left }\n\n/* Basscss Darken */\n\n.bg-darken-1 { background-color: #000000; background-color: rgba(0, 0, 0, .0625) }\n\n.bg-darken-2 { background-color: #000000; background-color: rgba(0, 0, 0, .125) }\n\n.bg-darken-3 { background-color: #000000; background-color: rgba(0, 0, 0, .25) }\n\n.bg-darken-4 { background-color: #000000; background-color: rgba(0, 0, 0, .5) }\n\n/* Base Modules */\n\n/* Basscss Type Scale */\n\n.h1 { font-size: 2rem }\n\n.h2 { font-size: 1.5rem }\n\n.h3 { font-size: 1.25rem }\n\n.h4 { font-size: 1rem }\n\n.h5 { font-size: .875rem }\n\n.h6 { font-size: .75rem }\n\n/* Basscss Typography */\n\n.font-family-inherit { font-family: inherit }\n\n.font-size-inherit { font-size: inherit }\n\n.text-decoration-none { text-decoration: none }\n\n.bold    { font-weight: bold; font-weight: bold }\n\n.regular { font-weight: normal }\n\n.italic  { font-style: italic }\n\n.caps    { text-transform: uppercase; letter-spacing: .2em; }\n\n.left-align   { text-align: left }\n\n.center       { text-align: center }\n\n.right-align  { text-align: right }\n\n.justify      { text-align: justify }\n\n.nowrap { white-space: nowrap }\n\n.break-word { word-wrap: break-word }\n\n.line-height-1 { line-height: 1 }\n\n.line-height-2 { line-height: 1.125 }\n\n.line-height-3 { line-height: 1.25 }\n\n.line-height-4 { line-height: 1.5 }\n\n.list-style-none { list-style: none }\n\n.underline { text-decoration: underline }\n\n.truncate {\n  max-width: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.list-reset {\n  list-style: none;\n  padding-left: 0;\n}\n\n/* Basscss Layout */\n\n.inline       { display: inline }\n\n.block        { display: block }\n\n.inline-block { display: inline-block }\n\n.table        { display: table }\n\n.table-cell   { display: table-cell }\n\n.overflow-hidden { overflow: hidden }\n\n.overflow-scroll { overflow: scroll }\n\n.overflow-auto   { overflow: auto }\n\n.clearfix:before,\n.clearfix:after {\n  content: \" \";\n  display: table\n}\n\n.clearfix:after { clear: both }\n\n.left  { float: left }\n\n.right { float: right }\n\n.fit { max-width: 100% }\n\n.max-width-1 { max-width: 24rem }\n\n.max-width-2 { max-width: 32rem }\n\n.max-width-3 { max-width: 48rem }\n\n.max-width-4 { max-width: 64rem }\n\n.border-box { box-sizing: border-box }\n\n/* Basscss Align */\n\n.align-baseline { vertical-align: baseline }\n\n.align-top      { vertical-align: top }\n\n.align-middle   { vertical-align: middle }\n\n.align-bottom   { vertical-align: bottom }\n\n/* Basscss Margin */\n\n.m0  { margin:        0 }\n\n.mt0 { margin-top:    0 }\n\n.mr0 { margin-right:  0 }\n\n.mb0 { margin-bottom: 0 }\n\n.ml0 { margin-left:   0 }\n\n.mx0 { margin-left:   0; margin-right:  0 }\n\n.my0 { margin-top:    0; margin-bottom: 0 }\n\n.m1  { margin: .5rem }\n\n.mt1 { margin-top: .5rem }\n\n.mr1 { margin-right: .5rem }\n\n.mb1 { margin-bottom: .5rem }\n\n.ml1 { margin-left: .5rem }\n\n.mx1 { margin-left: .5rem; margin-right: .5rem }\n\n.my1 { margin-top: .5rem; margin-bottom: .5rem }\n\n.m2  { margin: 1rem }\n\n.mt2 { margin-top: 1rem }\n\n.mr2 { margin-right: 1rem }\n\n.mb2 { margin-bottom: 1rem }\n\n.ml2 { margin-left: 1rem }\n\n.mx2 { margin-left: 1rem; margin-right: 1rem }\n\n.my2 { margin-top: 1rem; margin-bottom: 1rem }\n\n.m3  { margin: 2rem }\n\n.mt3 { margin-top: 2rem }\n\n.mr3 { margin-right: 2rem }\n\n.mb3 { margin-bottom: 2rem }\n\n.ml3 { margin-left: 2rem }\n\n.mx3 { margin-left: 2rem; margin-right: 2rem }\n\n.my3 { margin-top: 2rem; margin-bottom: 2rem }\n\n.m4  { margin: 4rem }\n\n.mt4 { margin-top: 4rem }\n\n.mr4 { margin-right: 4rem }\n\n.mb4 { margin-bottom: 4rem }\n\n.ml4 { margin-left: 4rem }\n\n.mx4 { margin-left: 4rem; margin-right: 4rem }\n\n.my4 { margin-top: 4rem; margin-bottom: 4rem }\n\n.mxn1 { margin-left: -.5rem; margin-right: -.5rem; }\n\n.mxn2 { margin-left: -1rem; margin-right: -1rem; }\n\n.mxn3 { margin-left: -2rem; margin-right: -2rem; }\n\n.mxn4 { margin-left: -4rem; margin-right: -4rem; }\n\n.ml-auto { margin-left: auto }\n\n.mr-auto { margin-right: auto }\n\n.mx-auto { margin-left: auto; margin-right: auto; }\n\n/* Basscss Padding */\n\n.p0  { padding: 0 }\n\n.pt0 { padding-top: 0 }\n\n.pr0 { padding-right: 0 }\n\n.pb0 { padding-bottom: 0 }\n\n.pl0 { padding-left: 0 }\n\n.px0 { padding-left: 0; padding-right:  0 }\n\n.py0 { padding-top: 0;  padding-bottom: 0 }\n\n.p1  { padding: .5rem }\n\n.pt1 { padding-top: .5rem }\n\n.pr1 { padding-right: .5rem }\n\n.pb1 { padding-bottom: .5rem }\n\n.pl1 { padding-left: .5rem }\n\n.py1 { padding-top: .5rem; padding-bottom: .5rem }\n\n.px1 { padding-left: .5rem; padding-right: .5rem }\n\n.p2  { padding: 1rem }\n\n.pt2 { padding-top: 1rem }\n\n.pr2 { padding-right: 1rem }\n\n.pb2 { padding-bottom: 1rem }\n\n.pl2 { padding-left: 1rem }\n\n.py2 { padding-top: 1rem; padding-bottom: 1rem }\n\n.px2 { padding-left: 1rem; padding-right: 1rem }\n\n.p3  { padding: 2rem }\n\n.pt3 { padding-top: 2rem }\n\n.pr3 { padding-right: 2rem }\n\n.pb3 { padding-bottom: 2rem }\n\n.pl3 { padding-left: 2rem }\n\n.py3 { padding-top: 2rem; padding-bottom: 2rem }\n\n.px3 { padding-left: 2rem; padding-right: 2rem }\n\n.p4  { padding: 4rem }\n\n.pt4 { padding-top: 4rem }\n\n.pr4 { padding-right: 4rem }\n\n.pb4 { padding-bottom: 4rem }\n\n.pl4 { padding-left: 4rem }\n\n.py4 { padding-top: 4rem; padding-bottom: 4rem }\n\n.px4 { padding-left: 4rem; padding-right: 4rem }\n\n/* Basscss Grid */\n\n.col {\n  float: left;\n  box-sizing: border-box;\n}\n\n.col-right {\n  float: right;\n  box-sizing: border-box;\n}\n\n.col-1 {\n  width: 8.33333%;\n}\n\n.col-2 {\n  width: 16.66667%;\n}\n\n.col-3 {\n  width: 25%;\n}\n\n.col-4 {\n  width: 33.33333%;\n}\n\n.col-5 {\n  width: 41.66667%;\n}\n\n.col-6 {\n  width: 50%;\n}\n\n.col-7 {\n  width: 58.33333%;\n}\n\n.col-8 {\n  width: 66.66667%;\n}\n\n.col-9 {\n  width: 75%;\n}\n\n.col-10 {\n  width: 83.33333%;\n}\n\n.col-11 {\n  width: 91.66667%;\n}\n\n.col-12 {\n  width: 100%;\n}\n\n@media (min-width: 40em) {\n\n  .sm-col {\n    float: left;\n    box-sizing: border-box;\n  }\n\n  .sm-col-right {\n    float: right;\n    box-sizing: border-box;\n  }\n\n  .sm-col-1 {\n    width: 8.33333%;\n  }\n\n  .sm-col-2 {\n    width: 16.66667%;\n  }\n\n  .sm-col-3 {\n    width: 25%;\n  }\n\n  .sm-col-4 {\n    width: 33.33333%;\n  }\n\n  .sm-col-5 {\n    width: 41.66667%;\n  }\n\n  .sm-col-6 {\n    width: 50%;\n  }\n\n  .sm-col-7 {\n    width: 58.33333%;\n  }\n\n  .sm-col-8 {\n    width: 66.66667%;\n  }\n\n  .sm-col-9 {\n    width: 75%;\n  }\n\n  .sm-col-10 {\n    width: 83.33333%;\n  }\n\n  .sm-col-11 {\n    width: 91.66667%;\n  }\n\n  .sm-col-12 {\n    width: 100%;\n  }\n\n}\n\n@media (min-width: 52em) {\n\n  .md-col {\n    float: left;\n    box-sizing: border-box;\n  }\n\n  .md-col-right {\n    float: right;\n    box-sizing: border-box;\n  }\n\n  .md-col-1 {\n    width: 8.33333%;\n  }\n\n  .md-col-2 {\n    width: 16.66667%;\n  }\n\n  .md-col-3 {\n    width: 25%;\n  }\n\n  .md-col-4 {\n    width: 33.33333%;\n  }\n\n  .md-col-5 {\n    width: 41.66667%;\n  }\n\n  .md-col-6 {\n    width: 50%;\n  }\n\n  .md-col-7 {\n    width: 58.33333%;\n  }\n\n  .md-col-8 {\n    width: 66.66667%;\n  }\n\n  .md-col-9 {\n    width: 75%;\n  }\n\n  .md-col-10 {\n    width: 83.33333%;\n  }\n\n  .md-col-11 {\n    width: 91.66667%;\n  }\n\n  .md-col-12 {\n    width: 100%;\n  }\n\n}\n\n@media (min-width: 64em) {\n\n  .lg-col {\n    float: left;\n    box-sizing: border-box;\n  }\n\n  .lg-col-right {\n    float: right;\n    box-sizing: border-box;\n  }\n\n  .lg-col-1 {\n    width: 8.33333%;\n  }\n\n  .lg-col-2 {\n    width: 16.66667%;\n  }\n\n  .lg-col-3 {\n    width: 25%;\n  }\n\n  .lg-col-4 {\n    width: 33.33333%;\n  }\n\n  .lg-col-5 {\n    width: 41.66667%;\n  }\n\n  .lg-col-6 {\n    width: 50%;\n  }\n\n  .lg-col-7 {\n    width: 58.33333%;\n  }\n\n  .lg-col-8 {\n    width: 66.66667%;\n  }\n\n  .lg-col-9 {\n    width: 75%;\n  }\n\n  .lg-col-10 {\n    width: 83.33333%;\n  }\n\n  .lg-col-11 {\n    width: 91.66667%;\n  }\n\n  .lg-col-12 {\n    width: 100%;\n  }\n\n}\n\n.flex { display: -ms-flexbox; display: flex }\n\n@media (min-width: 40em) {\n  .sm-flex { display: -ms-flexbox; display: flex }\n}\n\n@media (min-width: 52em) {\n  .md-flex { display: -ms-flexbox; display: flex }\n}\n\n@media (min-width: 64em) {\n  .lg-flex { display: -ms-flexbox; display: flex }\n}\n\n.flex-column  { -ms-flex-direction: column; flex-direction: column }\n\n.flex-wrap    { -ms-flex-wrap: wrap; flex-wrap: wrap }\n\n.items-start    { -ms-flex-align: start; -ms-grid-row-align: flex-start; align-items: flex-start }\n\n.items-end      { -ms-flex-align: end; -ms-grid-row-align: flex-end; align-items: flex-end }\n\n.items-center   { -ms-flex-align: center; -ms-grid-row-align: center; align-items: center }\n\n.items-baseline { -ms-flex-align: baseline; -ms-grid-row-align: baseline; align-items: baseline }\n\n.items-stretch  { -ms-flex-align: stretch; -ms-grid-row-align: stretch; align-items: stretch }\n\n.self-start    { -ms-flex-item-align: start; align-self: flex-start }\n\n.self-end      { -ms-flex-item-align: end; align-self: flex-end }\n\n.self-center   { -ms-flex-item-align: center; align-self: center }\n\n.self-baseline { -ms-flex-item-align: baseline; align-self: baseline }\n\n.self-stretch  { -ms-flex-item-align: stretch; align-self: stretch }\n\n.justify-start   { -ms-flex-pack: start; justify-content: flex-start }\n\n.justify-end     { -ms-flex-pack: end; justify-content: flex-end }\n\n.justify-center  { -ms-flex-pack: center; justify-content: center }\n\n.justify-between { -ms-flex-pack: justify; justify-content: space-between }\n\n.justify-around  { -ms-flex-pack: distribute; justify-content: space-around }\n\n.content-start   { -ms-flex-line-pack: start; align-content: flex-start }\n\n.content-end     { -ms-flex-line-pack: end; align-content: flex-end }\n\n.content-center  { -ms-flex-line-pack: center; align-content: center }\n\n.content-between { -ms-flex-line-pack: justify; align-content: space-between }\n\n.content-around  { -ms-flex-line-pack: distribute; align-content: space-around }\n\n.content-stretch { -ms-flex-line-pack: stretch; align-content: stretch }\n\n/* 1. Fix for Chrome 44 bug. https://code.google.com/p/chromium/issues/detail?id=506893 */\n\n.flex-auto {\n  -ms-flex: 1 1 auto;\n      flex: 1 1 auto;\n  min-width: 0; /* 1 */\n  min-height: 0; /* 1 */\n}\n\n.flex-none { -ms-flex: none; flex: none }\n\n.order-0 { -ms-flex-order: 0; order: 0 }\n\n.order-1 { -ms-flex-order: 1; order: 1 }\n\n.order-2 { -ms-flex-order: 2; order: 2 }\n\n.order-3 { -ms-flex-order: 3; order: 3 }\n\n.order-last { -ms-flex-order: 99999; order: 99999 }\n\n/* Basscss Position */\n\n.relative { position: relative }\n\n.absolute { position: absolute }\n\n.fixed    { position: fixed }\n\n.top-0    { top: 0 }\n\n.right-0  { right: 0 }\n\n.bottom-0 { bottom: 0 }\n\n.left-0   { left: 0 }\n\n.z1 { z-index: 1 }\n\n.z2 { z-index: 2 }\n\n.z3 { z-index: 3 }\n\n.z4 { z-index: 4 }\n\n/* Basscss Border */\n\n.border {\n  border-style: solid;\n  border-width: 1px;\n}\n\n.border-top {\n  border-top-style: solid;\n  border-top-width: 1px;\n}\n\n.border-right {\n  border-right-style: solid;\n  border-right-width: 1px;\n}\n\n.border-bottom {\n  border-bottom-style: solid;\n  border-bottom-width: 1px;\n}\n\n.border-left {\n  border-left-style: solid;\n  border-left-width: 1px;\n}\n\n.border-none { border: 0 }\n\n.rounded { border-radius: 3px }\n\n.circle  { border-radius: 50% }\n\n.rounded-top    { border-radius: 3px 3px 0 0 }\n\n.rounded-right  { border-radius: 0 3px 3px 0 }\n\n.rounded-bottom { border-radius: 0 0 3px 3px }\n\n.rounded-left   { border-radius: 3px 0 0 3px }\n\n.not-rounded { border-radius: 0 }\n\n/* Basscss Hide */\n\n.hide {\n  position: absolute !important;\n  height: 1px;\n  width: 1px;\n  overflow: hidden;\n  clip: rect(1px, 1px, 1px, 1px);\n}\n\n@media (max-width: 40em) {\n  .xs-hide { display: none !important }\n}\n\n@media (min-width: 40em) and (max-width: 52em) {\n  .sm-hide { display: none !important }\n}\n\n@media (min-width: 52em) and (max-width: 64em) {\n  .md-hide { display: none !important }\n}\n\n@media (min-width: 64em) {\n  .lg-hide { display: none !important }\n}\n\n.display-none { display: none !important }\n\n.card{\r\n    display:block;    \r\n    margin: 10px;\r\n    border:1px solid #e3e3e3;\r\n    font-size:12px;\r\n    width: 200px;\r\n}\n\n.card .card-info{\r\n    display: block;\r\n    width: 180px;\r\n    margin: 10px;\r\n    background-size: cover;\r\n    background-position: center;\r\n}\n\n.card .card-image{\r\n    display: block;\r\n    width: 180px;\r\n    height: 80px;\r\n    overflow: hidden;\r\n    position: relative;\r\n}\n\n.card .card-btn-play{\r\n    opacity: 0;\r\n    cursor: pointer;\r\n    background: #000000;\r\n    background: rgba(0, 0, 0, 0.5);\r\n    position: absolute;\r\n    left: 0;\r\n    top: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    text-align: center;\r\n    line-height: 80px;\r\n    transition: all 0.3s;   \r\n    color: #f84171;\r\n    font-size: 28px;\r\n    opacity: 0;\r\n    transition: opacity .2s ease-in-out;\r\n}\n\n.card.playing .card-btn-play{\r\n    opacity: 1 !important;\r\n}\n\n.card .card-image:hover .card-btn-play{\r\n    opacity: 1;\r\n}\n\n.card img{\r\n    width:100%;    \r\n}\n\n.card-footer{\r\n    padding: 3px 5px;\r\n    color: #fff;\r\n    background: #000000;\r\n    background: rgba(0,0,0,0.6);   \r\n}\n\n.card.playing .card-footer{\r\n    color: #000;\r\n    background: #ffffff;\r\n    background: rgba(255,255,255,0.6);   \r\n}\n\n.card .card-name{\r\n    display:block;\r\n    text-overflow: ellipsis;\r\n    overflow:hidden;\r\n    white-space: nowrap;\r\n}\n\n.card .card-user a{\r\n    float: right;\r\n    font-size: 14px;\r\n    color: #f84171;\r\n}\n\n.player {\r\n    position: fixed;\r\n    left: 0;\r\n    bottom: 0;\r\n    width: 100%;\r\n    background-color: #fff;\r\n    border-top: 1px solid #e3e3e3;\r\n    -moz-user-select: none;\r\n    -webkit-user-select: none;\r\n    -ms-user-select: none;\r\n    z-index: 999;\r\n}\n\n.player .song-card-details {\r\n        overflow: hidden;\r\n    }\n\n.player-section {\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-direction: row;\r\n        flex-direction: row;\r\n    -ms-flex-align: center;\r\n        align-items: center;\r\n}\n\n.player-section + .player-section {\r\n        margin-left: 40px;\r\n    }\n\n.player-main {\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-direction: row;\r\n        flex-direction: row;\r\n    padding: 8px;\r\n}\n\n.player-info {\r\n    width: 140px;\r\n    font-size:12px;\r\n}\n\n.player-info .song-card-details a{\r\n    display: block;\r\n    overflow: hidden;\r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n}\n\n.player-image {\r\n    width: 30px;\r\n    height: 30px;\r\n    float: left;\r\n    margin-right: 8px;\r\n    -ms-flex-negative: 0;\r\n        flex-shrink: 0;\r\n}\n\n.player-button {\r\n    padding: 4px;\r\n}\n\n.player-button > i {\r\n        color: #ccc;\r\n    }\n\n.player-button.active:hover i {\r\n        color: #86AB85;\r\n    }\n\n.player-button.active > i {\r\n        color: #A6D2A5;\r\n    }\n\n.player-button:hover {\r\n        cursor: pointer;\r\n    }\n\n.player-button:hover > i {\r\n            color: #222;\r\n        }\n\n.player-button:hover .ion-ios-pause {\r\n            color: #86AB85;\r\n        }\n\n.player-button + .player-button {\r\n        margin-left: 30px;\r\n    }\n\n.player-button .ion-ios-pause {\r\n        color: #A6D2A5;\r\n    }\n\n.player-seek {\r\n    -ms-flex: 1;\r\n        flex: 1;\r\n}\n\n.player-seek-bar-wrap {\r\n    padding: 6px 0;\r\n    -ms-flex: 1;\r\n        flex: 1;\r\n}\n\n.player-seek-bar-wrap:hover {\r\n        cursor: pointer;\r\n    }\n\n.player-seek-bar {\r\n    position: relative;\r\n    height: 2px;\r\n    background-color: #ddd;\r\n}\n\n.player-seek-duration-bar {\r\n    position: absolute;\r\n    top: 0;\r\n    left: 0;\r\n    height: 100%;\r\n    background-color: #A6D2A5;\r\n}\n\n.player-seek-handle {\r\n    position: absolute;\r\n    top: -5px;\r\n    right: -6px;\r\n    width: 12px;\r\n    height: 12px;\r\n    background-color: #fff;\r\n    border-radius: 50%;\r\n    border: 1px solid #e3e3e3;\r\n}\n\n.player-time {\r\n    margin-left: 30px;\r\n    color: #ccc;\r\n    font-size: 11px;\r\n}\n\n.player-time-divider {\r\n    margin: 0 10px;\r\n}\n\n.player-volume {\r\n    margin-left: 30px;\r\n    width: 100px;\r\n}\n\n.player-volume-button {\r\n    width: 12px;\r\n}\n\n.player-volume-button-wrap {\r\n    position: relative;\r\n}\n\n.player-volume-button-wrap .ion-android-volume-up, .player-volume-button-wrap .ion-android-volume-down {\r\n        z-index: 0;\r\n        color: #A6D2A5;\r\n    }\n\n.player-volume-button-wrap .ion-android-volume-mute {\r\n        position: absolute;\r\n        top: 0;\r\n        left: 0;\r\n        z-index: 1;\r\n        color: #ccc;\r\n    }   ", ""]);
 
 	// exports
 

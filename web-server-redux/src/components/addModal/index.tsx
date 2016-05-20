@@ -62,8 +62,8 @@ class AddModal extends React.Component<IAddModalProps, void> {
                         <Alert isVisible={ add.isLoading }>Please wait...</Alert>
                         <Alert id="qa-alert" isVisible={ add.hasError } status="error">
                             {add.errorMessage}
-                        </Alert>
-                        <FormGroup>
+                        </Alert>                        
+                        <div className="py2" style={{display:add.isLoading?'none':'' }}>
                             <FormLabel id="qa-url-label">Url</FormLabel>
                             <Input placeholder="Music Url..."
                                 type="text"
@@ -72,38 +72,16 @@ class AddModal extends React.Component<IAddModalProps, void> {
                                 isVisible={ !!(url.touched && url.error) }>
                                 { url.error }
                             </FormError>
-                        </FormGroup>
-                        <FormGroup>
+                        </div>
+                        <div className="py2" style={{display:add.isLoading?'none':'' }}>
                             <Button type="submit" className="mr1" id="qa-login-button">
                                 Add
                             </Button>
-                            <Button onClick={ resetForm }
-                                type="reset"
-                                className="bg-red" id="qa-clear-button">
-                                Clear
-                            </Button>
-                        </FormGroup>
+                        </div>
                     </Form>
                 </ModalContent>
             </Modal>
         );
-    }
-
-    static validate(values) {
-        const errors = { url: '', studioId: '' };
-        if (!values.url) {
-            errors.url = 'url is required.';
-        }
-
-        if (values.url && values.url.indexOf("http://mp3.sogou.com/tiny/song") != 0) {
-            if (
-                values.url.indexOf("http://music.163.com")!=0&&
-                values.url.indexOf('http://mp3.sogou.com/tiny/song') != 0 
-            && values.url.indexOf("soundcloud.com") == -1) {
-                errors.url = "url error";
-            }
-        }
-        return errors;
     }
 }
 
@@ -111,6 +89,5 @@ export default reduxForm({
     form: 'add',
     fields: [
         'url'
-    ],
-    validate: AddModal.validate,
+    ]
 }, mapStateToProps, mapDispatchToProps)(AddModal)

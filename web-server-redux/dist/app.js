@@ -47837,7 +47837,7 @@
 	        });
 	    },
 	    _a[actionTypes_1.player.random] = function (state, action) {
-	        localStorage["random"] = state.mainPlayer ? '0' : '1';
+	        localStorage["random"] = state.isRandom ? '0' : '1';
 	        return $.extend({}, state, {
 	            isRandom: !state.isRandom
 	        });

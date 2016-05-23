@@ -43,13 +43,25 @@ export function connect(uid) {
     return def.promise;
 }
 var eventBuilder = {
+    events:{},
     on: function (eventName, cb: (data) => void) {
-        pomelo.on(eventName, cb);
+        eventBuilder.events[eventName]=pomelo.on(eventName, cb);
         return eventBuilder;
     },
     once: function (eventName, cb: (data) => void) {
         pomelo.once(eventName, cb);
         return eventBuilder;
+    },
+    off:function(eventName?) {
+        if(eventName){
+            eventBuilder.events[eventName].off();
+            delete eventBuilder.events[eventName];
+        }
+        else{
+            for (var key of Object.keys(eventBuilder.events)){
+                eventBuilder.off(key);
+            }
+        }
     }
 }
 export var on = eventBuilder.on;

@@ -66,6 +66,38 @@ export function addMusic() {
                 dispatch(Success());
             })
         }
+        if(url.indexOf("http://www.xiami.com/song")==0){
+            var location=url.split('?')[0];
+            var id=location.replace("http://www.xiami.com/song/","");
+            
+            var req=`http://www.xiami.com/song/playlist/id/${id}/object_name/default/object_id/0/cat/json?callback=?`;          
+            dispatch(Pending());
+            return $.ajax({
+                url:req,
+                dataType:"jsonp"
+            }).done(json=>{
+                var data=json.data.trackList[0];
+                if(data){
+                    var m={
+                        id: 'xiami-' + data.songId,
+                        name: data.songName,
+                        artists: [json.singers],
+                        album: data.album_name,
+                        image: data.album_pic,
+                        resourceUrl: data.purview.filePath,
+                        orderer: sessionStorage['username2'] || ""
+                    }        
+                      $studio.importMusic([m]).then(()=>{
+                          dispatch(Success());
+                      })            
+                }
+                else{
+                     dispatch(Fail("解析失败"));
+                }                
+            })
+            //
+        }
+        
         else if (url.indexOf("http://mp3.sogou.com/tiny/song") == 0) {
             var queryParams = parseQueryString(url);
             if (queryParams.tid) {
@@ -98,7 +130,7 @@ export function addMusic() {
                 str = url.split('?')[0];
             }
             var sp = str.split('/');
-            var id = sp[sp.length - 1];            
+            var id:any = sp[sp.length - 1];            
             dispatch(Pending());
             return $.getJSON(`//api.soundcloud.com/tracks/${id}?client_id=${keys.soundcloud_key}`)
                 .done((data) => {

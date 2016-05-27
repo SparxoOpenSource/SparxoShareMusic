@@ -27889,13 +27889,26 @@
 	}
 	exports.connect = connect;
 	var eventBuilder = {
+	    events: {},
 	    on: function (eventName, cb) {
-	        pomelo.on(eventName, cb);
+	        eventBuilder.events[eventName] = pomelo.on(eventName, cb);
 	        return eventBuilder;
 	    },
 	    once: function (eventName, cb) {
 	        pomelo.once(eventName, cb);
 	        return eventBuilder;
+	    },
+	    off: function (eventName) {
+	        if (eventName) {
+	            eventBuilder.events[eventName].off();
+	            delete eventBuilder.events[eventName];
+	        }
+	        else {
+	            for (var _i = 0, _a = Object.keys(eventBuilder.events); _i < _a.length; _i++) {
+	                var key = _a[_i];
+	                eventBuilder.off(key);
+	            }
+	        }
 	    }
 	};
 	exports.on = eventBuilder.on;
@@ -33748,6 +33761,35 @@
 	            dispatch(Pending());
 	            $studio.add(url).then(function () {
 	                dispatch(Success());
+	            });
+	        }
+	        if (url.indexOf("http://www.xiami.com/song") == 0) {
+	            var location = url.split('?')[0];
+	            var id = location.replace("http://www.xiami.com/song/", "");
+	            var req = "http://www.xiami.com/song/playlist/id/" + id + "/object_name/default/object_id/0/cat/json?callback=?";
+	            dispatch(Pending());
+	            return $.ajax({
+	                url: req,
+	                dataType: "jsonp"
+	            }).done(function (json) {
+	                var data = json.data.trackList[0];
+	                if (data) {
+	                    var m = {
+	                        id: 'xiami-' + data.songId,
+	                        name: data.songName,
+	                        artists: [json.singers],
+	                        album: data.album_name,
+	                        image: data.album_pic,
+	                        resourceUrl: data.purview.filePath,
+	                        orderer: sessionStorage['username2'] || ""
+	                    };
+	                    $studio.importMusic([m]).then(function () {
+	                        dispatch(Success());
+	                    });
+	                }
+	                else {
+	                    dispatch(Fail("解析失败"));
+	                }
 	            });
 	        }
 	        else if (url.indexOf("http://mp3.sogou.com/tiny/song") == 0) {

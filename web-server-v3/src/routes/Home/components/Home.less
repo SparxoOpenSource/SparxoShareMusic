@@ -1,0 +1,152 @@
+﻿::-webkit-scrollbar  
+{  
+    width: 8px;  
+    height: 8px; 
+}    
+/*定义滚动条轨道 内阴影+圆角*/  
+::-webkit-scrollbar-track  
+{  
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);  
+    border-radius: 10px;
+}
+/*定义滑块 内阴影+圆角*/  
+::-webkit-scrollbar-thumb  
+{  
+    border-radius: 10px;  
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);  
+    background-color: #555;  
+}  
+
+.main-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.main-container .container,.main-container .row,.main-container .col{
+    height:100%;
+}
+.main-container .col{
+    position:relative;
+    padding:80px 0;
+}
+.background-image {
+    opacity:0.75;
+    background-attachment:fixed;
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position:center center;
+    -webkit-filter: blur(15px);
+    -moz-filter: blur(15px);
+    -ms-filter: blur(15px);
+    filter: blur(15px);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.play-info {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    overflow:hidden;
+    width: 100%;   
+    color:#fff;
+    background:rgba(0,0,0,.25);
+}
+.play-image{
+    width:80%;
+    margin:0 auto;
+    margin-top:10%;
+    position:relative;
+    overflow:hidden;    
+}
+.play-image:before{
+    content:"";
+    display:block;
+    width:100%;
+    margin-bottom:100%;
+}
+.play-info img{
+    position:absolute;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+}
+
+.play-list{
+    height:100%;
+    overflow:auto;
+}
+.play-list ul{
+    
+    position:relative;
+}
+
+.play-list ul li{
+    list-style:none;
+    margin-bottom:20px;
+    color:#fff;
+    padding:10px;
+    position:relative;
+}
+.play-list ul li .song-times{
+    position:absolute;
+    display: none;
+    width: 20px;
+    height: 20px;
+    background: #f00;
+    text-align: center;
+    border-radius: 20px;
+    top: 2px;
+    left: 2px;
+}
+
+.play-list ul li:hover{    
+    background:rgba(0,0,0,0.15);
+}
+.play-list ul li:hover .song-times{
+    display:block;
+}
+.play-list ul li.playing{
+    background:rgba(0,0,0,0.35);
+}
+.play-list ul li a{
+    margin:0;
+    display:block;
+    color:#fff;
+    text-decoration:none;
+}
+.play-list img{
+    width:80px;
+    height:80px;
+}
+
+.search-bar{
+    position:fixed;
+    top:0;
+    width:100%;
+    height:80px !important;
+    z-index:100;
+    padding-top:15px;
+}
+.search-bar .container{
+    padding:0;
+}
+
+.search-bar .container input,
+.search-bar .container button{
+    background:rgba(0,0,0,0.25);
+    color:#fff;
+}
+.search-bar .container input:focus{
+    background:rgba(0,0,0,0.65);
+}
+
+.play-control{
+    color:#fff;
+    display:block;
+    margin:20px 0;
+}

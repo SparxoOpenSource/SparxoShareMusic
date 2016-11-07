@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "react-dom": "registry:npm/react-dom#15.0.1+20160826174104",
+    "react-redux": "registry:npm/react-redux#4.4.0+20160614222153",
+    "redux-thunk": "registry:npm/redux-thunk#2.0.0+20160525185520"
+  },
+  "globalDependencies": {
+    "es6-shim": "registry:dt/es6-shim#0.31.2+20160602141504",
+    "jquery": "registry:dt/jquery#1.10.0+20160929162922",
+    "react": "registry:dt/react#0.14.0+20161008064207",
+    "react-router": "registry:dt/react-router#2.0.0+20160928130202",
+    "react-router-redux": "registry:dt/react-router-redux#4.0.0+20160930121107",
+    "redux": "registry:dt/redux#3.5.2+20160703092728",
+    "redux-form": "registry:dt/redux-form#4.0.3+20160907012813",
+    "socket.io-client": "registry:dt/socket.io-client#1.4.4+20160317120654",
+    "webpack-env": "registry:dt/webpack-env#1.12.2+20160316155526"
+  }
+}

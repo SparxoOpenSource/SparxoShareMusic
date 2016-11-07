@@ -1,8 +1,7 @@
 
 
-export var server={
-    ip:"52.198.38.90",
-    port:3014    
+export var app={
+    i18nPath:"/i18n"
 }
 export var keys={
     soundcloud_key:"02gUJC0hH2ct1EGOcYXQIzRFU91c72Ea"

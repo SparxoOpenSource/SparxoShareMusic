@@ -79,7 +79,6 @@ export function initAsync() {
             dispatch(get(data));
         });
         ws.on('song.add', (data) => {
-            debugger;
             dispatch(add(data));
         }).on('song.remove', (data) => {
             dispatch(remove(data));

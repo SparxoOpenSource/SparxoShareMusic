@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import "./Player.less";
+import './Player.less';
 
 interface IPlayerProps extends React.Props<any> {
     playSong: any;
@@ -33,7 +33,7 @@ function formatSeconds(num) {
 }
 
 function findIndex(array: Array<any>, callback) {
-    for (var index = 0; index < array.length; index++) {
+    for (let index = 0; index < array.length; index++) {
         if (callback(array[index])) {
             return index;
         }
@@ -47,7 +47,7 @@ class Player extends React.Component<IPlayerProps, {}> {
         duration: 0,
         currentTime: 0,
         volume: 1,
-        isRandom: JSON.parse(localStorage["isRandom"] || "false")
+        isRandom: JSON.parse(localStorage['isRandom'] || 'false')
     }
     constructor(props, state) {
         super(props, state);
@@ -61,18 +61,18 @@ class Player extends React.Component<IPlayerProps, {}> {
         this.handleVolumeChange = this.handleVolumeChange.bind(this);
     }
     componentDidMount() {
-        var audioEl = this.refs["player"] as HTMLAudioElement;
-        audioEl.addEventListener("ended", this.handleEnded, false);
+        let audioEl = this.refs['player'] as HTMLAudioElement;
+        audioEl.addEventListener('ended', this.handleEnded, false);
         audioEl.addEventListener('loadedmetadata', this.handleLoadedMetadata, false);
         audioEl.addEventListener('loadstart', this.handleLoadStart, false);
-        audioEl.addEventListener("pause", this.handlePause, false);
-        audioEl.addEventListener("play", this.handlePlay, false);
-        audioEl.addEventListener("timeupdate", this.handleTimeUpdate, false);
-        audioEl.addEventListener("volumechange", this.handleVolumeChange, false);
-        audioEl.addEventListener("error", this.handleError, false);
+        audioEl.addEventListener('pause', this.handlePause, false);
+        audioEl.addEventListener('play', this.handlePlay, false);
+        audioEl.addEventListener('timeupdate', this.handleTimeUpdate, false);
+        audioEl.addEventListener('volumechange', this.handleVolumeChange, false);
+        audioEl.addEventListener('error', this.handleError, false);
     }
     componentWillUnmount() {
-        var audioEl = this.refs["player"] as HTMLAudioElement;
+        let audioEl = this.refs['player'] as HTMLAudioElement;
         audioEl.removeEventListener('ended', this.handleEnded, false);
         audioEl.removeEventListener('loadedmetadata', this.handleLoadedMetadata, false);
         audioEl.removeEventListener('loadstart', this.handleLoadStart, false);
@@ -80,10 +80,10 @@ class Player extends React.Component<IPlayerProps, {}> {
         audioEl.removeEventListener('play', this.handlePlay, false);
         audioEl.removeEventListener('timeupdate', this.handleTimeUpdate, false);
         audioEl.removeEventListener('volumechange', this.handleVolumeChange, false);
-        audioEl.removeEventListener("error", this.handleError, false);
+        audioEl.removeEventListener('error', this.handleError, false);
     }
     handleError() {
-        var self = this;
+        let self = this;
         setTimeout(function () {
             self.playNext();
         }, 1000);
@@ -92,7 +92,7 @@ class Player extends React.Component<IPlayerProps, {}> {
         this.playNext();
     }
     handleLoadedMetadata() {
-        const audioElement = this.refs["player"] as HTMLAudioElement;
+        const audioElement = this.refs['player'] as HTMLAudioElement;
         this.setState({
             duration: Math.floor(audioElement.duration),
         });
@@ -114,26 +114,25 @@ class Player extends React.Component<IPlayerProps, {}> {
         })
     }
     handleTimeUpdate(e) {
-        var audioEl = this.refs["player"] as HTMLAudioElement;
+        let audioEl = this.refs['player'] as HTMLAudioElement;
         this.setState({
             currentTime: Math.floor(audioEl.currentTime)
         })
     }
     handleVolumeChange(e) {
-        const audioEl = this.refs["player"] as HTMLAudioElement;
+        const audioEl = this.refs['player'] as HTMLAudioElement;
         this.setState({
             volume: audioEl.volume
         })
     }
     playPrev() {
-        var {playSong, playlist, play} = this.props;
+        let {playSong, playlist, play} = this.props;
 
-        var index = findIndex(playlist, s => s.id == playSong.id);
-        var next;
+        let index = findIndex(playlist, s => s.id === playSong.id);
+        let next;
         if (index > 0) {
             next = playlist[index - 1];
-        }
-        else {
+        } else {
             next = playlist[playlist.length - 1];
         }
         if (next) {
@@ -142,18 +141,16 @@ class Player extends React.Component<IPlayerProps, {}> {
 
     }
     playNext() {
-        var {playSong, playlist, play} = this.props;
-        var next;
+        let {playSong, playlist, play} = this.props;
+        let next;
         if (this.state.isRandom) {
-            var index = Math.ceil(Math.random() * playlist.length);
+            let index = Math.ceil(Math.random() * playlist.length);
             next = playlist[index];
-        }
-        else {
-            var index = findIndex(playlist, s => s.id == playSong.id);
+        } else {
+            let index = findIndex(playlist, s => s.id === playSong.id);
             if (index < playlist.length - 1) {
                 next = playlist[index + 1];
-            }
-            else {
+            } else {
                 next = playlist[0];
             }
         }
@@ -162,34 +159,31 @@ class Player extends React.Component<IPlayerProps, {}> {
         }
     }
     tooglePlay() {
-        var audioEl = this.refs["player"] as HTMLAudioElement;
+        let audioEl = this.refs['player'] as HTMLAudioElement;
         audioEl.paused ? audioEl.play() : audioEl.pause();
     }
     toogleRandom() {
-        localStorage["isRandom"] = !this.state.isRandom;
+        localStorage['isRandom'] = !this.state.isRandom;
         this.setState({
             isRandom: !this.state.isRandom
         })
     }
     seek(e) {
-        const audioEl = this.refs["player"] as HTMLAudioElement;
+        const audioEl = this.refs['player'] as HTMLAudioElement;
         const percent = (e.clientX - offsetLeft(e.currentTarget)) / e.currentTarget.offsetWidth;
         const currentTime = Math.floor(percent * this.state.duration);
         audioEl.currentTime = currentTime;
     }
     changeVolume(e) {
-        const audioEl = this.refs["player"] as HTMLAudioElement;
+        const audioEl = this.refs['player'] as HTMLAudioElement;
         const volume = (e.clientX - offsetLeft(e.currentTarget)) / e.currentTarget.offsetWidth;
         audioEl.volume = volume;
     }
     render() {
 
-        var {playSong} = this.props;
-        var {isRandom} = this.state;
-        var resourceUrl = playSong ? playSong.resourceUrl : '';
-        var image = playSong ? playSong.image : "";
-        var musicName = playSong ? playSong.name : "";
-        var orderer = playSong ? playSong.orderer : "";
+        let {playSong} = this.props;
+        let {isRandom} = this.state;
+        let resourceUrl = playSong ? playSong.resourceUrl : '';
 
         return <div className="player fixed bottom-0 left-0 right-0">
             <audio id="player" ref="player" src={resourceUrl}></audio>

@@ -1,38 +1,38 @@
-﻿import io = require("socket.io-client");
+﻿
+import io = require('socket.io-client');
+let ws = io.connect('/');
 
-var ws = io.connect("/");
-export function join(user_name,room_id) {
+export function join(user_name, room_id) {
     return new Promise((resolve, reject) => {
-        ws.once("join_success", (success, msg) => {
+        ws.once('join_success', (success, msg) => {
             if (success) {
                 resolve(msg);
             } else {
                 reject(msg);
             }
-        }).emit("join", user_name, room_id);
+        }).emit('join', user_name, room_id);
     });
 }
 export function playlists() {
     return new Promise((resolve, reject) => {
-        ws.once("playlists_success", (success, list) => {
+        ws.once('playlists_success', (success, list) => {
             if (success) {
                 resolve(list);
             } else {
-                reject("fail");
+                reject('fail');
             }
-        }).emit("playlists")
-
+        }).emit('playlists');
     });
 }
 
 export function addSong(data) {
-    ws.emit("song.add", data);
+    ws.emit('song.add', data);
 }
 export function removeSong(data) {
-    ws.emit("song.remove", data);
+    ws.emit('song.remove', data);
 }
 export function playSong(data) {
-    ws.emit("song.play", data);
+    ws.emit('song.play', data);
 }
 
 export default ws;

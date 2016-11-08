@@ -111,7 +111,7 @@ export function addAsync(url) {
                             resourceUrl: data.mp3Url,
                             orderer: user
                         };
-                        addSong(data);
+                        addSong(m);
                     }
                  }).fail(()=>{
                      alert("解析失败")

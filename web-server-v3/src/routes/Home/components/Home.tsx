@@ -67,7 +67,7 @@ class Home extends React.Component<any, any>{
             <div className="search-bar">
                 <div className="container">
                     <div className="input-group input-group-lg" style={{ width:'100%'}}>
-                        <input ref="add_url" value={this.state.filter} onChange={(e) => this.onChange(e)} className="form-control" />
+                        <input ref="add_url" placeholder="search or url(163, sogou, soundcloud)" value={this.state.filter} onChange={(e) => this.onChange(e)} className="form-control" />
                         {
                             (() => {
                                 if (this.state.isAdd) {

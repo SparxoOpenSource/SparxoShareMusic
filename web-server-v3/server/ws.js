@@ -14,15 +14,26 @@ function writeData(room_id, data) {
     var json_path = "./playlists_" + room_id + ".json";
     fs.writeFileSync(json_path, JSON.stringify(data));    
 }
-function addItem(room_id, item) {
+function addItems(room_id, item) {
     var data = getData(room_id);
-    var s = data.playlist.filter(function(s){ return s.id==item.id });
-    if (s.length>0) {
-        return false;
+    var addItems=[];
+    if(toString.call(item)=='[object Array]'){
+        addItems=item;
     }
-    data.playlist.unshift(item);
+    else{
+        addItems=[item];
+    }
+    var result=[];
+    for(var i=0;i<addItems.length;i++){
+        var addItem=addItems[i];
+        var s=data.playlist.find((temp)=>temp.id==addItem.id);
+        if(!s){
+            result.push(addItem);
+        }
+    }
+    data.playlist.unshift.apply(data.playlist,result);   
     writeData(room_id,data);
-    return true;
+    return result;
 }
 function removeItem(room_id, remove_id) {
     var data = getData(room_id);
@@ -74,9 +85,9 @@ module.exports = function (server,app) {
         });
 
         client.on('song.add', function (data) {
-            if (addItem(client.room_id, data)) {
-                ws.sockets.emit('song.add', data);
-                console.log("add-success");
+            var added= addItems(client.room_id, data);
+            if (added.length>0) {
+                ws.sockets.emit('song.add', added);
             } else {
                 console.log("add-fail");
             }

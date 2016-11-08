@@ -97,30 +97,64 @@ export function addAsync(url) {
     return (dispatch, getState) => {
         let user = getState().session.user;
         if (url.indexOf('http://music.163.com')===0) {
-             let surl = url.replace('#/', '');
+             let surl = url.replace('#/', '');             
              let queryParams = parseQueryString(surl);
              if (queryParams.id) {
-                let api = encodeURIComponent( `http://music.163.com/api/song/detail/?id=${queryParams.id}&ids=[${queryParams.id}]`);
-                 return $.ajax({
-                     url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
-                     dataType: 'jsonp'
-                 }).done((res)=>{
-                     if(res.code===200){
-                        var data=res.songs[0];
-                        let m = {
-                            id: 'wangyi-' + data.id,
-                            name: data.name,
-                            artists: data.artists.map((item=>item.name)),
-                            album: data.album.name,
-                            image: data.album.picUrl,
-                            resourceUrl: data.mp3Url,
-                            orderer: user
-                        };
-                        addSong(m);
-                    }
-                 }).fail(()=>{
-                     alert("解析失败")
-                 });
+                 if(surl.indexOf('song')>-1){
+                    let api = encodeURIComponent( `http://music.163.com/api/song/detail/?id=${queryParams.id}&ids=[${queryParams.id}]`);
+                    return $.ajax({
+                        url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
+                        dataType: 'jsonp'
+                    }).done((res)=>{
+                        if(res.code===200){
+                            var data=res.songs[0];
+                            if(data.mp3Url!=null){
+                                let m = {
+                                    id: 'wangyi-' + data.id,
+                                    name: data.name,
+                                    artists: data.artists.map((item=>item.name)),
+                                    album: data.album.name,
+                                    image: data.album.picUrl,
+                                    resourceUrl: data.mp3Url,
+                                    orderer: user
+                                };
+                                addSong(m);
+                            }else{
+                                alert("不支持播放");
+                            }
+                        }
+                    }).fail(()=>{
+                        alert("解析失败")
+                    });
+                }
+                if(surl.indexOf('playlist')>-1){
+                    //http://music.163.com/api/playlist/detail?id=493682409
+                    let api = encodeURIComponent( `http://music.163.com/api/playlist/detail/?id=${queryParams.id}`);
+                    return $.ajax({
+                        url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
+                        dataType: 'jsonp'
+                    }).done((res)=>{
+                        if(res.code===200){
+                            var tracks=res.result.tracks;
+                            if(confirm(tracks.length+" songs added?")){
+                                var items=tracks.map((data)=>{
+                                    return {
+                                        id: 'wangyi-' + data.id,
+                                        name: data.name,
+                                        artists: data.artists.map((item=>item.name)),
+                                        album: data.album.name,
+                                        image: data.album.picUrl,
+                                        resourceUrl: data.mp3Url,
+                                        orderer: user
+                                    }
+                                })
+                                addSong(items);
+                            }
+                        }
+                    }).fail(()=>{
+                        alert("解析失败")
+                    });
+                }
              }
 
         }
@@ -214,8 +248,15 @@ const ACTION_HANDLERS = {
         return $.extend(null, state, action.payload);
     },
     [PLAYLIST_ADD]: (state, action) => {
+        var addItems=[];
+        if($.isArray(action.payload)){
+            addItems=action.payload;
+        }else{
+            addItems=[action.payload];
+        }
+
         return $.extend(null, state, {
-            playlist: [action.payload, ...state.playlist]
+            playlist: [...addItems, ...state.playlist]
         });
     },
     [PLAYLIST_REMOVE]: (state, action) => {

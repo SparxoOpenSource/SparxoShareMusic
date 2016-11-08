@@ -1,4 +1,4 @@
-import ws,{playlists,addSong,removeSong,playSong } from '../../../api/socket';
+import ws, {playlists, addSong, removeSong, playSong } from '../../../api/socket';
 
 // ------------------------------------
 // Constants
@@ -6,30 +6,30 @@ import ws,{playlists,addSong,removeSong,playSong } from '../../../api/socket';
 export const PLAYLIST_ADD = 'PLAYLIST_ADD';
 export const PLAYLIST_REMOVE = 'PLAYLIST_REMOVE';
 export const PLAYLIST_PLAY = 'PLAYLIST_PLAY';
-export const PLAYLIST_GET = "PLAYLIST_GET";
+export const PLAYLIST_GET = 'PLAYLIST_GET';
 
-const soundcloud_key = "02gUJC0hH2ct1EGOcYXQIzRFU91c72Ea";
+const soundcloud_key = '02gUJC0hH2ct1EGOcYXQIzRFU91c72Ea';
 
 function parseQueryString(url): any {
-    var queryIndex = url.indexOf("?"),
+    let queryIndex = url.indexOf('?'),
         queryObject = {},
         pairs;
     if (!url) {
         return null;
     }
-    var queryString = url;
+    let queryString = url;
     if (queryIndex != -1) {
         queryString = url.substr(queryIndex + 1);
     }
     pairs = queryString.split('&');
-    for (var pair of pairs) {
+    for (let pair of pairs) {
         if (pair === '') {
             continue;
         }
-        var parts = pair.split(/=(.+)?/),
+        let parts = pair.split(/=(.+)?/),
             key = parts[0],
             value = parts[1] && parts[1].replace(/\+/g, ' ');
-        var existing = queryObject[key];
+        let existing = queryObject[key];
         if (existing) {
             if (Array.isArray(existing)) {
                 existing.push(value);
@@ -78,12 +78,12 @@ export function initAsync() {
         playlists().then((data) => {
             dispatch(get(data));
         });
-        ws.on("song.add", (data) => {
+        ws.on('song.add', (data) => {
             debugger;
             dispatch(add(data));
-        }).on("song.remove", (data) => {
+        }).on('song.remove', (data) => {
             dispatch(remove(data));
-        }).on("song.play", data => {
+        }).on('song.play', data => {
             dispatch(play(data));
         });
     }
@@ -91,18 +91,47 @@ export function initAsync() {
 
 export function addAsync(url) {
     return (dispatch, getState) => {
-        var user = getState().session.user;
-        if (url.indexOf("http://www.xiami.com/song") == 0) {
-            var location = url.split('?')[0];
-            var id = location.replace("http://www.xiami.com/song/", "");
-            var req = `http://www.xiami.com/song/playlist/id/${id}/object_name/default/object_id/0/cat/json?callback=?`;
+        let user = getState().session.user;
+        if (url.indexOf('http://music.163.com')) {
+             let surl = url.replace('#/', '');
+             let queryParams = parseQueryString(surl);
+             if (queryParams.id) {
+                let api = encodeURIComponent( `http://music.163.com/api/song/detail/?id=${queryParams.id}&ids=[188222]`);
+                 return $.ajax({
+                     url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
+                     dataType: 'jsonp'
+                 }).done((res)=>{
+                     if(data.code===200){
+                        var data=res.songs[0];
+
+                        let m = {
+                            id: 'wangyi-' + data.id,
+                            name: data.name,
+                            artists: data.artists.map((item=>item.name)),
+                            album: data.album.name,
+                            image: data.album.picUrl,
+                            resourceUrl: data.mp3Url,
+                            orderer: user
+                        };
+                        addSong(data);
+                    }
+                 }).fail(()=>{
+                     alert("解析失败")
+                 });
+             }
+
+        }
+        if (url.indexOf('http://www.xiami.com/song') === 0) {
+            let location = url.split('?')[0];
+            let id = location.replace('http://www.xiami.com/song/', '');
+            let req = `http://www.xiami.com/song/playlist/id/${id}/object_name/default/object_id/0/cat/json?callback=?`;
             return $.ajax({
                 url: req,
-                dataType: "jsonp"
+                dataType: 'jsonp'
             }).done(json => {
-                var data = json.data.trackList[0];
+                let data = json.data.trackList[0];
                 if (data) {
-                    var m = {
+                    let m = {
                         id: 'xiami-' + data.songId,
                         name: data.songName,
                         artists: [json.singers],
@@ -110,27 +139,27 @@ export function addAsync(url) {
                         image: data.album_pic,
                         resourceUrl: data.purview.filePath,
                         orderer: user
-                    }
+                    };
                     addSong(data);
                 }
             });
         }
 
-        if (url.indexOf("http://mp3.sogou.com/tiny/song") == 0) {
-            var queryParams = parseQueryString(url);
+        if (url.indexOf('http://mp3.sogou.com/tiny/song') === 0) {
+            let queryParams = parseQueryString(url);
             if (queryParams.tid) {
                 return $.ajax({
-                    url: "http://mp3.sogou.com/tiny/song?json=1&query=getlyric&tid=" + queryParams.tid,
+                    url: 'http://mp3.sogou.com/tiny/song?json=1&query=getlyric&tid=' + queryParams.tid,
                     dataType: 'jsonp',
-                    jsonpCallback: "MusicJsonCallback"
+                    jsonpCallback: 'MusicJsonCallback'
                 }).done((json) => {
-                    var album_str = json.album_id + "";
-                    var m = {
+                    let album_str = json.album_id + '';
+                    let m = {
                         id: 'sogou-' + json.song_id,
                         name: json.song_name,
                         artists: [json.singer_name],
                         album: json.album_name,
-                        image: "http://imgcache.qq.com/music/photo/album_300/" + parseInt(album_str.substr(album_str.length - 2)) + "/300_albumpic_" + json.album_id + "_0.jpg",
+                        image: 'http://imgcache.qq.com/music/photo/album_300/' + parseInt(album_str.substr(album_str.length - 2)) + '/300_albumpic_' + json.album_id + '_0.jpg',
                         resourceUrl: json.play_url,
                         orderer: user
                     };
@@ -138,16 +167,16 @@ export function addAsync(url) {
                 });
             }
         }
-        if (url.indexOf("soundcloud.com") != -1) {
-            var str = "";
+        if (url.indexOf('soundcloud.com') != -1) {
+            let str = '';
             if (url.indexOf('?')) {
                 str = url.split('?')[0];
             }
-            var sp = str.split('/');
-            var id: any = sp[sp.length - 1];
+            let sp = str.split('/');
+            let id: any = sp[sp.length - 1];
             return $.getJSON(`//api.soundcloud.com/tracks/${id}?client_id=${soundcloud_key}`)
                 .done((data) => {
-                    var m = {
+                    let m = {
                         id: `soundcloud-${data.id}`,
                         name: data.title,
                         artists: [data.user.username],

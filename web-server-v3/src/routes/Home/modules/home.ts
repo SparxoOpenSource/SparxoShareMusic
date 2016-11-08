@@ -100,9 +100,8 @@ export function addAsync(url) {
                      url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
                      dataType: 'jsonp'
                  }).done((res)=>{
-                     if(data.code===200){
+                     if(res.code===200){
                         var data=res.songs[0];
-
                         let m = {
                             id: 'wangyi-' + data.id,
                             name: data.name,

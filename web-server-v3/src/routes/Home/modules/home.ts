@@ -10,6 +10,11 @@ export const PLAYLIST_GET = 'PLAYLIST_GET';
 
 const soundcloud_key = '02gUJC0hH2ct1EGOcYXQIzRFU91c72Ea';
 
+var SC:any=window["SC"];
+SC.initialize({
+  client_id: soundcloud_key
+});
+
 function parseQueryString(url): any {
     let queryIndex = url.indexOf('?'),
         queryObject = {},
@@ -166,25 +171,18 @@ export function addAsync(url) {
             }
         }
         if (url.indexOf('soundcloud.com') != -1) {
-            let str = '';
-            if (url.indexOf('?')) {
-                str = url.split('?')[0];
-            }
-            let sp = str.split('/');
-            let id: any = sp[sp.length - 1];
-            return $.getJSON(`//api.soundcloud.com/tracks/${id}?client_id=${soundcloud_key}`)
-                .done((data) => {
-                    let m = {
-                        id: `soundcloud-${data.id}`,
-                        name: data.title,
-                        artists: [data.user.username],
-                        album: data.genre,
-                        image: data.artwork_url,
-                        resourceUrl: `${data.stream_url}?client_id=${soundcloud_key}`,
+            SC.resolve(url).then((track)=>{
+                 let m = {
+                        id: `soundcloud-${track.id}`,
+                        name: track.title,
+                        artists: [track.user.username],
+                        album: track.genre,
+                        image: track.artwork_url,
+                        resourceUrl: `${track.stream_url}?client_id=${soundcloud_key}`,
                         orderer: user
-                    }
-                    addSong(m);
-                });
+                }
+                addSong(m);
+            });
         }
     }
 }

@@ -52,8 +52,11 @@ class Home extends React.Component<any, any>{
         var current_music = playlist.find(s => s.id == current);
         if (current_music) {
             setTimeout(() => {
-                var top = $('#'+current_music.id).position().top;
-                $(".play-list").animate({ "scrollTop": top }, 200);
+                var $el=$('#'+current_music.id);
+                if($el.length>0){
+                    var top = $el.position().top;
+                    $(".play-list").animate({ "scrollTop": top }, 200);
+                }
             }, 10);
         }
         else {

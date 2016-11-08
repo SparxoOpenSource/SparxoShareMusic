@@ -91,7 +91,7 @@ export function initAsync() {
 export function addAsync(url) {
     return (dispatch, getState) => {
         let user = getState().session.user;
-        if (url.indexOf('http://music.163.com')) {
+        if (url.indexOf('http://music.163.com')===0) {
              let surl = url.replace('#/', '');
              let queryParams = parseQueryString(surl);
              if (queryParams.id) {

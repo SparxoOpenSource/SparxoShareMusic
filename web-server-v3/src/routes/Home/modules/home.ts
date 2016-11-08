@@ -265,6 +265,13 @@ const ACTION_HANDLERS = {
         });
     },
     [PLAYLIST_PLAY]: (state, action) => {
+        setTimeout(() => {
+                var $el=$('#'+action.payload.id);
+                if($el.length > 0){
+                    var top = $el.position().top;
+                    $(".play-list").animate({ "scrollTop": top }, 200);
+                }
+        }, 10);
         return $.extend(null, state, { current: action.payload });
     }
 }

@@ -10,7 +10,7 @@ export const PLAYLIST_GET = 'PLAYLIST_GET';
 
 const soundcloud_key = '02gUJC0hH2ct1EGOcYXQIzRFU91c72Ea';
 
-var SC:any=window["SC"];
+let SC: any = window['SC'];
 SC.initialize({
   client_id: soundcloud_key
 });
@@ -96,52 +96,52 @@ export function initAsync() {
 export function addAsync(url) {
     return (dispatch, getState) => {
         let user = getState().session.user;
-        if (url.indexOf('http://music.163.com')===0) {
+        if (url.indexOf('http://music.163.com') === 0) {
              let surl = url.replace('#/', '');             
              let queryParams = parseQueryString(surl);
              if (queryParams.id) {
-                 if(surl.indexOf('song')>-1){
+                 if (surl.indexOf('song') > -1) {
                     let api = encodeURIComponent( `http://music.163.com/api/song/detail/?id=${queryParams.id}&ids=[${queryParams.id}]`);
                     return $.ajax({
                         url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
                         dataType: 'jsonp'
-                    }).done((res)=>{
-                        if(res.code===200){
-                            var data=res.songs[0];
-                            if(data.mp3Url!=null){
+                    }).done((res) => {
+                        if (res.code === 200) {
+                            let data = res.songs[0];
+                            if (data.mp3Url != null) {
                                 let m = {
                                     id: 'wangyi-' + data.id,
                                     name: data.name,
-                                    artists: data.artists.map((item=>item.name)),
+                                    artists: data.artists.map((item => item.name)),
                                     album: data.album.name,
                                     image: data.album.picUrl,
                                     resourceUrl: data.mp3Url,
                                     orderer: user
                                 };
                                 addSong(m);
-                            }else{
-                                alert("不支持播放");
+                            }else {
+                                alert('不支持播放');
                             }
                         }
-                    }).fail(()=>{
-                        alert("解析失败")
+                    }).fail(() => {
+                        alert('解析失败')
                     });
                 }
-                if(surl.indexOf('playlist')>-1){
+                if (surl.indexOf('playlist') > -1) {
                     //http://music.163.com/api/playlist/detail?id=493682409
                     let api = encodeURIComponent( `http://music.163.com/api/playlist/detail/?id=${queryParams.id}`);
                     return $.ajax({
                         url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
                         dataType: 'jsonp'
-                    }).done((res)=>{
-                        if(res.code===200){
-                            var tracks=res.result.tracks.filter((track)=>track.mp3Url!=null);
-                            if(confirm(tracks.length+" songs added?")){
-                                var items=tracks.map((data)=>{
+                    }).done((res) => {
+                        if (res.code === 200) {
+                            let tracks = res.result.tracks.filter((track) => track.mp3Url != null);
+                            if (confirm(tracks.length + ' songs added?')) {
+                                let items = tracks.map((data) => {
                                     return {
                                         id: 'wangyi-' + data.id,
                                         name: data.name,
-                                        artists: data.artists.map((item=>item.name)),
+                                        artists: data.artists.map((item => item.name)),
                                         album: data.album.name,
                                         image: data.album.picUrl,
                                         resourceUrl: data.mp3Url,
@@ -151,8 +151,8 @@ export function addAsync(url) {
                                 addSong(items);
                             }
                         }
-                    }).fail(()=>{
-                        alert("解析失败")
+                    }).fail(() => {
+                        alert('解析失败')
                     });
                 }
              }
@@ -205,7 +205,7 @@ export function addAsync(url) {
             }
         }
         if (url.indexOf('soundcloud.com') != -1) {
-            SC.resolve(url).then((track)=>{
+            SC.resolve(url).then((track) => {
                  let m = {
                         id: `soundcloud-${track.id}`,
                         name: track.title,
@@ -214,7 +214,7 @@ export function addAsync(url) {
                         image: track.artwork_url,
                         resourceUrl: `${track.stream_url}?client_id=${soundcloud_key}`,
                         orderer: user
-                }
+                };
                 addSong(m);
             });
         }
@@ -248,11 +248,11 @@ const ACTION_HANDLERS = {
         return $.extend(null, state, action.payload);
     },
     [PLAYLIST_ADD]: (state, action) => {
-        var addItems=[];
-        if($.isArray(action.payload)){
-            addItems=action.payload;
-        }else{
-            addItems=[action.payload];
+        let addItems = [];
+        if ($.isArray(action.payload)) {
+            addItems = action.payload;
+        }else {
+            addItems = [action.payload];
         }
 
         return $.extend(null, state, {
@@ -266,22 +266,22 @@ const ACTION_HANDLERS = {
     },
     [PLAYLIST_PLAY]: (state, action) => {
         setTimeout(() => {
-                var $el=$('#'+action.payload.id);
-                if($el.length > 0){
-                    var top = $el.position().top;
-                    $(".play-list").animate({ "scrollTop": top }, 200);
+                let $el = $('#' + action.payload);
+                if ($el.length > 0) {
+                    let top = $el.position().top;
+                    $('.play-list').animate({ 'scrollTop': top }, 200);
                 }
         }, 10);
         return $.extend(null, state, { current: action.payload });
     }
-}
+};
 
 // ------------------------------------
 // Reducer
 // ------------------------------------
 const initialState = {
     playlist: []
-}
+};
 
 export default function counterReducer(state = initialState, action) {
     const handler = ACTION_HANDLERS[action.type];

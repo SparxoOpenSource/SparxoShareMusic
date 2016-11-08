@@ -3,4 +3,5 @@
 /web-server/logs/
 /web-server/node_modules/
 node_modules
+playlist_*.json
 *.dll

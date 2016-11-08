@@ -95,7 +95,7 @@ export function addAsync(url) {
              let surl = url.replace('#/', '');
              let queryParams = parseQueryString(surl);
              if (queryParams.id) {
-                let api = encodeURIComponent( `http://music.163.com/api/song/detail/?id=${queryParams.id}&ids=[188222]`);
+                let api = encodeURIComponent( `http://music.163.com/api/song/detail/?id=${queryParams.id}&ids=[${queryParams.id}]`);
                  return $.ajax({
                      url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
                      dataType: 'jsonp'

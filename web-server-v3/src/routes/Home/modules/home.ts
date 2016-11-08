@@ -135,7 +135,7 @@ export function addAsync(url) {
                         dataType: 'jsonp'
                     }).done((res)=>{
                         if(res.code===200){
-                            var tracks=res.result.tracks;
+                            var tracks=res.result.tracks.filter((track)=>track.mp3Url!=null);
                             if(confirm(tracks.length+" songs added?")){
                                 var items=tracks.map((data)=>{
                                     return {

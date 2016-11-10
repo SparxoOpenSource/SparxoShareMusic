@@ -142,7 +142,7 @@ class Home extends React.Component<any, any>{
             {
                 (() => {
                     if (this.state.isMainPlayer) {
-                        return <Player playSong={current_music} play={(id) => this.playItem(id)} templist={templist} playlist={playlist} />
+                        return <Player playSong={current_music} play={(id,r) => this.playItem(id,r)} templist={templist} playlist={playlist} />
                     }
                 })()
             }            

@@ -9,11 +9,14 @@ const mapDispatchToProps = {
     initAsync: actions.initAsync,
     addAsync: actions.addAsync,
     playAsync: actions.playAsync,
-    removeAsync: actions.removeAsync
+    removeAsync: actions.removeAsync,
+    nextPlayAsync: actions.nextPlayAsync,
+    removeNextPlayAsync: actions.removeNextPlayAsync
 }
 
 const mapStateToProps = (state) => ({
     playlist: state.home.playlist,
+    templist:state.home.templist,
     current:state.home.current
 });
 

@@ -1,4 +1,4 @@
-import ws, {playlists, addSong, removeSong, playSong } from '../../../api/socket';
+import ws, {playlists, addSong, removeSong, playSong,sendMessage } from '../../../api/socket';
 
 // ------------------------------------
 // Constants
@@ -7,7 +7,7 @@ export const PLAYLIST_ADD = 'PLAYLIST_ADD';
 export const PLAYLIST_REMOVE = 'PLAYLIST_REMOVE';
 export const PLAYLIST_PLAY = 'PLAYLIST_PLAY';
 export const PLAYLIST_GET = 'PLAYLIST_GET';
-
+export const PLAYLIST_MESSAGE='PLAYLIST_MESSAGE';
 const soundcloud_key = '02gUJC0hH2ct1EGOcYXQIzRFU91c72Ea';
 
 let SC: any = window['SC'];
@@ -77,7 +77,12 @@ export function play(data) {
         payload: data
     }
 }
-
+export function onMessage(user,data) {
+    return {
+        type: PLAYLIST_MESSAGE,
+        payload: data
+    }
+}
 export function initAsync() {
     return (dispatch, getState) => {
         playlists().then((data) => {
@@ -89,6 +94,8 @@ export function initAsync() {
             dispatch(remove(data));
         }).on('song.play', data => {
             dispatch(play(data));
+        }).on('send.message',(user,data)=>{
+            dispatch(onMessage(user,data));
         });
     }
 }
@@ -233,11 +240,29 @@ export function playAsync(id) {
     }
 }
 
+export function nextPlayAsync(id){
+    return  (dispatch,getState)=>{
+        sendMessage({
+            type:'add.next',
+            data:id
+        });
+    };
+}
+export function removeNextPlayAsync(id){
+    return  (dispatch,getState)=>{
+        sendMessage({
+            type:'remove.next',
+            data:id
+        });
+    };
+}
 export const actions = {
     addAsync,
     playAsync,
     removeAsync,
-    initAsync
+    initAsync,
+    nextPlayAsync,
+    removeNextPlayAsync
 }
 
 // ------------------------------------
@@ -273,6 +298,23 @@ const ACTION_HANDLERS = {
                 }
         }, 10);
         return $.extend(null, state, { current: action.payload });
+    },
+    [PLAYLIST_MESSAGE]:(state,action)=>{
+        var data=action.payload;
+        if(data.type=='add.next'){
+            var song=state.playlist.find((item=>item.id==data.data));
+            var templist=state.templist.filter(item=>item.id!=data.data);
+
+            return $.extend(null,state,{
+                templist:[song,...templist]
+            });
+        }
+        if(data.type=='remove.next'){
+            return $.extend(null,state,{
+                templist:[...state.templist.filter(item=>item.id!=data.data)]
+            });
+        }
+        return state;
     }
 };
 
@@ -280,7 +322,8 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 const initialState = {
-    playlist: []
+    playlist: [],
+    templist:[]
 };
 
 export default function counterReducer(state = initialState, action) {

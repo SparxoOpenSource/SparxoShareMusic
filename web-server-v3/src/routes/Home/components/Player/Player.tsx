@@ -4,7 +4,8 @@ import './Player.less';
 interface IPlayerProps extends React.Props<any> {
     playSong: any;
     playlist: Array<any>;
-    play: (id) => void;
+    play: (id,remove_Temp) => void;
+    templist:Array<any>;
 };
 
 function padZero(num, size) {
@@ -136,26 +137,32 @@ class Player extends React.Component<IPlayerProps, {}> {
             next = playlist[playlist.length - 1];
         }
         if (next) {
-            play(next.id);
+            play(next.id,false);
         }
 
     }
     playNext() {
-        let {playSong, playlist, play} = this.props;
+        let {playSong, playlist,templist, play} = this.props;
         let next;
-        if (this.state.isRandom) {
-            let index = Math.ceil(Math.random() * playlist.length);
-            next = playlist[index];
-        } else {
-            let index = findIndex(playlist, s => s.id === playSong.id);
-            if (index < playlist.length - 1) {
-                next = playlist[index + 1];
+        let remove_Temp=false;
+        if(templist.length>0){
+            next=templist[0];
+            remove_Temp=true;
+        }else{
+            if (this.state.isRandom) {
+                let index = Math.ceil(Math.random() * playlist.length);
+                next = playlist[index];
             } else {
-                next = playlist[0];
+                let index = findIndex(playlist, s => s.id === playSong.id);
+                if (index < playlist.length - 1) {
+                    next = playlist[index + 1];
+                } else {
+                    next = playlist[0];
+                }
             }
         }
         if (next) {
-            play(next.id);
+            play(next.id,remove_Temp);
         }
     }
     tooglePlay() {

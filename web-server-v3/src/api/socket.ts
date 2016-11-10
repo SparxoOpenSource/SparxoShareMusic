@@ -34,5 +34,7 @@ export function removeSong(data) {
 export function playSong(data) {
     ws.emit('song.play', data);
 }
-
+export function sendMessage(msg){
+    ws.emit('send.message',msg);
+}
 export default ws;

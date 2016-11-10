@@ -12,7 +12,6 @@ class Home extends React.Component<any, any>{
     }
 
     componentWillMount() {
-
         this.props.initAsync();
     }
     addItem() {
@@ -24,8 +23,11 @@ class Home extends React.Component<any, any>{
             isAdd: false
         })
     }
-    playItem(id) {
+    playItem(id,remove_Temp=false) {
         this.props.playAsync(id);
+        if(remove_Temp){
+            this.props.removeNextPlayAsync(id);
+        }
     }
     removeItem(id) {
         this.props.removeAsync(id);
@@ -48,7 +50,7 @@ class Home extends React.Component<any, any>{
         this.setState({ isMainPlayer: _isMain });
     }
     render() {
-        var {current, playlist} = this.props;
+        var {current, playlist,templist,nextPlayAsync,removeNextPlayAsync} = this.props;
         var current_music = playlist.find(s => s.id == current);
         if (current_music) {
         }
@@ -76,7 +78,7 @@ class Home extends React.Component<any, any>{
             </div>
             <div className="container">
                 <div className="row">
-                    <div className="col col-sm-5 hidden-xs">
+                    <div className="row-flex col col-sm-5 hidden-xs">
                         <div className="play-info">
                             <div className="play-image">
                                 <img src={current_music.image} />
@@ -90,6 +92,17 @@ class Home extends React.Component<any, any>{
                                     <input type="checkbox" checked={this.state.isMainPlayer} onChange={() => this.onCheck()}/> Main Player
                                 </label>
                              </div>
+                        </div>
+                        <div className={`play-templist ${templist.length==0?'hide':''}`}>
+                            <ol>
+                            {
+                                templist.map((item,idx)=>{
+                                    return <li key={idx}>
+                                    {item.name}                                                                          
+                                     <a className="temp-times" href="javascript:;" onClick={() => this.props.removeNextPlayAsync(item.id)}>&times;</a>
+                                </li>})
+                            }
+                            </ol>
                         </div>
                     </div>
                     <div className="col col-sm-7">
@@ -106,13 +119,17 @@ class Home extends React.Component<any, any>{
                                 }).map((item) =>
                                     <li key={item.id} id={item.id} className={current == item.id ? 'playing' : ''}>
                                         <a className="song-times" href="javascript:;" onClick={() => this.removeItem(item.id)}>&times;</a>
-                                        <a className="media" href="javascript:;" onClick={() => this.playItem(item.id)}>
+                                        <a className="media" href="javascript:;">
                                             <div className="media-left">
                                                 <img src={item.image} alt="..." />
                                             </div>
                                             <div className="media-body">
                                                 <h4 className="media-heading">{item.name}</h4>
-                                                <p>{(item.artists || []).join(' ')}</p>                                                
+                                                <p>{(item.artists || []).join(' ')}</p>                                                  
+                                                <div>                                             
+                                                    <button onClick={()=>this.playItem(item.id)}>play</button>
+                                                    <button onClick={()=>nextPlayAsync(item.id)}>next play</button>
+                                                </div>                                                                                              
                                             </div>
                                         </a>
                                     </li>
@@ -125,7 +142,7 @@ class Home extends React.Component<any, any>{
             {
                 (() => {
                     if (this.state.isMainPlayer) {
-                        return <Player playSong={current_music} play={(id) => this.playItem(id)} playlist={playlist} />
+                        return <Player playSong={current_music} play={(id) => this.playItem(id)} templist={templist} playlist={playlist} />
                     }
                 })()
             }            

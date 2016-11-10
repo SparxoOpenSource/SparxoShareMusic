@@ -14,10 +14,6 @@ const mapDispatchToProps = {
     removeNextPlayAsync: actions.removeNextPlayAsync
 }
 
-const mapStateToProps = (state) => ({
-    playlist: state.home.playlist,
-    templist:state.home.templist,
-    current:state.home.current
-});
+const mapStateToProps = (state) =>state.home;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)

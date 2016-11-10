@@ -3,6 +3,7 @@ import './Player.less';
 
 interface IPlayerProps extends React.Props<any> {
     playSong: any;
+    current:string;
     playlist: Array<any>;
     play: (id,remove_Temp) => void;
     templist:Array<any>;
@@ -127,9 +128,8 @@ class Player extends React.Component<IPlayerProps, {}> {
         })
     }
     playPrev() {
-        let {playSong, playlist, play} = this.props;
-
-        let index = findIndex(playlist, s => s.id === playSong.id);
+        let {current, playlist, play} = this.props;
+        let index = findIndex(playlist, s => s.id === current);
         let next;
         if (index > 0) {
             next = playlist[index - 1];
@@ -142,18 +142,20 @@ class Player extends React.Component<IPlayerProps, {}> {
 
     }
     playNext() {
-        let {playSong, playlist,templist, play} = this.props;
+        let {current, playlist,templist, play} = this.props;
         let next;
-        let remove_Temp=false;
+        let is_Temp=false;
         if(templist.length>0){
             next=templist[0];
-            remove_Temp=true;
+            is_Temp=true;
         }else{
+
             if (this.state.isRandom) {
                 let index = Math.ceil(Math.random() * playlist.length);
                 next = playlist[index];
             } else {
-                let index = findIndex(playlist, s => s.id === playSong.id);
+
+                let index = findIndex(playlist, s => s.id === current);
                 if (index < playlist.length - 1) {
                     next = playlist[index + 1];
                 } else {
@@ -162,7 +164,7 @@ class Player extends React.Component<IPlayerProps, {}> {
             }
         }
         if (next) {
-            play(next.id,remove_Temp);
+            play(next.id,is_Temp);
         }
     }
     tooglePlay() {

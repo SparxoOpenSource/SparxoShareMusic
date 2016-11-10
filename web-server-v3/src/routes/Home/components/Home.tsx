@@ -23,11 +23,8 @@ class Home extends React.Component<any, any>{
             isAdd: false
         })
     }
-    playItem(id,remove_Temp=false) {
-        this.props.playAsync(id);
-        if(remove_Temp){
-            this.props.removeNextPlayAsync(id);
-        }
+    playItem(id,is_Temp=false) {
+        this.props.playAsync(id,is_Temp);        
     }
     removeItem(id) {
         this.props.removeAsync(id);
@@ -50,8 +47,16 @@ class Home extends React.Component<any, any>{
         this.setState({ isMainPlayer: _isMain });
     }
     render() {
-        var {current, playlist,templist,nextPlayAsync,removeNextPlayAsync} = this.props;
-        var current_music = playlist.find(s => s.id == current);
+        var {temp,current, playlist,templist,nextPlayAsync,removeNextPlayAsync} = this.props;
+
+        var current_music = playlist.find(s =>{
+            if(temp){
+                return s.id == temp;
+            } else {
+                return s.id == current;
+            }
+        });
+
         if (current_music) {
         }
         else {
@@ -117,7 +122,7 @@ class Home extends React.Component<any, any>{
                                     }
                                     return item.name.indexOf(this.state.filter) > -1;
                                 }).map((item) =>
-                                    <li key={item.id} id={item.id} className={current == item.id ? 'playing' : ''}>
+                                    <li key={item.id} id={item.id} className={current_music.id == item.id ? 'playing' : ''}>
                                         <a className="song-times" href="javascript:;" onClick={() => this.removeItem(item.id)}>&times;</a>
                                         <a className="media" href="javascript:;">
                                             <div className="media-left">
@@ -142,7 +147,7 @@ class Home extends React.Component<any, any>{
             {
                 (() => {
                     if (this.state.isMainPlayer) {
-                        return <Player playSong={current_music} play={(id,r) => this.playItem(id,r)} templist={templist} playlist={playlist} />
+                        return <Player playSong={current_music} current={current} play={(id,r) => this.playItem(id,r)} templist={templist} playlist={playlist} />
                     }
                 })()
             }            

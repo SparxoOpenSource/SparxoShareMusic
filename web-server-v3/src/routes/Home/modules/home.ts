@@ -308,6 +308,7 @@ const ACTION_HANDLERS = {
     },
     [PLAYLIST_MESSAGE]:(state,action)=>{
         var data=action.payload;
+        
         if(data.type=='add.next'){
             var song=state.playlist.find((item=>item.id==data.data));
             var templist=state.templist.filter(item=>item.id!=data.data);

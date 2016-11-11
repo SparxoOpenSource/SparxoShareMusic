@@ -98,7 +98,7 @@ class Home extends React.Component<any, any>{
                                 </label>
                              </div>
                         </div>
-                        <div className={`play-templist ${templist.length==0?'hide':''}`}>
+                        <div className={`play-templist ${(templist.length==0||!this.state.isMainPlayer)?'hide':''}`}>
                             <ol>
                             {
                                 templist.map((item,idx)=>{

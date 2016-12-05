@@ -104,7 +104,9 @@ export function addAsync(url) {
     return (dispatch, getState) => {
         let user = getState().session.user;
         if (url.indexOf('http://music.163.com') === 0) {
-             let surl = url.replace('#/', '');             
+             let surl = url.replace('#/', '');                           
+             let refer=encodeURIComponent(`http://music.163.com`);
+  
              let queryParams = parseQueryString(surl);
              if (queryParams.id) {
                  if (surl.indexOf('song') > -1) {
@@ -138,7 +140,7 @@ export function addAsync(url) {
                     //http://music.163.com/api/playlist/detail?id=493682409
                     let api = encodeURIComponent( `http://music.163.com/api/playlist/detail/?id=${queryParams.id}`);
                     return $.ajax({
-                        url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
+                        url: `http://myproxy.applinzi.com/get.php?url=${api}&refer=${refer}&callback=?`,
                         dataType: 'jsonp'
                     }).done((res) => {
                         if (res.code === 200) {
@@ -165,7 +167,7 @@ export function addAsync(url) {
                 if(surl.indexOf('album')>-1){
                     let api=encodeURIComponent(`http://music.163.com/api/album/${queryParams.id}`);
                     return $.ajax({
-                        url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
+                        url: `http://myproxy.applinzi.com/get.php?url=${api}&refer=${refer}&callback=?`,
                         dataType: 'jsonp'
                     }).done((res) => {
                         if (res.code === 200) {

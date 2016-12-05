@@ -162,6 +162,34 @@ export function addAsync(url) {
                         alert('解析失败')
                     });
                 }
+                if(surl.indexOf('album')>-1){
+                    let api=encodeURIComponent(`http://music.163.com/api/album/${queryParams.id}`);
+                    return $.ajax({
+                        url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
+                        dataType: 'jsonp'
+                    }).done((res) => {
+                        if (res.code === 200) {
+                            let songs = res.album.songs.filter((song) => song.mp3Url != null);
+                            if (confirm(songs.length + ' songs added?')) {
+                                let items = songs.map((data) => {
+                                    return {
+                                        id: 'wangyi-' + data.id,
+                                        name: data.name,
+                                        artists: data.artists.map((item => item.name)),
+                                        album: data.album.name,
+                                        image: data.album.picUrl,
+                                        resourceUrl: data.mp3Url,
+                                        orderer: user
+                                    }
+                                })
+                                addSong(items);
+                            }
+                        }
+                    }).fail(() => {
+                        alert('解析失败')
+                    });
+                    
+                }
              }
 
         }

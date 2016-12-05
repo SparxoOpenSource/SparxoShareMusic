@@ -159,6 +159,8 @@ export function addAsync(url) {
                                 })
                                 addSong(items);
                             }
+                        }else{                            
+                            alert('解析失败')
                         }
                     }).fail(() => {
                         alert('解析失败')
@@ -186,6 +188,8 @@ export function addAsync(url) {
                                 })
                                 addSong(items);
                             }
+                        }else{                            
+                            alert('解析失败')
                         }
                     }).fail(() => {
                         alert('解析失败')

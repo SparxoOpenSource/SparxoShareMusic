@@ -110,10 +110,9 @@ export function addAsync(url) {
              let queryParams = parseQueryString(surl);
              if (queryParams.id) {
                  if (surl.indexOf('song') > -1) {
-                    let api = encodeURIComponent( `http://music.163.com/api/song/detail/?id=${queryParams.id}&ids=[${queryParams.id}]`);
+                    let api = `http://music.163.com/api/song/detail/?id=${queryParams.id}&ids=[${queryParams.id}]`;
                     return $.ajax({
-                        url: `http://myproxy.applinzi.com/get.php?url=${api}&callback=?`,
-                        dataType: 'jsonp'
+                        url: api
                     }).done((res) => {
                         if (res.code === 200) {
                             let data = res.songs[0];
@@ -138,10 +137,9 @@ export function addAsync(url) {
                 }
                 if (surl.indexOf('playlist') > -1) {
                     //http://music.163.com/api/playlist/detail?id=493682409
-                    let api = encodeURIComponent( `http://music.163.com/api/playlist/detail/?id=${queryParams.id}`);
+                    let api = `http://music.163.com/api/playlist/detail/?id=${queryParams.id}`;
                     return $.ajax({
-                        url: `http://myproxy.applinzi.com/get.php?url=${api}&refer=${refer}&callback=?`,
-                        dataType: 'jsonp'
+                        url: api
                     }).done((res) => {
                         if (res.code === 200) {
                             let tracks = res.result.tracks.filter((track) => track.mp3Url != null);
@@ -167,10 +165,9 @@ export function addAsync(url) {
                     });
                 }
                 if(surl.indexOf('album')>-1){
-                    let api=encodeURIComponent(`http://music.163.com/api/album/${queryParams.id}`);
+                    let api=`http://music.163.com/api/album/${queryParams.id}`;
                     return $.ajax({
-                        url: `http://myproxy.applinzi.com/get.php?url=${api}&refer=${refer}&callback=?`,
-                        dataType: 'jsonp'
+                        url: api
                     }).done((res) => {
                         if (res.code === 200) {
                             let songs = res.album.songs.filter((song) => song.mp3Url != null);

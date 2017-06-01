@@ -8,7 +8,7 @@ export const PLAYLIST_REMOVE = 'PLAYLIST_REMOVE';
 export const PLAYLIST_PLAY = 'PLAYLIST_PLAY';
 export const PLAYLIST_GET = 'PLAYLIST_GET';
 export const PLAYLIST_MESSAGE='PLAYLIST_MESSAGE';
-const soundcloud_key = '02gUJC0hH2ct1EGOcYXQIzRFU91c72Ea';
+const soundcloud_key = '2t9loNQH90kzJcsFCODdigxfp325aq4z';
 
 let SC: any = window['SC'];
 SC.initialize({
